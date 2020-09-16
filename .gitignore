@@ -1,0 +1,9 @@
+# NES source folder
+src
+
+# Reference guides
+*.pdf
+
+# Disk images
+*.ssd
+*.dsd
