@@ -1,0 +1,63 @@
+There are two banks of 8x8 pixel tiles, number from 0x00 to 0xff
+
+Larger sprites are made up of 4 tiles to be 16x16 pixels
+
+Notable tiles :
+
+LHS
+---
+00,02,04,06,08,0A,0C,0E,20 Bomberman sprites
+22,24,26,28,2A,2C,2E Bomberman death sprites
+40,42,44 Running man sprites
+46 "000" or "0" and "00" at 47
+48,4A,4C,4E Enemy death sprites
+60,62,64,66 Valcom sprites
+68,6A,6C,6E O'Neil sprites
+80,82,84,86 Dahl sprites
+88,8A,8C,8E Minvo sprites
+A0,A2,A4,A6 Doria sprites
+A8,AA,AC,AE Ovape sprites
+C0,C2,C4,C6 Pass sprites
+C8,CA,CC,CE Pontan sprites
+EO "B" sprite
+E2 King tut sprite
+E4 Monkey sprite
+E6 Subway train sprite
+E8 C bottle sprite
+EA Sweating man sprite
+EC "1"
+ED "2"
+EE "4"
+EF "8"
+FC "10"
+FD "20"
+FE "40"
+FF "80"
+
+RHS
+---
+00 Bomb power-up sprite
+02 Flame power-up sprite
+04 Rollerskate power-up sprite
+06 Speedrun power-up sprite
+08 Heartbomb power-up sprite
+0A Movingbomb power-up sprite
+0C Flamingman power-up sprite
+0E Questionmark power-up sprite
+20..2F Explosion tiles, normally " !"#$%&'()*+,-"
+30..39 Numbers 0 to 9
+3A Used as space, normally ":"
+3B Used as full, normally ";"
+3C..3F Exitway sprite (split), normally "<=>?"
+40 Right triangle, normally "@"
+41..5A Letters A to Z
+5B..5F Explosion tiles, normally "[\]^_"
+60..63 Blank, normally "`abc"
+64..67 Concrete tiles, normally "defg"
+68..7F Brick tiles, normally "hijklmno"
+80..8B Bomb animation sprites (split), normally "pqrs", "tuvw", "xyz{"
+8C..AF Explosion tiles
+B0..FA Title screen tiles
+FB..FC TM
+FD Full stop
+FE Copyright
