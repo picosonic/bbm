@@ -1,21 +1,9 @@
 INCLUDE "os.asm"
 INCLUDE "inkey.asm"
 
+INCLUDE "vars.asm"
+
 ORG &1100
-
-sprsrc = &60
-sprsrc2 = &62
-
-sprdst = &64
-sprdst2 = &66
-
-sprite = &68
-sprx = &69
-spry = &70
-
-delayframes = &71
-
-titleptr = &72
 
 MODE8BASE  = &4800
 
@@ -516,6 +504,8 @@ MODE8BASE  = &4800
   TYA
   RTS
 }
+
+INCLUDE "rand.asm"
 
 .titlestr
 EQUS "L.TITLE", &0D
