@@ -7,3 +7,9 @@ src
 # Disk images
 *.ssd
 *.dsd
+
+# Other files
+*.jpg
+*.webp
+*.png
+*.gif
