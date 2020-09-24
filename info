@@ -1,0 +1,164 @@
+NES
+  1.79Mhz (NTSC), 1.66Mhz (PAL)
+  48 colours and 6 grey palette (25 simultaneous)
+  256x240
+
+Beeb
+  2Mhz
+  Mode 1 320x256 4 colours (black 0/blue 4/red 1/white 7)
+  Mode 2 160x256 8 colours
+  Mode 5 160x256 4 colours
+  
+  ----------------------
+
+reset
+play song 1
+
+start
+play song 2
+wait
+play song 3
+stage time = 200 seconds
+
+bonus start
+play song 2
+wait
+play song 6
+bonus stage time = 30 seconds
+...
+play song 10
+wait
+
+play song 7
+end of game
+
+demo plays song 8
+
+Max 10 bombs
+160 x N before bombs explode (2.66666 seconds @ 60fps)
+Bomb animataion, sprites 9, 10, 9, 8
+
+  ----------------------
+  
+On title screen
+Select moves the arrow between "START" and "CONTINUE"
+Start button selects the entry with the arrow
+"CONTINUE" asks "ENTER SECRET CODE", with flashing cursor
+  Direction buttons select letters of alphabet from "A" to "P"
+  A button selects current character
+  It takes 20 characters for secret code, once you enter 20th it validates it
+  Example codes (more below) :
+    BAHIMNJDJNMNMNMNMNMF, this takes you to stage 1, 200 seconds, 2 lives, 0 score
+    MNJDIMABAJDJDJDJDJDL
+
+In game
+Status shown at top
+  Time remaining (200 seconds per level)
+  Score
+  Lives remaining (There are 3 lives per level, shown as "LEFT 2" down to "LEFT 0")
+  
+Levels are
+  11 high by 29 wide (319 cells)
+  plus a 1 block concrete border (although left/right/lower sides only show partially)
+  every even cell contains concrete
+
+Whenever you die
+  it show "STAGE N" screen
+  then randomly generates a new stage map
+  you get 200 seconds reset
+  unless you've run out of lives, when it shows
+    "GAME OVER" and a secret code
+    
+  ----------------------
+  
+  Bonus items (https://gamefaqs.gamespot.com/nes/563390-bomberman/cheats)
+  After doing the following, you only have 8.5 seconds to find these bonus items and get the following scores
+  
+  Bonus target (10,000)
+    Reveal the exit and walk over it without defeating any enemies
+    
+  Cola bottle (30,000)
+    Reveal the exit, walk over it, and don't let go of the d pad for 15 seconds while making sure not to defeat any enemies
+    
+  Dezeniman-san (20,000,000)
+    Destroy every wall and bomb the exit thrice while making sure not to defeat any enemies
+    
+  Famicom (500,000)
+    Kill every enemy, then create 248 chain reactions with your bombs
+    
+  Goddess mask (20,000)
+    Defeat every enemy and circle the outer ring of the level
+
+  Nakamoto-san (10,000,000)
+    Kill every enemy without blowing up any walls
+    
+  ----------------------
+      
+  Secret codes (from https://www.ign.com/wikis/nes-cheats/Bomberman_Cheats)
+  
+  These codes will give you max bombs and max fire.
+
+    NMIHPPBPCAFHABDPCPCH - Level 01
+    HIJDIJFJDLHFLOPDJDJN - Level 02
+    BAJDINANMJGGCPOOLOLG - Level 03
+    DJOLBGLGKGJAHIEMNMNN - Level 04
+    NMKGDDONMHLCGKKGKGKJ - Level 05
+    ABGKKBPHILHFLOPCPCPC - Level 06
+    FEBABGLEFLHFLOPCPCPA - Level 07
+    HIFEMIIABJGGCPOBABAN - Level 08
+    NMEFPHCMNJGGCPOBABAF - Level 09
+    JDGKKBPHILHFLOPGKGKL - Level 10
+    HIPCOHCMNLHFLOPEFEFG - Level 11
+    ABJDIFJKGGJAHIEPCPCN - Level 12
+    JDBABANOLJGGCPODJDJF - Level 13
+    ABNMKNAIHFAJNMMKGKGF - Level 14
+    ABIHPGLEFCNNJDBEFEFN - Level 15
+    ABABEMKJDAFHABDCPPCN - Level 16
+    JDDJOIIOLCNNJDBABOLH - Level 17
+    JDNMKLGHILHFLOPGKEFH - Level 18
+    DJABEKMPCFAJNMMOLFEL - Level 19
+    FEGKKJFNMAFHABDABOLN - Level 20
+    NMKGDDOIHJGGCPONMIHN - Level 21
+    NMCPIIIOLFAJNMMGKEFF - Level 22
+    NMPCOIIOLCNNJDBBAHIJ - Level 23
+    NMGKKEEHILHFLOPPCGKL - Level 24
+    HIKGDODCPGJAHIEPCGKJ - Level 25
+    ABHIMGLBANCLFEINMIHH - Level 26
+    MNGKKDOOLGJAHIEKGCPC - Level 27
+    OLDJOIIKGLHFLOPEFLOL - Level 28
+    IHJDIKMEFNCLFEINMIHF - Level 29
+    IHDJOIIKGLHFLOPMNJDA - Level 30
+    DJJDIDOOLFAJNMMEFLOC - Level 31
+    IHIHPBPCPNCBOLIHIJDH - Level 32
+    OLFEMANMNFADDJMABFEF - Level 33
+    MNDJOODJDHLPPCKBAMNA - Level 34
+    DJABEMKMNNCMIHIMNDJC - Level 35
+    BADJOIIIHAFDDJDIHOLA - Level 36
+    DJFEMPBPCGJKEFEEFBAC - Level 37
+    DJKGDIIIHJGBOLOABFEH - Level 38
+    DJCPIODFECNOBABABFEN - Level 39
+    IHEFPPBGKFAIMNMOLKGJ - Level 40
+    IHLOEHCMNNCMIHIIHOLJ - Level 41
+    DJEFPHCMNJGBOLOABFEH - Level 42
+    MNGKKIIOLGJKEFEKGPCJ - Level 43
+    BAPCOMKDJJGBOLODJIHJ - Level 44
+    OLNMKDOIHFAIMNMGKLOF - Level 45
+    OLIHPMKNMFAIMNMABFEH - Level 46
+    OLABEMKNMCNOBABPCEFL - Level 47
+    OLOLBFJGKGJKEFEFEPCL - Level 48
+    OLFEMFJGKLHPPCPLOMNL - Level 49
+    NMABEKMKGNCLFEIIHFEL - Level 50
+
+    Additional Passwords
+    BOFEDJJDDJGKEFOLFMIH - Level 74
+    NMIHPLGKGJDJDJDJDJDH - Begin with maximum Blast Radius / 4,500 points.
+    
+    IAHBEKOLLCPCPCPCPCPL - Stage 1 / 1-bomb / 14-blocks-range / detonator / flameproof
+
+Further notes
+
+To play the bonus game longer and get more points just hold down the A button, after your bombs explode, and keep walking around laying bombs in front of the explosions.
+
+Note: If you have Remote Control power-up you need to hold down the A and B buttons.
+
+

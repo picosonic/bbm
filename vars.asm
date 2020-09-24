@@ -1,3 +1,5 @@
+\ zero page variables
+
 sprsrc = &60
 sprsrc2 = &62
 
