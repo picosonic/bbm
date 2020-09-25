@@ -41,6 +41,8 @@ Bomb animataion, sprites 9, 10, 9, 8
   ----------------------
   
 On title screen
+Demo starts after 0x800 (2048) frames @ 60Hz ~ approx 34.1333 seconds of idle
+Whilst nothing pressed, the random number seed is advanced
 Select moves the arrow between "START" and "CONTINUE"
 Start button selects the entry with the arrow
 "CONTINUE" asks "ENTER SECRET CODE", with flashing cursor
@@ -54,8 +56,9 @@ Start button selects the entry with the arrow
 In game
 Status shown at top
   Time remaining (200 seconds per level)
-  Score
-  Lives remaining (There are 3 lives per level, shown as "LEFT 2" down to "LEFT 0")
+  Score counted in 100s, maximum displayable is 999,999,900, 7 bytes used from 0x61 to 0x67 (as BCD)
+  Lives remaining (There are 3 lives per level, shown as "LEFT 2" down to "LEFT 0") at 0x68
+  Top left coordinates (X,Y) are 1,1. Sprite offset coordinates (U,V) from 0 (half top/left) to 16 (half bottom/right)
   
 Levels are
   11 high by 29 wide (319 cells)
