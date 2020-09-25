@@ -16,4 +16,6 @@ titleptr = &72
 
 seed = &73
 
-nextvar = &77
+cursor = &77
+
+nextvar = &78

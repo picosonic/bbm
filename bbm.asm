@@ -59,6 +59,9 @@ MODE8BASE  = &4800
   ; Initialise sprite
   LDA #&00:STA sprite
 
+  ; Initialise cursor
+  STA cursor
+
 .gamestart
 
   JSR waitvsync
@@ -71,6 +74,12 @@ MODE8BASE  = &4800
   ; wait for keypress
   LDA #INKEY_SPACE:JSR scankey ; Scan for SPACEBAR
   BEQ awaitspace
+
+  ; toggle cursor
+  LDA cursor
+  EOR #&01
+  STA cursor
+
   JMP gamestart
 
 .alldone
@@ -176,14 +185,22 @@ MODE8BASE  = &4800
   LDA #(MODE8BASE) MOD 256:STA sprdst
   LDA #(MODE8BASE) DIV 256:STA sprdst+1
 
-  LDA #&80
+  LDX cursor
+  LDA cursorl, X
   CLC:ADC sprdst:STA sprdst
-  LDA #&22
+
+  LDX cursor
+  LDA cursorh, X
   CLC:ADC sprdst+1:STA sprdst+1
 
   LDA #&40:STA sprite:JSR writetile
 
   RTS
+
+.cursorl
+  EQUB &80, &00
+.cursorh
+  EQUB &22, &23
 }
 
 .drawtopscore
