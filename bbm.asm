@@ -62,6 +62,14 @@ MODE8BASE  = &4800
   ; Initialise cursor
   STA cursor
 
+  ; Initialise top score
+  STA topscore
+  LDX #&07
+.topscoreinit
+  STA topscore, X
+  DEX
+  BNE topscoreinit
+
 .gamestart
 
   JSR waitvsync
@@ -197,6 +205,7 @@ MODE8BASE  = &4800
 
   RTS
 
+; cursor position lookup
 .cursorl
   EQUB &80, &00
 .cursorh
@@ -208,11 +217,30 @@ MODE8BASE  = &4800
   LDA #(MODE8BASE) MOD 256:STA sprdst
   LDA #(MODE8BASE) DIV 256:STA sprdst+1
 
-  LDA #&50
+  LDA #&E0
   CLC:ADC sprdst:STA sprdst
-  LDA #&27
+  LDA #&26
   CLC:ADC sprdst+1:STA sprdst+1
 
+  LDX #&00
+.nodigits
+  LDA topscore, X
+  BNE decimals
+  LDA #&3A:STA sprite:JSR writetile
+  INX
+  CPX #&07
+  BNE nodigits
+  BEQ digitend
+
+.decimals
+  LDA topscore, X
+  CLC:ADC #&30
+  STA sprite:JSR writetile
+  INX
+  CPX #&07
+  BNE decimals
+  
+.digitend
   LDA #&30:STA sprite:JSR writetile
   LDA #&30:STA sprite:JSR writetile
 
