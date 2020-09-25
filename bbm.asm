@@ -62,13 +62,14 @@ MODE8BASE  = &4800
   ; Initialise cursor
   STA cursor
 
-  ; Initialise top score
-  STA topscore
-  LDX #&07
-.topscoreinit
+  ; Initialise scores
+  LDX #&00
+.scoreinit
   STA topscore, X
-  DEX
-  BNE topscoreinit
+  STA score, X
+  INX
+  CPX #&07
+  BNE scoreinit
 
 .gamestart
 

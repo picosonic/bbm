@@ -19,5 +19,6 @@ seed = &73
 cursor = &77
 
 topscore = &78
+score = &7F
 
-nextvar = &7F
+nextvar = &86
