@@ -79,17 +79,25 @@ MODE8BASE  = &4800
   JSR waitvsync
   JSR drawtitle
 
-.awaitspace
+.awaitkeys
   ; wait for keypress
+  LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
+  BNE gamestart
   LDA #INKEY_SPACE:JSR scankey ; Scan for SPACEBAR
-  BEQ awaitspace
+  BEQ awaitkeys
 
   ; toggle cursor
+  JSR waitvsync
+  LDA #&3A:JSR drawcursor ; Draw a blank on current position
   LDA cursor
   EOR #&01
   STA cursor
+  JSR waitvsync
+  LDA #&40:JSR drawcursor ; Draw cursor at new position
 
-  JMP gamestart
+  LDA #INKEY_SPACE:JSR unpressed ; Wait for SPACEBAR to be released
+
+  JMP awaitkeys
 
 .alldone
   JMP alldone
@@ -184,13 +192,15 @@ MODE8BASE  = &4800
 
   JSR drawtopscore
 
-  JSR drawpointer
+  LDA #&40:JSR drawcursor
 
   RTS
 }
 
-.drawpointer
+.drawcursor
 {
+  PHA
+
   LDA #(MODE8BASE) MOD 256:STA sprdst
   LDA #(MODE8BASE) DIV 256:STA sprdst+1
 
@@ -202,7 +212,7 @@ MODE8BASE  = &4800
   LDA cursorh, X
   CLC:ADC sprdst+1:STA sprdst+1
 
-  LDA #&40:STA sprite:JSR writetile
+  PLA:STA sprite:JSR writetile
 
   RTS
 
@@ -240,7 +250,7 @@ MODE8BASE  = &4800
   INX
   CPX #&07
   BNE decimals
-  
+
 .digitend
   LDA #&30:STA sprite:JSR writetile
   LDA #&30:STA sprite:JSR writetile
@@ -296,7 +306,7 @@ MODE8BASE  = &4800
   EQUB &A0, &2E
   EQUS "LICENSED", &B0, "BY"
   EQUB &FF
- 
+
   EQUB &40, &32
   EQUS "NINTENDO", &B0, "OF", &B0, "AMERICA", &B0, "INC", &FD
   EQUB &FF
@@ -548,6 +558,20 @@ MODE8BASE  = &4800
   LDA #&81
   JSR OSBYTE
   TYA
+  RTS
+}
+
+; Wait until specified key is not pressed
+.unpressed
+{
+  PHA
+  JSR scankey
+  BEQ cleared
+  PLA
+  JMP unpressed
+
+.cleared
+  PLA
   RTS
 }
 
