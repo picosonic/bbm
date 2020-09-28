@@ -8,7 +8,7 @@ Beeb
   Mode 1 320x256 4 colours (black 0/blue 4/red 1/white 7)
   Mode 2 160x256 8 colours
   Mode 5 160x256 4 colours
-  
+
   ----------------------
 
 reset
@@ -39,14 +39,14 @@ Max 10 bombs
 Bomb animataion, sprites 9, 10, 9, 8
 
   ----------------------
-  
+
 On title screen
 Demo starts after 0x800 (2048) frames @ 60Hz ~ approx 34.1333 seconds of idle
 Whilst nothing pressed, the random number seed is advanced
 Select moves the arrow between "START" and "CONTINUE"
 Start button selects the entry with the arrow
 "CONTINUE" asks "ENTER SECRET CODE", with flashing cursor
-  Direction buttons select letters of alphabet from "A" to "P"
+  Direction buttons select letters of alphabet from "A" to "P", right=alphabetical, up/down/left=reverse alphabetical
   A button selects current character
   It takes 20 characters for secret code, once you enter 20th it validates it
   Example codes (more below) :
@@ -59,7 +59,11 @@ Status shown at top
   Score counted in 100s, maximum displayable is 999,999,900, 7 bytes used from 0x61 to 0x67 (as BCD)
   Lives remaining (There are 3 lives per level, shown as "LEFT 2" down to "LEFT 0") at 0x68
   Top left coordinates (X,Y) are 1,1. Sprite offset coordinates (U,V) from 0 (half top/left) to 16 (half bottom/right)
-  
+
+In demo
+  No music or sound effects
+  Demo lasts approx 48.5 seconds when bomberman exits the level
+
 Levels are
   11 high by 29 wide (319 cells)
   plus a 1 block concrete border (although left/right/lower sides only show partially)
@@ -71,34 +75,99 @@ Whenever you die
   you get 200 seconds reset
   unless you've run out of lives, when it shows
     "GAME OVER" and a secret code
-    
+
   ----------------------
-  
+
+Bomberman animation frames
+
+ FRAME -> SPRITE
+
+  Walking
+     0 0
+     1 1
+     2 2
+     3 1
+
+  Climbing (forward)
+     4 3
+     5 4
+     6 5
+     7 4
+
+  Descending (backward)
+     8 6
+     9 7
+    10 8
+    11 7
+
+  Death
+    12 9
+    13 10
+    14 11
+    15 12
+    16 13
+    17 14
+    18 15
+
+  Game completed
+    (19) 16
+    (20) 17
+    (21) 18
+    (22) 17
+
+  ----------------------
+
+Enemy types
+ 0 None
+ 1 VALCOM (Balloon) 100
+ 2 O'NEIL (Onion) 200
+ 3 DAHL (Barrel) 400
+ 4 MIVO (Happy face) 800
+ 5 DORIA (Blob) 2000
+ 6 OVAPE (Ghost) 100
+ 7 PASS (Tiger) 4000
+ 8 PONTAN (Coin) 8000
+ 9 *death*
+
+  ----------------------
+
   Bonus items (https://gamefaqs.gamespot.com/nes/563390-bomberman/cheats)
+    https://tcrf.net/Bomberman_(NES)
   After doing the following, you only have 8.5 seconds to find these bonus items and get the following scores
-  
+
   Bonus target (10,000)
     Reveal the exit and walk over it without defeating any enemies
-    
-  Cola bottle (30,000)
-    Reveal the exit, walk over it, and don't let go of the d pad for 15 seconds while making sure not to defeat any enemies
-    
-  Dezeniman-san (20,000,000)
-    Destroy every wall and bomb the exit thrice while making sure not to defeat any enemies
-    
-  Famicom (500,000)
-    Kill every enemy, then create 248 chain reactions with your bombs
-    
+    Stages 6, 8, 14, 16, 22, 24, 30, 32, 38, 40, 46, 48
+    These come from the space shooter Star Force, which was ported to the Famicom by Hudson Soft
+
   Goddess mask (20,000)
     Defeat every enemy and circle the outer ring of the level
+    Stages 1, 7, 9, 15, 17, 23, 25, 31, 33, 39, 41, 47, 49
+    Appears in Star Force as a 1,000,000 point bonus item
+
+  Cola bottle (30,000)
+    Reveal the exit, walk over it, and don't let go of the d pad for 15 seconds while making sure not to defeat any enemies
+    Stages 4, 12, 20, 28, 36, 44
+
+  Famicom (500,000)
+    Kill every enemy, then create 248 chain reactions with your bombs (one chain reaction = one bomb detonating another)
+    Stages 3, 11, 19, 27, 35, 43
+    NOTE - This bonus cannot be obtained if you have the Detonator!
 
   Nakamoto-san (10,000,000)
     Kill every enemy without blowing up any walls
-    
+    Stages 2, 10, 18, 26, 34, 42, 50
+    This is a portrait of programmer (and later vice president of Hudson) Shinichi Nakamoto
+
+  Dezeniman-san (20,000,000)
+    Destroy every wall and bomb the exit thrice while making sure not to defeat any enemies (including those that come out of the door)
+    Stages 5, 13, 21, 29, 37, 45
+    This is the hero of the goofy computer adventure game Dezeni World
+
   ----------------------
-      
+
   Secret codes (from https://www.ign.com/wikis/nes-cheats/Bomberman_Cheats)
-  
+
   These codes will give you max bombs and max fire.
 
     NMIHPPBPCAFHABDPCPCH - Level 01
@@ -155,7 +224,7 @@ Whenever you die
     Additional Passwords
     BOFEDJJDDJGKEFOLFMIH - Level 74
     NMIHPLGKGJDJDJDJDJDH - Begin with maximum Blast Radius / 4,500 points.
-    
+
     IAHBEKOLLCPCPCPCPCPL - Stage 1 / 1-bomb / 14-blocks-range / detonator / flameproof
 
 Further notes
