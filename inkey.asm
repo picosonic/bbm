@@ -1,5 +1,5 @@
-\ INKEY codes
-\ From Advanced User Guide, Appendix C
+; INKEY codes
+; From Advanced User Guide, Appendix C
 
 INKEY_SPACE = &9D
 

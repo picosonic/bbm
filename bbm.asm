@@ -534,6 +534,7 @@ MODE8BASE  = &4800
   RTS
 }
 
+; Wait for vertical trace
 .waitvsync
 {
   LDA #&13
@@ -541,9 +542,10 @@ MODE8BASE  = &4800
   RTS
 }
 
+; Delay specified number of frames
 .delay
 {
-  LDA #&13:JSR OSBYTE
+  LDA #&13:JSR OSBYTE ; Wait for vsync
 
   DEC delayframes
   BNE delay
