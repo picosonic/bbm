@@ -82,7 +82,7 @@ MODE8BASE  = &4800
 .awaitkeys
   ; wait for keypress
   LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
-  BNE gamestart
+  BNE playgame
   LDA #INKEY_SPACE:JSR scankey ; Scan for SPACEBAR
   BEQ awaitkeys
 
@@ -98,6 +98,17 @@ MODE8BASE  = &4800
   LDA #INKEY_SPACE:JSR unpressed ; Wait for SPACEBAR to be released
 
   JMP awaitkeys
+
+.playgame
+{
+  LDA #&01:STA stage
+  JSR drawstagescreen
+
+  ; Wait 1 second
+  LDA #&60:STA delayframes:JSR delay
+
+  JSR gamestart
+}
 
 .alldone
   JMP alldone
@@ -314,6 +325,68 @@ MODE8BASE  = &4800
   EQUB &00, &36
   EQUS "BBC", &B0, "MICRO", &B0, "PORT", &B0, "2020", &B0, "BY", &B0, "PICOSONIC"
   EQUB &FF
+}
+
+.drawstagescreen
+{
+  JSR cls
+
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  ; Set text coordinates
+  LDA #&A0
+  CLC:ADC sprdst:STA sprdst
+  LDA #&1A
+  CLC:ADC sprdst+1:STA sprdst+1
+
+  LDX #&04
+.nextchar
+  LDA stagestring, X
+  STA sprite:JSR writetile
+  DEX
+  BPL nextchar
+
+  ; Advance two tile positions
+  LDA sprdst:CLC:ADC #&20:STA sprdst
+  BCC samepage
+  INC sprdst+1
+.samepage
+
+  ; Print current stage number
+  LDA stage:JSR putnumber
+
+  RTS
+
+.stagestring
+  EQUS "EGATS"
+}
+
+; Print 2 digit number in A reg, with leading spaces
+.putnumber
+{
+  LDY #'0'
+  SEC
+
+.tens
+  SBC #10
+  BCC donetens
+  INY
+  BNE tens
+
+.donetens
+  ADC #&3A
+  CPY #'0'
+  BNE putnum2
+  LDY #&3A
+
+.putnum2
+  PHA
+  STY sprite:JSR writetile
+  PLA
+  STA sprite:JSR writetile
+
+  RTS
 }
 
 .cls

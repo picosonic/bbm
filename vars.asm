@@ -21,4 +21,6 @@ cursor = &77
 topscore = &78
 score = &7F
 
-nextvar = &86
+stage = &86
+
+nextvar = &87
