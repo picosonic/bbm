@@ -80,6 +80,8 @@ MODE8BASE  = &4800
   JSR drawtitle
 
 .awaitkeys
+  JSR rand
+
   ; wait for keypress
   LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
   BNE playgame
@@ -107,7 +109,65 @@ MODE8BASE  = &4800
   ; Wait 1 second
   LDA #&60:STA delayframes:JSR delay
 
+  ; Generate level map
+  JSR buildmap
+
+  ; Set time limit
+  LDA #200:STA timeleft
+
+  ; TODO
   JSR gamestart
+}
+
+.buildmap
+{
+  JSR addconcreteblocks
+
+  RTS
+}
+
+.addconcreteblocks
+{
+  LDA #(levelmap) MOD 256:STA stagemapptr
+  LDA #(levelmap) DIV 256:STA stagemapptr+1
+
+  LDY #0
+
+  LDX #&00:JSR stagerow ; Top wall
+  LDX #&20:JSR stagerow ; Blank row
+  LDX #&40:JSR stagerow ; Alternate concrete
+  LDX #&20:JSR stagerow ; ...
+  LDX #&40:JSR stagerow
+  LDX #&20:JSR stagerow
+  LDX #&40:JSR stagerow
+  LDX #&20:JSR stagerow
+  LDX #&40:JSR stagerow
+  LDX #&20:JSR stagerow
+  LDX #&40:JSR stagerow
+  LDX #&20:JSR stagerow
+  LDX #&00 ; Bottom wall
+
+.stagerow
+  LDA #&20:STA tempx
+
+.stagecell
+  LDA stagerows, X
+  STA (stagemapptr), Y
+  INC stagemapptr
+  BNE hipart
+  INC stagemapptr+1
+
+.hipart
+  INX
+  DEC tempx
+  BNE stagecell
+
+  RTS
+
+.stagerows
+  EQUB 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  EQUB 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+  EQUB 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1
 }
 
 .alldone
@@ -375,10 +435,10 @@ MODE8BASE  = &4800
   BNE tens
 
 .donetens
-  ADC #&3A
+  ADC #':'
   CPY #'0'
   BNE putnum2
-  LDY #&3A
+  LDY #':'
 
 .putnum2
   PHA
@@ -672,7 +732,9 @@ INCBIN "TILES.beeb"
 INCBIN "SPRITES.beeb"
 
 .eof
-  RTS
+.levelmap
+SKIP (13*32) ; Reserve bytes for in-game level data
+  RTS ; Here just to advise on remaining space
 
 SAVE "bbm", start, end
 SAVE "title", titles, tilesheet
