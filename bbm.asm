@@ -123,11 +123,11 @@ MODE8BASE  = &4800
 {
   JSR addconcreteblocks
 
-  ; Place item 4 randomly on map
+  ; Place exit (under brick) randomly on map
   JSR randomcoords
   LDA #&04:STA (stagemapptr), Y
 
-  ; Place item 5 randomly on map
+  ; Place bonus (under brick) randomly on map
   JSR randomcoords
   LDA #&05:STA (stagemapptr), Y
 
@@ -232,7 +232,7 @@ MODE8BASE  = &4800
 .multtaby
   EQUB 0,&20,&40,&60,&80,&A0,&C0,&E0,  0,&20,&40,&60,&80
 .multtabx
-  EQUB (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256)+1, (levelmap MOD 256)+1, (levelmap MOD 256)+1, (levelmap MOD 256)+1, (levelmap MOD 256)+1
+  EQUB (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1
 
 .alldone
   JMP alldone
