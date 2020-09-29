@@ -30,4 +30,6 @@ tempy = &89
 
 stagemapptr = &8A
 
-nextvar = &8C
+framecounter = &8C
+
+nextvar = &8D

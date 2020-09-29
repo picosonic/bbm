@@ -56,6 +56,11 @@ MODE8BASE  = &4800
   LDX #(tilestr) MOD 256:LDY #(tilestr) DIV 256:JSR OSCLI
   LDX #(sprstr) MOD 256:LDY #(sprstr) DIV 256:JSR OSCLI
 
+  ; Set up vsync event handler
+  LDA #(eventhandler) MOD 256:STA EVNTV
+  LDA #(eventhandler) DIV 256:STA EVNTV+1
+  LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
+
   ; Initialise sprite
   LDA #&00:STA sprite
 
@@ -82,7 +87,7 @@ MODE8BASE  = &4800
 .awaitkeys
   JSR rand
 
-  ; wait for keypress
+  ; check for keypress
   LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
   BNE playgame
   LDA #INKEY_SPACE:JSR scankey ; Scan for SPACEBAR
@@ -101,6 +106,29 @@ MODE8BASE  = &4800
 
   JMP awaitkeys
 
+.eventhandler
+{
+  ; Save registers
+  PHP
+  PHA
+  TXA
+  PHA
+  TYA
+  PHA
+
+  INC framecounter
+
+  ; Restore registers
+  PLA
+  TAY
+  PLA
+  TAX
+  PLA
+  PLP
+  
+  RTS
+}
+
 .playgame
 {
   LDA #&01:STA stage
@@ -114,9 +142,43 @@ MODE8BASE  = &4800
 
   ; Set time limit
   LDA #200:STA timeleft
+}
+
+.gameloop
+{
+  ; TODO Check if game is paused
+  ; TODO JSR SPRD
+  ; TODO check button presses
+  ; TODO bomb timer operations
+  ; TODO draw bomberman
+  ; TODO THINK
+  ; TODO animate bombs
+  JSR stagetimer ; tick game stage timer
+
+  ; check for keypress
+  LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
+  BEQ gameloop
 
   ; TODO
-  JSR gamestart
+  JMP gamestart
+}
+
+.stagetimer
+{
+  LDA framecounter
+  AND #&3F
+  BNE done
+  LDA timeleft
+  CMP #255
+  BEQ done
+  DEC timeleft
+  BNE done
+  ; TODO remove all monsters
+  ; TODO add a bunch of small monsters
+  ; TODO respawn bonus
+
+.done
+  RTS
 }
 
 .buildmap
