@@ -23,4 +23,11 @@ score = &7F
 
 stage = &86
 
-nextvar = &87
+timeleft = &87
+
+tempx = &88
+tempy = &89
+
+stagemapptr = &8A
+
+nextvar = &8C
