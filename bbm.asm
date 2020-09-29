@@ -123,6 +123,28 @@ MODE8BASE  = &4800
 {
   JSR addconcreteblocks
 
+  ; Place item 4 randomly on map
+  JSR randomcoords
+  LDA #&04:STA (stagemapptr), Y
+
+  ; Place item 5 randomly on map
+  JSR randomcoords
+  LDA #&05:STA (stagemapptr), Y
+
+  ; Place 50 + (2*stage) bricks randomly
+  LDA #&32
+  CLC:ADC stage
+  CLC:ADC stage
+  STA tempx
+
+.nextbrick
+  ; Place brick on map
+  JSR randomcoords
+  LDA #&02:STA (stagemapptr), Y
+
+  DEC tempx
+  BNE nextbrick
+
   RTS
 }
 
@@ -169,6 +191,48 @@ MODE8BASE  = &4800
   EQUB 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
   EQUB 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1
 }
+
+; Find an empty position on the 32x13 map
+.randomcoords
+{
+  JSR rand
+  ROR A:ROR A ; A = A/4
+  AND #&1F ; 0 to 31
+  BEQ randomcoords
+  STA tempx
+
+.loop
+  JSR rand
+  ROR A:ROR A:ROR A ; A = A/8
+  AND #&0F ; 0 to 15
+  BEQ loop
+  CMP #&0C ; if A >= 13, try again
+  BCS loop
+  STA tempy
+
+  TAY
+
+  LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+
+  LDY tempx
+  LDA (stagemapptr), Y ; Check what's on the map already
+  BNE randomcoords ; If not blank, retry
+  CPY #&03
+  BCS done
+  LDA tempy
+  CMP #&03
+  BCC randomcoords
+
+.done
+  RTS
+}
+
+; Level data lookup tables
+.multtaby
+  EQUB 0,&20,&40,&60,&80,&A0,&C0,&E0,  0,&20,&40,&60,&80
+.multtabx
+  EQUB (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256), (levelmap MOD 256)+1, (levelmap MOD 256)+1, (levelmap MOD 256)+1, (levelmap MOD 256)+1, (levelmap MOD 256)+1
 
 .alldone
   JMP alldone
@@ -733,7 +797,7 @@ INCBIN "SPRITES.beeb"
 
 .eof
 .levelmap
-SKIP (13*32) ; Reserve bytes for in-game level data
+SKIP (32*13) ; Reserve bytes for in-game level data
   RTS ; Here just to advise on remaining space
 
 SAVE "bbm", start, end
