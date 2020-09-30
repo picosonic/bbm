@@ -142,6 +142,20 @@ MODE8BASE  = &4800
 
   ; Set time limit
   LDA #200:STA timeleft
+
+  JSR cls
+
+  ; Draw level
+  LDX #&00:LDY #&00
+  LDA #0:STA sprx:STA spry:STA yloop+1
+.yloop
+  LDA #00:STA sprite:INC yloop+1
+  JSR drawsprite
+
+  LDA spry:CLC:ADC #&4:STA spry
+  INX
+  CPX #13
+  BNE yloop
 }
 
 .gameloop
@@ -517,6 +531,8 @@ MODE8BASE  = &4800
 {
   JSR cls
 
+  JSR gamepal
+
   LDA #(MODE8BASE) MOD 256:STA sprdst
   LDA #(MODE8BASE) DIV 256:STA sprdst+1
 
@@ -596,6 +612,11 @@ MODE8BASE  = &4800
 
 .drawsprite
 {
+  TXA
+  PHA
+  TYA
+  PHA
+
  ; Store a pointer to spritesheet
   LDA #(spritesheet) MOD 256:STA sprsrc
   LDA #(spritesheet) DIV 256:STA sprsrc+1
@@ -635,6 +656,10 @@ MODE8BASE  = &4800
   LDA sprdst:CLC:ADC sprx:STA sprdst
   LDA sprdst2:CLC:ADC sprx:STA sprdst2
 
+  ; Recalculate bottom part as being + 0x200 from top
+  LDA sprdst:STA sprdst2
+  LDA sprdst+1:CLC:ADC #&02:STA sprdst2+1
+
   ; Now draw it
   LDY #&00
 .loop
@@ -648,6 +673,11 @@ MODE8BASE  = &4800
   TYA
   CMP #&20
   BNE loop
+
+  PLA
+  TAY
+  PLA
+  TAX
 
   RTS
 }
