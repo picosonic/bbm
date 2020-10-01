@@ -147,15 +147,42 @@ MODE8BASE  = &4800
 
   ; Draw level
   LDX #&00:LDY #&00
-  LDA #0:STA sprx:STA spry:STA yloop+1
-.yloop
-  LDA #00:STA sprite:INC yloop+1
-  JSR drawsprite
+  LDA #0:STA sprx
+  LDA #4:STA spry
 
-  LDA spry:CLC:ADC #&4:STA spry
+  LDA #(levelmap) MOD 256:STA stagemapptr
+  LDA #(levelmap) DIV 256:STA stagemapptr+1
+
+.loop
+  LDA (stagemapptr), Y:CLC:ADC #24:STA sprite
+
+  INC stagemapptr
+  BNE samepage
+  INC stagemapptr+1
+.samepage
+
+  JSR drawbigtile
+
+  LDA sprx:CLC:ADC #&20:STA sprx
+
   INX
-  CPX #13
-  BNE yloop
+  CPX #8
+  BNE loop
+
+  LDA spry:CLC:ADC #&04:STA spry
+  LDA stagemapptr:CLC:ADC #23:STA stagemapptr
+
+  LDX #0
+
+  INY
+  CPY #13
+  BNE loop
+
+  ; Draw bomberman
+  LDA #&20:STA sprx
+  LDA #8:STA spry
+  LDA #0:STA sprite
+  JSR drawsprite
 }
 
 .gameloop
@@ -819,6 +846,91 @@ MODE8BASE  = &4800
   TYA
   CMP #&10
   BNE loop
+
+  RTS
+}
+
+.drawbigtile
+{
+  TXA
+  PHA
+  TYA
+  PHA
+
+ ; Store a pointer to tilesheet
+  LDA #(tilesheet) MOD 256:STA sprsrc
+  LDA #(tilesheet) DIV 256:STA sprsrc+1
+
+  LDA #(tilesheet+&20) MOD 256:STA sprsrc2
+  LDA #(tilesheet+&20) DIV 256:STA sprsrc2+1
+
+  ; Store a pointer to the screen
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  LDA #(MODE8BASE+&200) MOD 256:STA sprdst2
+  LDA #(MODE8BASE+&200) MOD 256:STA sprdst2+1
+
+  ; Calculate pointer to requested sprite within spritesheet
+  LDA sprite
+  BEQ calcdone
+  TAX
+  LDA sprsrc
+.calc
+  CLC
+  ADC #&40
+  BCC norm
+  INC sprsrc+1
+.norm
+  DEX
+  BNE calc
+  STA sprsrc
+
+  LDA sprite
+  BEQ calcdone
+  TAX
+  LDA sprsrc2
+.calc2
+  CLC
+  ADC #&40
+  BCC norm2
+  INC sprsrc2+1
+.norm2
+  DEX
+  BNE calc2
+  STA sprsrc2
+
+.calcdone
+
+  ; Calculate pointer to x,y position of sprite within screen RAM - TODO FIX
+  LDA sprdst+1:CLC:ADC spry:STA sprdst+1
+  LDA sprdst2+1:CLC:ADC spry:STA sprdst2+1
+
+  LDA sprdst:CLC:ADC sprx:STA sprdst
+  LDA sprdst2:CLC:ADC sprx:STA sprdst2
+
+  ; Recalculate bottom part as being + 0x200 from top
+  LDA sprdst:STA sprdst2
+  LDA sprdst+1:CLC:ADC #&02:STA sprdst2+1
+
+  ; Now draw it
+  LDY #&00
+.loop
+  LDA (sprsrc), Y
+  STA (sprdst), Y
+
+  LDA (sprsrc2), Y
+  STA (sprdst2), Y
+
+  INY
+  TYA
+  CMP #&20
+  BNE loop
+
+  PLA
+  TAY
+  PLA
+  TAX
 
   RTS
 }
