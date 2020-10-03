@@ -148,7 +148,7 @@ MODE8BASE  = &4800
   ; Draw level
   LDX #&00:LDY #&00
   LDA #0:STA sprx
-  LDA #4:STA spry
+  LDA #1:STA spry
 
   LDA #(levelmap) MOD 256:STA stagemapptr
   LDA #(levelmap) DIV 256:STA stagemapptr+1
@@ -163,16 +163,16 @@ MODE8BASE  = &4800
 
   JSR drawbigtile
 
-  LDA sprx:CLC:ADC #&20:STA sprx
+  INC sprx
 
   INX
-  CPX #8
+  CPX #16
   BNE loop
 
-  LDA spry:CLC:ADC #&04:STA spry
-  LDA stagemapptr:CLC:ADC #23:STA stagemapptr
-
-  LDX #0
+  ; Move down a row
+  INC spry
+  LDX #0:STX sprx
+  LDA stagemapptr:CLC:ADC #15:STA stagemapptr
 
   INY
   CPY #13
@@ -857,19 +857,17 @@ MODE8BASE  = &4800
   TYA
   PHA
 
- ; Store a pointer to tilesheet
+  ; Store a pointer to tilesheet top half
   LDA #(tilesheet) MOD 256:STA sprsrc
   LDA #(tilesheet) DIV 256:STA sprsrc+1
 
+  ; Store a pointer to tilesheet bottom half
   LDA #(tilesheet+&20) MOD 256:STA sprsrc2
   LDA #(tilesheet+&20) DIV 256:STA sprsrc2+1
 
   ; Store a pointer to the screen
   LDA #(MODE8BASE) MOD 256:STA sprdst
   LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  LDA #(MODE8BASE+&200) MOD 256:STA sprdst2
-  LDA #(MODE8BASE+&200) MOD 256:STA sprdst2+1
 
   ; Calculate pointer to requested sprite within spritesheet
   LDA sprite
@@ -902,29 +900,45 @@ MODE8BASE  = &4800
 
 .calcdone
 
-  ; Calculate pointer to x,y position of sprite within screen RAM - TODO FIX
-  LDA sprdst+1:CLC:ADC spry:STA sprdst+1
-  LDA sprdst2+1:CLC:ADC spry:STA sprdst2+1
+  ; Calculate pointer to x,y position of sprite within screen RAM
+  LDX spry
+  BEQ noy
+.yloop
+  LDA sprdst+1:CLC:ADC #&04:STA sprdst+1
+  DEX
+  BNE yloop
 
-  LDA sprdst:CLC:ADC sprx:STA sprdst
-  LDA sprdst2:CLC:ADC sprx:STA sprdst2
+.noy
 
-  ; Recalculate bottom part as being + 0x200 from top
+  LDX sprx
+  BEQ nox
+.xloop
+  LDA sprdst:CLC:ADC #&20:STA sprdst
+  BCC samepage
+  INC sprdst+1
+.samepage
+  DEX
+  BNE xloop
+
+.nox
+
+  ; Calculate bottom part as being + 0x200 from top
   LDA sprdst:STA sprdst2
   LDA sprdst+1:CLC:ADC #&02:STA sprdst2+1
 
   ; Now draw it
   LDY #&00
 .loop
+  ; Top half
   LDA (sprsrc), Y
   STA (sprdst), Y
 
+  ; Bottom half
   LDA (sprsrc2), Y
   STA (sprdst2), Y
 
   INY
-  TYA
-  CMP #&20
+  CPY #&20
   BNE loop
 
   PLA
