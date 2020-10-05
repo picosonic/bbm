@@ -57,6 +57,7 @@ MODE8BASE  = &4800
   LDX #(sprstr) MOD 256:LDY #(sprstr) DIV 256:JSR OSCLI
 
   ; Set up vsync event handler
+  LDA #&00:STA framecounter
   LDA #(eventhandler) MOD 256:STA EVNTV
   LDA #(eventhandler) DIV 256:STA EVNTV+1
   LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
@@ -135,7 +136,7 @@ MODE8BASE  = &4800
   JSR drawstagescreen
 
   ; Wait 1 second
-  LDA #&60:STA delayframes:JSR delay
+  LDA #&50:STA delayframes:JSR delay
 
   ; Generate level map
   JSR buildmap
@@ -148,7 +149,7 @@ MODE8BASE  = &4800
 
   JSR cls
 
-  ; Draw TIME and LEFT
+  ; Draw TIME/SCORE/LIVES
   JSR showstatus
 
   ; Draw level
@@ -210,21 +211,82 @@ MODE8BASE  = &4800
   JMP gamestart
 }
 
+; Reduce time left by a second
 .stagetimer
 {
   LDA framecounter
   AND #&3F
   BNE done
+
+; Here temporarily
+  JSR drawtime
+  LDA #&50:STA delayframes:JSR delay
+
   LDA timeleft
   CMP #255
   BEQ done
   DEC timeleft
   BNE done
+
   ; TODO remove all monsters
   ; TODO add a bunch of small monsters
   ; TODO respawn bonus
 
 .done
+  RTS
+}
+
+.drawtime
+{
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  ; Set text coordinates
+  LDA #&50
+  CLC:ADC sprdst:STA sprdst
+  LDA #&0
+  CLC:ADC sprdst+1:STA sprdst+1
+
+  LDA timeleft
+  CMP #255
+  BNE someleft
+  LDA #0
+.someleft
+
+  LDY #'0'
+  SEC
+
+.l1
+  SBC #100
+  BCC l2
+  INY
+  BNE l1
+
+.l2
+  ADC #&64
+  CPY #'0'
+  BNE l3
+  LDY #':'
+  STY sprite:JSR writetile
+
+  JMP putnumber
+
+.l3
+  STY sprite:JSR writetile
+  LDY #'0'
+  SEC
+
+.l4
+  SBC #10
+  BCC l5
+  INY
+  BNE l4
+
+.l5
+  ADC #':'
+  STY sprite:JSR writetile
+  STA sprite:JSR writetile
+
   RTS
 }
 
@@ -239,6 +301,7 @@ MODE8BASE  = &4800
   LDA #&0
   CLC:ADC sprdst+1:STA sprdst+1
 
+  ; Write "TIME"
   LDX #&03
 .nextchar
   LDA timestring, X
@@ -261,6 +324,7 @@ MODE8BASE  = &4800
   LDA #&00
   CLC:ADC sprdst+1:STA sprdst+1
 
+  ; Write "LEFT"
   LDX #&03
 .nextchar2
   LDA lifestring, X
@@ -768,6 +832,7 @@ MODE8BASE  = &4800
 
 .writetile
 {
+  PHA
   TXA
   PHA
   TYA
@@ -860,6 +925,7 @@ MODE8BASE  = &4800
   TAY
   PLA
   TAX
+  PLA
 
   RTS
 }
