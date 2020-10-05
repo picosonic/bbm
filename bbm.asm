@@ -136,7 +136,7 @@ MODE8BASE  = &4800
   JSR drawstagescreen
 
   ; Wait 1 second
-  LDA #&50:STA delayframes:JSR delay
+  LDA #50:STA delayframes:JSR delay
 
   ; Generate level map
   JSR buildmap
@@ -220,7 +220,7 @@ MODE8BASE  = &4800
 
 ; Here temporarily
   JSR drawtime
-  LDA #&50:STA delayframes:JSR delay
+  LDA #50:STA delayframes:JSR delay
 
   LDA timeleft
   CMP #255
