@@ -32,4 +32,6 @@ stagemapptr = &8A
 
 framecounter = &8C
 
-nextvar = &8D
+lifeleft = &8D
+
+nextvar = &8E

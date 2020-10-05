@@ -143,7 +143,13 @@ MODE8BASE  = &4800
   ; Set time limit
   LDA #200:STA timeleft
 
+  ; Set remaining lives
+  LDA #&02:STA lifeleft
+
   JSR cls
+
+  ; Draw TIME and LEFT
+  JSR showstatus
 
   ; Draw level
   LDX #&00:LDY #&00
@@ -220,6 +226,57 @@ MODE8BASE  = &4800
 
 .done
   RTS
+}
+
+.showstatus
+{
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  ; Set text coordinates
+  LDA #&0
+  CLC:ADC sprdst:STA sprdst
+  LDA #&0
+  CLC:ADC sprdst+1:STA sprdst+1
+
+  LDX #&03
+.nextchar
+  LDA timestring, X
+  STA sprite:JSR writetile
+  DEX
+  BPL nextchar
+
+  ; Set text coordinates
+  LDA #&C0
+  CLC:ADC sprdst:STA sprdst
+  LDA #&01
+  CLC:ADC sprdst+1:STA sprdst+1
+
+  ; Write trailing zeroes of score
+  LDA #&30:STA sprite:JSR writetile:JSR writetile
+
+  ; Set text coordinates
+  LDA #&40
+  CLC:ADC sprdst:STA sprdst
+  LDA #&00
+  CLC:ADC sprdst+1:STA sprdst+1
+
+  LDX #&03
+.nextchar2
+  LDA lifestring, X
+  STA sprite:JSR writetile
+  DEX
+  BPL nextchar2
+
+  ; Print lives remaining
+  LDA lifeleft:JSR putnumber
+
+  RTS
+
+.timestring
+  EQUS "EMIT"
+.lifestring
+  EQUS "TFEL"
 }
 
 .buildmap
