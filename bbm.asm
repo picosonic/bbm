@@ -62,6 +62,14 @@ MODE8BASE  = &4800
   ; Initialise cursor
   STA cursor
 
+  ; Initialise bombs
+  LDX #9
+  LDA #0
+.clearbombs
+  STA BOMB_ACTIVE, X
+  DEX
+  BPL clearbombs
+
   ; Initialise scores
   LDX #&00
 .scoreinit
@@ -197,6 +205,17 @@ MODE8BASE  = &4800
   LDA #2:STA spry
   LDA #0:STA sprite
   JSR drawsprite
+
+  ; Place a test bomb
+  LDX #&00
+  LDA #&02:STA BOMB_X, X
+  LDA #&02:STA BOMB_Y, X
+  LDA #&01:STA BOMB_ACTIVE, X
+
+  LDX #&01
+  LDA #&01:STA BOMB_X, X
+  LDA #&03:STA BOMB_Y, X
+  LDA #&01:STA BOMB_ACTIVE, X
 }
 
 .gameloop
@@ -204,10 +223,10 @@ MODE8BASE  = &4800
   ; TODO Check if game is paused
   ; TODO JSR SPRD
   ; TODO check button presses
-  ; TODO bomb timer operations
+  JSR bombtick ; bomb timer operations
   ; TODO draw bomberman
   ; TODO THINK
-  ; TODO animate bombs
+  JSR bombanim ; animate bombs
   JSR stagetimer ; tick game stage timer
 
   ; check for keypress
@@ -216,6 +235,63 @@ MODE8BASE  = &4800
 
   ; TODO
   JMP gamestart
+}
+
+.bombtick
+{
+  LDX #9
+
+.loop
+  ; Skip this bomb if it's not active
+  LDA BOMB_ACTIVE, X
+  BEQ nextbomb
+
+  ; Advance animation frame
+  INC BOMB_TIME_ELAPSED, X
+
+.nextbomb
+  DEX
+  BPL loop
+
+  RTS
+}
+
+; Animate frame for each active bomb
+.bombanim
+{
+  LDX #9
+
+.loop
+  ; Skip this bomb if it's not active
+  LDA BOMB_ACTIVE, X
+  BEQ nextbomb
+
+  ; Skip this bomb if elapsed%16 not 0
+  LDA BOMB_TIME_ELAPSED, X
+  AND #&0F
+  BNE nextbomb
+
+  ; Cache X, Y position for this bomb
+  LDA BOMB_X, X:STA sprx
+  LDA BOMB_Y, X:STA spry
+
+  ; Concentrate on bits 0111 0000
+  LDA BOMB_TIME_ELAPSED, X
+  LSR A:LSR A:LSR A:LSR A
+  AND #&03
+  TAY
+  ; Select bomb frame from lookup
+  LDA bombframes, Y
+  STA sprite:JSR drawbigtile
+
+.nextbomb
+  DEX
+  BPL loop
+
+  RTS
+
+.bombframes
+  EQUB 33, 34, 33, 32
 }
 
 ; Reduce time left by a second
@@ -227,7 +303,7 @@ MODE8BASE  = &4800
 
 ; Here temporarily
   JSR drawtime
-  LDA #50:STA delayframes:JSR delay
+;  LDA #50:STA delayframes:JSR delay
 
   LDA timeleft
   CMP #255
@@ -463,7 +539,8 @@ MODE8BASE  = &4800
 .multtaby
   EQUB 0,&20,&40,&60,&80,&A0,&C0,&E0,  0,&20,&40,&60,&80
 .multtabx
-  EQUB (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1
+  EQUB (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256)
+  EQUB (levelmap DIV 256), (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1
 
 .alldone
   JMP alldone
@@ -901,8 +978,7 @@ MODE8BASE  = &4800
   STA (sprdst), Y
 
   INY
-  TYA
-  CMP #&10
+  CPY #&10
   BNE loop
 
   RTS
@@ -1003,7 +1079,7 @@ MODE8BASE  = &4800
 
 .raster
 {
-  ; Calculate pointer to x,y position of sprite within screen RAM
+  ; Calculate pointer to x,y position of sprite/tile within screen RAM
   LDX spry
   BEQ noy
 .yloop

@@ -1,4 +1,4 @@
-\ zero page variables
+; zero page variables
 
 sprsrc = &60
 sprsrc2 = &62
@@ -37,3 +37,12 @@ lifeleft = &8D
 inmenu = &8E
 
 nextvar = &8F
+
+; Variables in LANGUAGE workspace
+
+; Bomb vars (up to 10 bombs)
+BOMB_ACTIVE         = &0400
+BOMB_X              = &040A
+BOMB_Y              = &0414
+BOMB_TIME_LEFT      = &041E
+BOMB_TIME_ELAPSED   = &0428
