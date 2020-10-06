@@ -56,12 +56,6 @@ MODE8BASE  = &4800
   LDX #(tilestr) MOD 256:LDY #(tilestr) DIV 256:JSR OSCLI
   LDX #(sprstr) MOD 256:LDY #(sprstr) DIV 256:JSR OSCLI
 
-  ; Set up vsync event handler
-  LDA #&00:STA framecounter
-  LDA #(eventhandler) MOD 256:STA EVNTV
-  LDA #(eventhandler) DIV 256:STA EVNTV+1
-  LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
-
   ; Initialise sprite
   LDA #&00:STA sprite
 
@@ -77,7 +71,18 @@ MODE8BASE  = &4800
   CPX #&07
   BNE scoreinit
 
+  ; Initialise game state
+  LDA #&01:STA inmenu
+
+  ; Set up vsync event handler
+  LDA #&00:STA framecounter
+  LDA #(eventhandler) MOD 256:STA EVNTV
+  LDA #(eventhandler) DIV 256:STA EVNTV+1
+  LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
+
 .gamestart
+
+  LDA #&01:STA inmenu
 
   JSR waitvsync
   JSR cls
@@ -151,6 +156,8 @@ MODE8BASE  = &4800
 
   ; Draw TIME/SCORE/LIVES
   JSR showstatus
+  JSR drawtime
+  LDA #&00:STA inmenu
 
   ; Draw level
   LDX #&00:LDY #&00
@@ -186,8 +193,8 @@ MODE8BASE  = &4800
   BNE loop
 
   ; Draw bomberman
-  LDA #&20:STA sprx
-  LDA #8:STA spry
+  LDA #1:STA sprx
+  LDA #2:STA spry
   LDA #0:STA sprite
   JSR drawsprite
 }
@@ -758,78 +765,6 @@ MODE8BASE  = &4800
   RTS
 }
 
-.drawsprite
-{
-  TXA
-  PHA
-  TYA
-  PHA
-
- ; Store a pointer to spritesheet
-  LDA #(spritesheet) MOD 256:STA sprsrc
-  LDA #(spritesheet) DIV 256:STA sprsrc+1
-
-  LDA #(spritesheet+&100) MOD 256:STA sprsrc2
-  LDA #(spritesheet+&100) DIV 256:STA sprsrc2+1
-
-  ; Store a pointer to the screen
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  LDA #(MODE8BASE+&200) MOD 256:STA sprdst2
-  LDA #(MODE8BASE+&200) MOD 256:STA sprdst2+1
-
-  ; Calculate pointer to requested sprite within spritesheet
-  LDA sprite
-  BEQ calcdone
-  TAX
-  LDA #&00
-.calc
-  CLC
-  ADC #&20
-  BCC norm
-  INC sprsrc+1:INC sprsrc2+1
-  INC sprsrc+1:INC sprsrc2+1
-.norm
-  DEX
-  BNE calc
-  STA sprsrc
-  STA sprsrc2
-.calcdone
-
-  ; Calculate pointer to x,y position of sprite within screen RAM - TODO FIX
-  LDA sprdst+1:CLC:ADC spry:STA sprdst+1
-  LDA sprdst2+1:CLC:ADC spry:STA sprdst2+1
-
-  LDA sprdst:CLC:ADC sprx:STA sprdst
-  LDA sprdst2:CLC:ADC sprx:STA sprdst2
-
-  ; Recalculate bottom part as being + 0x200 from top
-  LDA sprdst:STA sprdst2
-  LDA sprdst+1:CLC:ADC #&02:STA sprdst2+1
-
-  ; Now draw it
-  LDY #&00
-.loop
-  LDA (sprsrc), Y
-  STA (sprdst), Y
-
-  LDA (sprsrc2), Y
-  STA (sprdst2), Y
-
-  INY
-  TYA
-  CMP #&20
-  BNE loop
-
-  PLA
-  TAY
-  PLA
-  TAX
-
-  RTS
-}
-
 .writetile
 {
   PHA
@@ -1023,6 +958,51 @@ MODE8BASE  = &4800
 
 .calcdone
 
+  JMP raster
+}
+
+.drawsprite
+{
+  TXA
+  PHA
+  TYA
+  PHA
+
+ ; Store a pointer to spritesheet
+  LDA #(spritesheet) MOD 256:STA sprsrc
+  LDA #(spritesheet) DIV 256:STA sprsrc+1
+
+  LDA #(spritesheet+&100) MOD 256:STA sprsrc2
+  LDA #(spritesheet+&100) DIV 256:STA sprsrc2+1
+
+  ; Store a pointer to the screen
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  LDA #(MODE8BASE+&200) MOD 256:STA sprdst2
+  LDA #(MODE8BASE+&200) MOD 256:STA sprdst2+1
+
+  ; Calculate pointer to requested sprite within spritesheet
+  LDA sprite
+  BEQ calcdone
+  TAX
+  LDA #&00
+.calc
+  CLC
+  ADC #&20
+  BCC norm
+  INC sprsrc+1:INC sprsrc2+1
+  INC sprsrc+1:INC sprsrc2+1
+.norm
+  DEX
+  BNE calc
+  STA sprsrc
+  STA sprsrc2
+.calcdone
+}
+
+.raster
+{
   ; Calculate pointer to x,y position of sprite within screen RAM
   LDX spry
   BEQ noy

@@ -34,4 +34,6 @@ framecounter = &8C
 
 lifeleft = &8D
 
-nextvar = &8E
+inmenu = &8E
+
+nextvar = &8F
