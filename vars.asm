@@ -1,48 +1,64 @@
-; zero page variables
+; Zero page variables
 
-sprsrc = &60
-sprsrc2 = &62
+ORG &0060
 
-sprdst = &64
-sprdst2 = &66
+; Sprite source dest pointers, top and bottom halves
+.sprsrc EQUW &0000
+.sprsrc2 EQUW &0000
 
-sprite = &68
-sprx = &69
-spry = &70
+.sprdst EQUW &0000
+.sprdst2 EQUW &0000
 
-delayframes = &71
+; Sprite number and x, y position
+.sprite EQUB &00
+.sprx EQUB &00
+.spry EQUB &00
 
-titleptr = &72
+; Number of frames to delay by
+.delayframes EQUB &00
 
-seed = &73
+.titleptr EQUW &0000
 
-cursor = &77
+; Seed for random number generator
+.seed EQUW &0000, &0000
 
-topscore = &78
-score = &7F
+; Title screen cursor state
+.cursor EQUB &00
 
-stage = &86
+; Top score and current score
+.topscore EQUW &0000, &0000, &0000
+.score EQUW &0000, &0000, &0000
 
-timeleft = &87
+; Current stage
+.stage EQUB &00
 
-tempx = &88
-tempy = &89
+; Remaining time for current stage in seconds
+.timeleft EQUB &00
 
-stagemapptr = &8A
+; Temporary variables
+.tempx EQUB &00
+.tempy EQUB &00
 
-framecounter = &8C
+; Pointer into level array
+.stagemapptr EQUW &0000
 
-lifeleft = &8D
+; Number of frames, wraps around
+.framecounter EQUB &00
 
-inmenu = &8E
+; Number of lives remaining for current stage
+.lifeleft EQUB &00
 
-nextvar = &8F
+; Boolean for when on title screen
+.inmenu EQUB &00
 
+; ---------------------------------------------------------
 ; Variables in LANGUAGE workspace
 
+ORG &0400
+
 ; Bomb vars (up to 10 bombs)
-BOMB_ACTIVE         = &0400
-BOMB_X              = &040A
-BOMB_Y              = &0414
-BOMB_TIME_LEFT      = &041E
-BOMB_TIME_ELAPSED   = &0428
+.BOMB_ACTIVE         EQUW &0000, &0000, &0000, &0000, &0000
+.BOMB_X              EQUW &0000, &0000, &0000, &0000, &0000
+.BOMB_Y              EQUW &0000, &0000, &0000, &0000, &0000
+.BOMB_TIME_LEFT      EQUW &0000, &0000, &0000, &0000, &0000
+.BOMB_TIME_ELAPSED   EQUW &0000, &0000, &0000, &0000, &0000
