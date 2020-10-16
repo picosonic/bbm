@@ -1080,13 +1080,14 @@ MODE8BASE  = &4800
 .raster
 {
   ; Calculate pointer to x,y position of sprite/tile within screen RAM
-  LDX spry
+  LDA spry
   BEQ noy
-.yloop
-  LDA sprdst+1:CLC:ADC #&04:STA sprdst+1
-  DEX
-  BNE yloop
-
+  ASL A:ASL A ; Multiply Y by 4
+  STA yjump+2 ; Store result as operand for ADC below
+  LDA sprdst+1
+.yjump
+  CLC:ADC #&00
+  STA sprdst+1
 .noy
 
   LDX sprx
