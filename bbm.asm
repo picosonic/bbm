@@ -203,10 +203,10 @@ MODE8BASE  = &4800
   BNE loop
 
   ; Draw bomberman
-  LDA #1:STA sprx
-  LDA #2:STA spry
-  LDA #0:STA sprite
-  JSR drawsprite
+  LDA #1:STA BOMBMAN_X
+  LDA #2:STA BOMBMAN_Y
+  LDA #0:STA BOMBMAN_FRAME
+  JSR drawbomberman
 
   ; Place a test bomb
   LDX #&00
@@ -226,7 +226,7 @@ MODE8BASE  = &4800
   ; TODO JSR SPRD
   ; TODO check button presses
   JSR bombtick ; bomb timer operations
-  ; TODO draw bomberman
+  JSR drawbomberman
   ; TODO THINK
   JSR bombanim ; animate bombs
   JSR stagetimer ; tick game stage timer
@@ -237,6 +237,14 @@ MODE8BASE  = &4800
 
   ; TODO
   JMP gamestart
+}
+
+.drawbomberman
+{
+  LDA BOMBMAN_X:STA sprx
+  LDA BOMBMAN_Y:STA spry
+  LDA BOMBMAN_FRAME:STA sprite
+  JSR drawsprite
 }
 
 .bombtick
