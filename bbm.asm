@@ -4,6 +4,7 @@ INCLUDE "inkey.asm"
 INCLUDE "vars.asm"
 
 ORG &1100
+GUARD ROMSBASE
 
 MODE8BASE  = &4800
 
