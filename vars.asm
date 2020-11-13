@@ -52,7 +52,7 @@ ORG &0060
 .inmenu EQUB &00
 
 ; ---------------------------------------------------------
-; Variables in LANGUAGE workspace
+; Variables in LANGUAGE workspace, &400 to &7FF
 
 ORG &0400
 
@@ -62,3 +62,15 @@ ORG &0400
 .BOMB_Y              EQUW &0000, &0000, &0000, &0000, &0000
 .BOMB_TIME_LEFT      EQUW &0000, &0000, &0000, &0000, &0000
 .BOMB_TIME_ELAPSED   EQUW &0000, &0000, &0000, &0000, &0000
+
+; Bomberman X and Y position in level array, with U and Y offsets
+.BOMBMAN_X           EQUB &00
+.BOMBMAN_U           EQUB &00
+.BOMBMAN_Y           EQUB &00
+.BOMBMAN_V           EQUB &00
+.BOMBMAN_FRAME       EQUB &00
+
+ALIGN &100
+
+.levelmap
+SKIP (32*13) ; Reserve bytes for in-game level data

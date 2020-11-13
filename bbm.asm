@@ -1195,8 +1195,6 @@ INCBIN "TILES.beeb"
 INCBIN "SPRITES.beeb"
 
 .eof
-.levelmap
-SKIP (32*13) ; Reserve bytes for in-game level data
   RTS ; Here just to advise on remaining space
 
 SAVE "bbm", start, end
