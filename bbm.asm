@@ -166,6 +166,7 @@ MODE8BASE  = &4800
   ; Draw TIME/SCORE/LIVES
   JSR showstatus
   JSR drawtime
+  LDA #&00:STA framecounter
   LDA #&00:STA inmenu
 
   ; Draw level
@@ -299,8 +300,9 @@ MODE8BASE  = &4800
 .stagetimer
 {
   LDA framecounter
-  AND #&3F
+  CMP #50
   BNE done
+  LDA #&00:STA framecounter
 
 ; Here temporarily
   JSR drawtime
