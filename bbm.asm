@@ -1045,7 +1045,7 @@ MODE8BASE  = &4800
   TYA
   PHA
 
- ; Store a pointer to spritesheet
+  ; Store a pointer to spritesheet
   LDA #(spritesheet) MOD 256:STA sprsrc
   LDA #(spritesheet) DIV 256:STA sprsrc+1
 
@@ -1197,8 +1197,8 @@ INCBIN "SPRITES.beeb"
 .eof
   RTS ; Here just to advise on remaining space
 
-SAVE "bbm", start, end
-SAVE "title", titles, tilesheet
-SAVE "tiles", tilesheet, spritesheet
-SAVE "sprites", spritesheet, eof
+SAVE "BBM", start, end
+SAVE "TITLE", titles, tilesheet
+SAVE "TILES", tilesheet, spritesheet
+SAVE "SPRITES", spritesheet, eof
 

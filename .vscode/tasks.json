@@ -26,7 +26,7 @@
                 }
             },
             "args": [
-                "beebasm -v -i ${workspaceFolder}/bbm.asm -do ${workspaceFolder}/bbm.ssd -boot bbm -title 'BBM'"
+                "beebasm -v -i ${workspaceFolder}/bbm.asm -do ${workspaceFolder}/bbm.ssd -boot BBM -title 'BBM'"
             ],
             "isBuildCommand": true
         },
