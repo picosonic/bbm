@@ -23,45 +23,10 @@ MODE8BASE  = &4800
 INCLUDE "input.asm"
 INCLUDE "rand.asm"
 INCLUDE "menus.asm"
+INCLUDE "gfx.asm"
 
 .init
-  ; Mode 1 (320x256 4 colours)
-  LDA #&16:JSR OSWRCH
-  LDA #&01:JSR OSWRCH
-
-  ; Hide the cursor
-  LDA #&17:JSR OSWRCH
-  LDA #&01:JSR OSWRCH
-  LDA #&00:JSR OSWRCH
-  JSR OSWRCH:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH
-
-  ; Hide the cursor (another way)
-  LDA #&0A:STA CRTC00
-  LDA #&20:STA CRTC01
-
-  ; Set displayed chars per horizontal line to match NES (256 pixels)
-  LDA #&01:STA CRTC00
-  LDA #&40:STA CRTC01
-
-  ; Shift display horizontally to centre
-  LDA #&02:STA CRTC00
-  LDA #&59:STA CRTC01
-
-  ; Set displayed chars per column to match NES (240 pixels, with 224 displayed)
-  LDA #&06:STA CRTC00
-  LDA #&1C:STA CRTC01
-
-  ; Shift display vertically to centre
-  LDA #&07:STA CRTC00
-  LDA #33:STA CRTC01
-
-  ; Change screen start to &4800 to gain an extra 6k bytes
-  LDA #&0D:STA CRTC00
-  LDA #&00:STA CRTC01
-  LDA #&0C:STA CRTC00
-  LDA #(MODE8BASE) DIV 256
-  LSR A:LSR A:LSR A
-  STA CRTC01
+  JSR mode8
 
   ; Load data files
   LDX #(titlestr) MOD 256:LDY #(titlestr) DIV 256:JSR OSCLI
@@ -935,14 +900,6 @@ INCLUDE "menus.asm"
   PLA
   TAX
 
-  RTS
-}
-
-; Wait for vertical trace
-.waitvsync
-{
-  LDA #&13
-  JSR OSBYTE
   RTS
 }
 
