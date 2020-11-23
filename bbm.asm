@@ -1,6 +1,8 @@
+; OS defines
 INCLUDE "os.asm"
 INCLUDE "inkey.asm"
 
+; Variable defines
 INCLUDE "vars.asm"
 
 ORG &1100
@@ -14,6 +16,15 @@ MODE8BASE  = &4800
   ; Make sure we are not in decimal mode
   CLD
 
+  ; Jump to initialisation
+  JMP init
+
+; Import modules
+INCLUDE "input.asm"
+INCLUDE "rand.asm"
+INCLUDE "menus.asm"
+
+.init
   ; Mode 1 (320x256 4 colours)
   LDA #&16:JSR OSWRCH
   LDA #&01:JSR OSWRCH
@@ -621,8 +632,6 @@ MODE8BASE  = &4800
   RTS
 }
 
-INCLUDE "menus.asm"
-
 .cls
 {
   LDA #(MODE8BASE) MOD 256:STA sprdst
@@ -946,33 +955,6 @@ INCLUDE "menus.asm"
   BNE delay
   RTS
 }
-
-; Return &FF in A if key is pressed
-.scankey
-{
-  TAX ; Negative INKEY value to check for
-  LDY #&FF ; Keyboard scan
-  LDA #&81
-  JSR OSBYTE
-  TYA
-  RTS
-}
-
-; Wait until specified key is not pressed
-.unpressed
-{
-  PHA
-  JSR scankey
-  BEQ cleared
-  PLA
-  JMP unpressed
-
-.cleared
-  PLA
-  RTS
-}
-
-INCLUDE "rand.asm"
 
 .titlestr
 EQUS "L.TITLE", &0D
