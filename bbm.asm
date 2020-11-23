@@ -236,7 +236,7 @@ MODE8BASE  = &4800
   LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
   BEQ gameloop
 
-  JSR drawbonusscreen
+  JSR drawgameoverscreen
 
   ; Wait 1 second
   LDA #50:STA delayframes:JSR delay

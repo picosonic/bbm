@@ -235,7 +235,7 @@
 
   LDX #&0A
 .nextchar
-  LDA stagestring, X
+  LDA bonusstring, X
   STA sprite:JSR writetile
   DEX
   BPL nextchar
@@ -248,6 +248,40 @@
 
   RTS
 
-.stagestring
+.bonusstring
   EQUS "EGATS:SUNOB"
+}
+
+.drawgameoverscreen
+{
+  JSR cls
+
+  JSR gamepal
+
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  ; Set text coordinates
+  LDA #&A0
+  CLC:ADC sprdst:STA sprdst
+  LDA #&1A
+  CLC:ADC sprdst+1:STA sprdst+1
+
+  LDX #&08
+.nextchar
+  LDA gameoverstring, X
+  STA sprite:JSR writetile
+  DEX
+  BPL nextchar
+
+  ; Advance two tile positions
+  LDA sprdst:CLC:ADC #&20:STA sprdst
+  BCC samepage
+  INC sprdst+1
+.samepage
+
+  RTS
+
+.gameoverstring
+  EQUS "REVO:EMAG"
 }
