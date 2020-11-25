@@ -3,6 +3,7 @@ src
 
 # Reference guides
 *.pdf
+AllMem
 
 # Disk images
 *.ssd
@@ -13,3 +14,4 @@ src
 *.webp
 *.png
 *.gif
+*.bak
