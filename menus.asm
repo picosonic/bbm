@@ -278,3 +278,35 @@
 .gameoverstring
   EQUS "REVO:EMAG"
 }
+
+.password
+{
+  JSR cls
+
+  JSR gamepal
+
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  ; Set text coordinates
+  LDA #&70
+  CLC:ADC sprdst:STA sprdst
+  LDA #&0A
+  CLC:ADC sprdst+1:STA sprdst+1
+
+  LDX #&00
+  LDA passwordstring, X
+.nextchar
+  STA sprite:JSR writetile
+  INX
+  LDA passwordstring, X
+  BNE nextchar
+
+  ; TODO - password entry
+
+  RTS
+
+.passwordstring
+  EQUS "ENTER:SECRET:CODE"
+  EQUB &00
+}
