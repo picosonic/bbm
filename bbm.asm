@@ -76,18 +76,18 @@ INCLUDE "sound.asm"
 .awaitkeys
   JSR rand
 
-  ; check for keypress
-  LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
-  BNE playgame
-  LDA #INKEY_SPACE:JSR scankey ; Scan for SPACEBAR
+  ; Scan for RETURN
+  LDA #INKEY_RETURN:JSR scankey
+  BNE startpressed
+
+  ; Scan for SPACEBAR
+  LDA #INKEY_SPACE:JSR scankey
   BEQ awaitkeys
 
   ; toggle cursor
   JSR waitvsync
   LDA #&3A:JSR drawcursor ; Draw a blank on current position
-  LDA cursor
-  EOR #&01
-  STA cursor
+  LDA cursor:EOR #&01:STA cursor
   JSR waitvsync
   LDA #&40:JSR drawcursor ; Draw cursor at new position
 
@@ -95,6 +95,16 @@ INCLUDE "sound.asm"
 
   JMP awaitkeys
 
+.startpressed
+{
+  LDA cursor
+  BEQ playgame
+  JSR password
+
+  LDA #&00:BEQ awaitkeys
+}
+
+; Handler for VBLANK event
 .eventhandler
 {
   ; Save registers
