@@ -49,6 +49,24 @@
   RTS
 }
 
+.blankpal
+{
+  LDY #&00
+.loop
+  LDA #&13:JSR OSWRCH
+  LDA thispal, Y:JSR OSWRCH:INY
+  LDA thispal, Y:JSR OSWRCH:INY
+  LDA #&00:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH
+  CPY #&08
+  BNE loop
+
+  RTS
+
+.thispal
+  ; black, black, black, black
+  EQUB 0,0, 1,0, 2,0, 3,0
+}
+
 .titlepal
 {
   LDY #&00
