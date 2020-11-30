@@ -1,7 +1,9 @@
 
 .drawtitle
 {
-  JSR titlepal
+  ; Clear palette whilst drawing
+  JSR blankpal
+  JSR cls
 
   ; Store a pointer to title data
   LDA #(titles) MOD 256:STA titleptr
@@ -25,6 +27,9 @@
   LDA #(titles+&200) DIV 256
   CMP titleptr+1
   BNE loop
+
+  ; Show graphics
+  JSR titlepal
 
   JSR drawtitletext
 
@@ -98,8 +103,8 @@
 
 .drawtitletext
 {
-  LDY #&00 \ Position within current string
-  LDX #&06 \ Num. strings to write
+  LDY #&00 ; Position within current string
+  LDX #&06 ; Num. strings to write
 
 .nextstring
   ; Reset tile cursor
