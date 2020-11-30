@@ -245,12 +245,6 @@
   DEX
   BPL nextchar
 
-  ; Advance two tile positions
-  LDA sprdst:CLC:ADC #&20:STA sprdst
-  BCC samepage
-  INC sprdst+1
-.samepage
-
   RTS
 
 .bonusstring
@@ -278,12 +272,6 @@
   STA sprite:JSR writetile
   DEX
   BPL nextchar
-
-  ; Advance two tile positions
-  LDA sprdst:CLC:ADC #&20:STA sprdst
-  BCC samepage
-  INC sprdst+1
-.samepage
 
   RTS
 
