@@ -71,9 +71,6 @@ INCLUDE "sound.asm"
   LDA #&01:STA inmenu
 
   JSR waitvsync
-  JSR cls
-
-  JSR waitvsync
   JSR drawtitle
 
 .awaitkeys
