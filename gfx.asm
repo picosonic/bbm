@@ -43,8 +43,12 @@
 ; Wait for vertical trace
 .waitvsync
 {
+  TXA:PHA
+
   LDA #&13
   JSR OSBYTE
+
+  PLA:TAX
 
   RTS
 }
