@@ -302,7 +302,27 @@
   LDA passwordstring, X
   BNE nextchar
 
+  LDA #&00:STA sprx
+  LDA #&20:STA spry
+
   ; TODO - password entry
+  LDA #&00:STA tempx
+.loop
+  LDX #&1C
+.flashcursor
+  JSR waitvsync
+  ; TODO - read input
+  DEX
+  BNE flashcursor
+  LDA tempx
+  BEQ blank
+  LDA #&5F:STA sprite:ORA #&FF:BNE draw
+.blank
+  LDA #&3B:STA sprite
+.draw
+  JSR drawtile
+  LDA tempx:EOR #&01:STA tempx
+  ORA #&FF:BNE loop
 
   RTS
 
