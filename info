@@ -119,14 +119,31 @@ Bomberman animation frames
 
 Enemy types
  0 None
+
  1 VALCOM (Balloon) 100
+  also known as Baromu, Barom, Balloom, Bellom, Drifty, and Balloon. They're slow, and their movement can be very unpredictable. They won't chase after Bomberman.
+
  2 O'NEIL (Onion) 200
+  also known as Beaker, O'Neal, Oneal, and Kayloo the Onion. Onil moves quickly and randomly. It will move toward Bomberman when he is nearby. They are not likely to get stuck in walls and can be incredibly troublesome.
+
  3 DAHL (Barrel) 400
+  also kwown as Dall and Blockhead. They resemble barrels. It is found on some levels, after the Onils, It moves at a slightly fast speed, doing some bouncy moves (it won't do jumps, but it does some bouncy moves), it is not hard to kill, but it can be tricky for new players. Dahls are not smart, even less intelligent than Baroms and they won't try to chase Bomberman, prefering to move from the left to right, sometimes switching to up and down. They commonly get stuck in walls.
+
  4 MIVO (Happy face) 800
+  also known as Minvo. They move like fast Onils, and resemble smiley faces. These are encountered after the Dahls. They will commonly pursue Bomberman if he's nearby, though they do also get stuck if he's hiding nearby. Minvos are quite easy to beat, just treat them like Onils, only you have to be quicker in getting it out. Since they're encountered after the Dahls (encountered on the third stage), you have probably got the Remote Bomb, so it will be a bit easier. Just evade the Bombs, though!
+
  5 DORIA (Blob) 2000
+  also kwown as Dovia, Kondoria and Amebea, is an amoeba-like enemy. It's able to pass through soft blocks. Doria moves really slow, but it can move through Soft Blocks. Dorias are very smart, they will commonly attempt to chase Bomberman and they can evade bombs. Their first potential appearance can be Stage 3, if you bomb the exit/power up present there.
+
  6 OVAPE (Ghost) 100
+  also known as Floatsam. They resemble red, purple or pink ghosts that move through soft blocks. They are encountered after the Dorias.They don't chase after Bomberman too commonly, unlike Dorias, but due to their wall-pass abilities, they can cause problem.
+
  7 PASS (Tiger) 4000
+  also known as Parse, Tiglon, and Cecil the Tiger. Pass moves faster than most enemies, and is able to avoid bombs. It often pursues Bomberman. Their behavior and appearance is kind of similar to Minvos, leading to assume that the two enemies could be somehow related. Unlike Minvos, however, they're a bit faster and smarter. They're associated with the Fireproof Power-up and as such, will appear if said power up is blown up by a bomb, or the exit of a level with this power up present is bombed.
+
  8 PONTAN (Coin) 8000
+  also known as Foton. Pontan moves very quickly, passing through Soft Blocks and constantly pursuing the player. In its original appearance, it is the most dangerous enemy in the game. They're associated with the Invincibility Power-up and as such, will appear if said power up is blown up by a bomb, or the exit of a level with this power up present is bombed or worse, if the timer reaches zero.
+
  9 *death*
 
   ----------------------
@@ -222,7 +239,7 @@ Enemy types
     NMABEKMKGNCLFEIIHFEL - Level 50
 
     Additional Passwords
-    BOFEDJJDDJGKEFOLFMIH - Level 74
+    BOFEDJJDDJGKEFOLFMIH - Level 74 / power f / flameproof / 10 bombs / speed 1 / debug / detonator / 0 points
     NMIHPLGKGJDJDJDJDJDH - Begin with maximum Blast Radius / 4,500 points.
 
     IAHBEKOLLCPCPCPCPCPL - Stage 1 / 1-bomb / 14-blocks-range / detonator / flameproof
