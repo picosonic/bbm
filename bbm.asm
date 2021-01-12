@@ -5,7 +5,7 @@ INCLUDE "inkey.asm"
 ; Variable defines
 INCLUDE "vars.asm"
 
-ORG &1100
+ORG &1200
 GUARD ROMSBASE
 
 MODE8BASE  = &4800
@@ -100,8 +100,8 @@ INCLUDE "sound.asm"
   LDA cursor
   BEQ playgame
   JSR password
-
-  LDA #&00:BEQ awaitkeys
+  LDA cursor:EOR #&01:STA cursor
+  JSR gamestart
 }
 
 ; Handler for VBLANK event
