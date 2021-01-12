@@ -22,3 +22,21 @@
   PLA
   RTS
 }
+
+; Flush all input buffers
+.flushallbuffers
+{
+  LDA #&0F
+  LDX #&00
+  JSR OSBYTE
+  RTS
+}
+
+; Select only keyboard as input stream
+.selectkeyboard
+{
+  LDA #&02
+  LDX #&00
+  JSR OSBYTE
+  RTS
+}
