@@ -70,6 +70,9 @@ ORG &0400
 .BOMBMAN_V           EQUB &00
 .BOMBMAN_FRAME       EQUB &00
 
+.password_buffer
+SKIP 20
+
 ALIGN &100
 
 .levelmap
