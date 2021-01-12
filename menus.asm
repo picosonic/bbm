@@ -306,27 +306,85 @@
   LDA #&20:STA spry
 
   ; TODO - password entry
+  JSR flushallbuffers
   LDA #&00:STA tempx
-.loop
-  LDX #&1C
-.flashcursor
-  JSR waitvsync
+
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  ; Set text coordinates
+  LDA #&50
+  CLC:ADC sprdst:STA sprdst
+  LDA #&20
+  CLC:ADC sprdst+1:STA sprdst+1
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; TODO - read input
-  DEX
-  BNE flashcursor
-  LDA tempx
-  BEQ blank
-  LDA #&5F:STA sprite:ORA #&FF:BNE draw
-.blank
-  LDA #&3B:STA sprite
-.draw
-  JSR drawtile
-  LDA tempx:EOR #&01:STA tempx
-  ORA #&FF:BNE loop
+  ;
+
+  ; Set current string length to 0
+  LDA #&00:STA tempy
+.back
+  ; OSRDCH()
+  JSR OSRDCH
+
+  ; is it ESC (0x27)?
+  CMP #&1B
+  BNE noescape
+  ; acknowledge ESC
+  LDA #&7E:JSR OSBYTE
+  JMP back
+
+.noescape
+  ; is it DEL (0x7f)?
+  CMP #&7F
+  BNE nodel
+  ; is string length 0
+  LDA tempy
+  BEQ back
+  ; reduce string length
+  DEC tempy
+  ; write a blank char
+  ; Advance to next tile position
+  LDA sprdst:SEC:SBC #&10:STA sprdst
+  BCS samepage
+  DEC sprdst+1
+.samepage
+  LDA #&5F:STA sprite:JSR writetile
+
+  LDA sprdst:SEC:SBC #&10:STA sprdst
+  BCS samepage2
+  DEC sprdst+1
+.samepage2
+  JMP back
+
+.nodel
+  ; convert lowercase to uppercase
+  AND #&DF
+  ; is it outside printable range (A..P)?
+  CMP #'A':BCC back
+  CMP #'Q':BCS back
+  STA sprite:JSR writetile
+
+  ; add input to string
+  LDY tempy
+  STA password_buffer, Y
+  ; increment string length
+  INC tempy
+  ; is string length < 20?
+  LDA tempy:CMP #20:BCC back
+
+  ; validate password string
+  ; decode password string
+  ; apply decoded values to in-game variables
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   RTS
 
 .passwordstring
   EQUS "ENTER:SECRET:CODE"
   EQUB &00
+
+.codestring
+  EQUS "AOFKCPGELBHMJDNI"
 }
