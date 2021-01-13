@@ -319,7 +319,7 @@
   LDA #&7E:JSR OSBYTE
 
   ; Position text cursor for entry
-  LDX #&05:LDY #&0C
+  LDX #&06:LDY #&0E
   JSR positiontextcursor
 
   ; read password input
