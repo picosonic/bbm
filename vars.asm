@@ -1,3 +1,4 @@
+; ---------------------------------------------------------
 ; Zero page variables
 
 ORG &0060
@@ -50,6 +51,18 @@ ORG &0060
 
 ; Boolean for when on title screen
 .inmenu EQUB &00
+
+; Bonuses
+.BONUS_POWER         EQUB &00
+.BONUS_BOMBS         EQUB &00
+.BONUS_SPEED         EQUB &00
+.BONUS_NOCLIP        EQUB &00
+.BONUS_REMOTE        EQUB &00
+.BONUS_BOMBWALK      EQUB &00
+.BONUS_FIRESUIT      EQUB &00
+
+; Debug mode boolean (show powerups and exit)
+.DEBUG              EQUB &00
 
 ; ---------------------------------------------------------
 ; Variables in LANGUAGE workspace, &400 to &7FF
