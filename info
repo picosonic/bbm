@@ -70,9 +70,9 @@ Levels are
   every even cell contains concrete
 
 Whenever you die
-  it show "STAGE N" screen
+  it shows "STAGE N" screen
   then randomly generates a new stage map
-  you get 200 seconds reset
+  you get the 200 seconds timelimit reset
   unless you've run out of lives, when it shows
     "GAME OVER" and a secret code
 
