@@ -372,6 +372,7 @@
   STA sprite:JSR writetile
 
   ; add input to string
+  AND #&0F:TAX:LDA codebyte, X
   LDY tempx
   STA password_buffer, Y
   ; increment string length
@@ -380,16 +381,68 @@
   LDA tempx:CMP #20:BCC back
 
   ; validate password string
+  LDX #&00:STX seed
+.passloop
+  LDA password_buffer, X
+  PHA
+  CLC:ADC #&07
+  CLC:ADC seed
+  AND #&0F:STA password_buffer, X
+
+  PLA
+  STA seed
+  INX
+  CPX #20
+  BNE passloop
+
+  LDX #&00
+.passloop2
+  LDY #&04
+  LDA #&00
+.passloop3
+  CLC:ADC password_buffer, X
+  INX
+  DEY
+  BNE passloop3
+
+  AND #&0F
+  CMP password_buffer, X
+  BNE done
+  INX
+  CPX #&0F
+  BNE passloop2
+  LDA password_buffer+4
+  ASL A
+  STA tempx
+  LDA password_buffer+9
+  ASL A
+  CLC:ADC tempx:STA tempx
+  LDA password_buffer+14
+  ASL A
+  CLC:ADC tempx
+
+  LDX #&04
+.passloop4
+  CLC:ADC password_buffer+14, X
+  DEX
+  BNE passloop4
+
+  AND #&0F
+  CMP password_buffer+19
+  BNE done
+
+  JMP playgame
+
   ; decode password string
   ; apply decoded values to in-game variables
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+.done
   RTS
 
 .passwordstring
   EQUS "ENTER:SECRET:CODE"
   EQUB &00
 
-.codestring
-  EQUS "AOFKCPGELBHMJDNI"
+.codebyte
+  EQUB &05, &00, &09, &04, &0D, &07, &02, &06, &0A, &0F, &0C, &03, &08, &0B, &0E, &01
 }
