@@ -1,3 +1,36 @@
+.positiontextcursor
+{
+  ; Save accumulator
+  PHA
+
+  ; Postition at start of screen memory
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  ; Add y offset
+  TYA:BEQ doney
+.yloop
+  INC sprdst+1:INC sprdst+1
+  DEY
+  BNE yloop
+.doney
+
+  ; Add x offset
+  TXA:BEQ donex
+.xloop
+  LDA sprdst:CLC:ADC #&10:STA sprdst
+  BCC samepage
+  INC sprdst+1
+.samepage
+  DEX
+  BNE xloop
+.donex
+
+  ; Restore accumulator
+  PLA
+
+  RTS
+}
 
 .drawtitle
 {
@@ -68,13 +101,9 @@
 
 .drawtopscore
 {
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  LDA #&E0
-  CLC:ADC sprdst:STA sprdst
-  LDA #&26
-  CLC:ADC sprdst+1:STA sprdst+1
+  ; Position text cursor to write top score
+  LDX #&0E:LDY #&13
+  JSR positiontextcursor
 
   LDX #&00
 .nodigits
@@ -165,14 +194,9 @@
 
   JSR gamepal
 
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  ; Set text coordinates
-  LDA #&A0
-  CLC:ADC sprdst:STA sprdst
-  LDA #&1A
-  CLC:ADC sprdst+1:STA sprdst+1
+  ; Position text cursor to write "STAGE n"
+  LDX #&0A:LDY #&0D
+  JSR positiontextcursor
 
   LDX #&04
 .nextchar
@@ -229,14 +253,9 @@
 
   JSR gamepal
 
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  ; Set text coordinates
-  LDA #&A0
-  CLC:ADC sprdst:STA sprdst
-  LDA #&1A
-  CLC:ADC sprdst+1:STA sprdst+1
+  ; Position text cursor to write "BONUS STAGE"
+  LDX #&0A:LDY #&0D
+  JSR positiontextcursor
 
   LDX #&0A
 .nextchar
@@ -257,14 +276,9 @@
 
   JSR gamepal
 
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  ; Set text coordinates
-  LDA #&A0
-  CLC:ADC sprdst:STA sprdst
-  LDA #&1A
-  CLC:ADC sprdst+1:STA sprdst+1
+  ; Position text cursor to write "GAME OVER"
+  LDX #&0A:LDY #&0D
+  JSR positiontextcursor
 
   LDX #&08
 .nextchar
@@ -285,14 +299,9 @@
 
   JSR gamepal
 
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  ; Set text coordinates
-  LDA #&70
-  CLC:ADC sprdst:STA sprdst
-  LDA #&0A
-  CLC:ADC sprdst+1:STA sprdst+1
+  ; Position text cursor to write prompt
+  LDX #&07:LDY #&05
+  JSR positiontextcursor
 
   LDX #&00
   LDA passwordstring, X
@@ -309,14 +318,9 @@
   JSR flushallbuffers
   LDA #&00:STA tempx
 
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  ; Set text coordinates
-  LDA #&50
-  CLC:ADC sprdst:STA sprdst
-  LDA #&20
-  CLC:ADC sprdst+1:STA sprdst+1
+  ; Position text cursor for entry
+  LDX #&05:LDY #&0C
+  JSR positiontextcursor
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; TODO - read input
@@ -344,14 +348,16 @@
   BEQ back
   ; reduce string length
   DEC tempy
-  ; write a blank char
-  ; Advance to next tile position
+
+  ; Move to previous character position
   LDA sprdst:SEC:SBC #&10:STA sprdst
   BCS samepage
   DEC sprdst+1
 .samepage
-  LDA #&5F:STA sprite:JSR writetile
+  ; write a blank char
+  LDA #'_':STA sprite:JSR writetile
 
+  ; Move to previous character position
   LDA sprdst:SEC:SBC #&10:STA sprdst
   BCS samepage2
   DEC sprdst+1
