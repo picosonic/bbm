@@ -92,7 +92,7 @@
 
   RTS
 
-; cursor position lookup
+  ; cursor position lookup
 .cursorl
   EQUB &80, &00
 .cursorh
@@ -314,22 +314,20 @@
   LDA #&00:STA sprx
   LDA #&20:STA spry
 
-  ; TODO - password entry
   JSR flushallbuffers
-  LDA #&00:STA tempx
+  ; acknowledge any ESC prior to password input
+  LDA #&7E:JSR OSBYTE
 
   ; Position text cursor for entry
   LDX #&05:LDY #&0C
   JSR positiontextcursor
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ; TODO - read input
-  ;
+  ; read password input
 
-  ; Set current string length to 0
-  LDA #&00:STA tempy
+  ; set current string length to 0
+  LDA #&00:STA tempx
 .back
-  ; OSRDCH()
+  ; read a character from keyboard
   JSR OSRDCH
 
   ; is it ESC (0x27)?
@@ -337,17 +335,18 @@
   BNE noescape
   ; acknowledge ESC
   LDA #&7E:JSR OSBYTE
-  JMP back
+  ; password entry cancelled
+  RTS
 
 .noescape
   ; is it DEL (0x7f)?
   CMP #&7F
   BNE nodel
   ; is string length 0
-  LDA tempy
+  LDA tempx
   BEQ back
   ; reduce string length
-  DEC tempy
+  DEC tempx
 
   ; Move to previous character position
   LDA sprdst:SEC:SBC #&10:STA sprdst
@@ -367,18 +366,18 @@
 .nodel
   ; convert lowercase to uppercase
   AND #&DF
-  ; is it outside printable range (A..P)?
+  ; is it outside valid range (A..P)?
   CMP #'A':BCC back
   CMP #'Q':BCS back
   STA sprite:JSR writetile
 
   ; add input to string
-  LDY tempy
+  LDY tempx
   STA password_buffer, Y
   ; increment string length
-  INC tempy
+  INC tempx
   ; is string length < 20?
-  LDA tempy:CMP #20:BCC back
+  LDA tempx:CMP #20:BCC back
 
   ; validate password string
   ; decode password string
