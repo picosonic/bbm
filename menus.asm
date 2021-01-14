@@ -431,11 +431,26 @@
   CMP password_buffer+19
   BNE done
 
-  JMP playgame
+  ; apply decoded password values to in-game variables
+  LDX #&00
+  LDY #&00
+.passloop5
+  JSR getpassptr
 
-  ; decode password string
-  ; apply decoded values to in-game variables
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  LDA password_buffer, Y
+  STY tempy:LDY #&00:STA (stagemapptr), Y:LDY tempy
+  INY
+  CPY #20
+  BNE passloop5
+
+  ; Shift low nibble to high nibble of BONUS_POWER
+  LDA BONUS_POWER:ASL A:ASL A:ASL A:ASL A:STA BONUS_POWER
+
+  ; Derive stage value
+  LDA seed+1:ASL A:ASL A:ASL A:ASL A:ORA seed:STA stage
+
+  JMP playgame+4
+
 .done
   RTS
 
@@ -445,4 +460,19 @@
 
 .codebyte
   EQUB &05, &00, &09, &04, &0D, &07, &02, &06, &0A, &0F, &0C, &03, &08, &0B, &0E, &01
+}
+
+.getpassptr
+{
+  LDA passdatavars, X:STA stagemapptr
+  LDA #&00:STA stagemapptr+1
+  INX
+
+  RTS
+
+.passdatavars
+  EQUB (score+6 MOD 256), (BONUS_REMOTE MOD 256), (seed MOD 256), (score MOD 256), (tempx MOD 256)
+  EQUB (score+5 MOD 256), (BONUS_POWER MOD 256), (score+3 MOD 256), (BONUS_FIRESUIT MOD 256), (tempx MOD 256)
+  EQUB (BONUS_BOMBS MOD 256), (score+2 MOD 256), (BONUS_SPEED MOD 256), (score+1 MOD 256), (tempx MOD 256)
+  EQUB (score+4 MOD 256), (DEBUG MOD 256), (seed+1 MOD 256), (BONUS_NOCLIP MOD 256), (tempx MOD 256)
 }
