@@ -311,9 +311,6 @@
   LDA passwordstring, X
   BNE nextchar
 
-  LDA #&00:STA sprx
-  LDA #&20:STA spry
-
   JSR flushallbuffers
   ; acknowledge any ESC prior to password input
   LDA #&7E:JSR OSBYTE
@@ -446,22 +443,26 @@
   ; Shift low nibble to high nibble of BONUS_POWER
   LDA BONUS_POWER:ASL A:ASL A:ASL A:ASL A:STA BONUS_POWER
 
-  ; Derive stage value
+  ; Derive stage value by combining nibbles
   LDA seed+1:ASL A:ASL A:ASL A:ASL A:ORA seed:STA stage
 
+  ; Jump into gameplay (for now) - needs fixing as causes a stack leak
   JMP playgame+4
 
 .done
   RTS
 
+  ; Password prompt string
 .passwordstring
   EQUS "ENTER:SECRET:CODE"
   EQUB &00
 
+  ; Password translation codes (nibbles)
 .codebyte
   EQUB &05, &00, &09, &04, &0D, &07, &02, &06, &0A, &0F, &0C, &03, &08, &0B, &0E, &01
 }
 
+; Get a pointer to the in-game variable for the X th password position
 .getpassptr
 {
   LDA passdatavars, X:STA stagemapptr
@@ -470,6 +471,7 @@
 
   RTS
 
+ ; Locations in zero page where the decoded password variables are placed
 .passdatavars
   EQUB (score+6 MOD 256), (BONUS_REMOTE MOD 256), (seed MOD 256), (score MOD 256), (tempx MOD 256)
   EQUB (score+5 MOD 256), (BONUS_POWER MOD 256), (score+3 MOD 256), (BONUS_FIRESUIT MOD 256), (tempx MOD 256)
