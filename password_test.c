@@ -9,8 +9,8 @@ unsigned char lup[]={0x5, 0x0, 0x9, 0x4, 0xD, 0x7, 0x2, 0x6, 0xA, 0xF, 0xC, 0x3,
 int main(int argc, char **argv)
 {
   char inp[]="NMIHPLGKGJDJDJDJDJDH";
-  unsigned char a, x, y, seed, stack, onef;
-  int i;
+  unsigned char a, seed, prev;
+  int i, j;
 
   if (argc==2)
   {
@@ -28,85 +28,59 @@ int main(int argc, char **argv)
     inp[i]=lup[inp[i] & 0xf];
 
   // Decode
-  x=0;
-  seed=x;
+  seed=0;
 
-  do
+  for (i=0; i<PWLEN; i++)
   {
-    a=inp[x];
-    stack=a;
-    a+=7;
-    a+=seed;
-    a=a & 0xf;
-    inp[x]=a;
-    a=stack;
-    seed=a;
-    x++;
-  } while (x!=0x14);
+    prev=inp[i];
+    inp[i]=(inp[i]+7+seed) & 0xf;
+    seed=prev;
+  }
 
   // Print decoded hex
   for (i=0; i<PWLEN; i++)
     printf("%.2x ", inp[i]);
   printf("\n");
 
-  // Validate
-  x=0;
-
-  do
+  // Validate first 3 checksums
+  for (i=0; i<3; i++)
   {
-    y=4;
     a=0;
-
-    do
+    
+    for (j=0; j<4; j++)
+      a=(a+inp[(i*5)+j]) & 0xf;
+    
+    if (a!=inp[(i*5)+4])
     {
-      a+=inp[x];
-      x++;
-      y--;
-    } while (y!=0);
+      printf("\nPassword is not valid\n\n");
+      return 1;
+    }
+  }
 
-    a=a & 0xf;
-    if (a!=inp[x]) return 1;
+  // Validate final checksum
+  a=(inp[4]*2)+(inp[9]*2)+(inp[14]*2);
 
-    x++;
-  } while (x!=0xf);
+  for (i=0; i<4; i++)
+    a=(a+inp[15+i]) & 0xf;
 
-  a=inp[4];
-  a=a<<1;
-  onef=a;
-
-  a=inp[9];
-  a=a<<1;
-  a+=onef;
-  onef=a;
-
-  a=inp[14];
-  a=a<<1;
-  a+=onef;
-
-  x=4;
-
-  do
+  if (a!=inp[19])
   {
-    a+=inp[14+x];
-    x--;
-  } while (x!=0);
-
-  a=a & 0xf;
-
-  if (a!=inp[19]) return 1;
+    printf("\nPassword is not valid\n\n");
+    return 1;
+  }
 
   printf("\nPassword is valid\n\n");
 
   printf("Stage : %d\n", (inp[17] << 4) | inp[2]);
   printf("Score : %c%c%c%c%c%c%c00\n", inp[3]|0x30, inp[13]|0x30, inp[11]|0x30, inp[7]|0x30, inp[15]|0x30, inp[5]|0x30, inp[0]|0x30);
 
-  printf("Remote detonator : %.2x\n", inp[1]);
-  printf("Power : %.2x\n", inp[6]);
-  printf("Firesuit : %.2x\n", inp[8]);
-  printf("Bombs : %.2x\n", inp[10]);
-  printf("Speed : %.2x\n", inp[12]);
-  printf("DEBUG : %.2x\n", inp[16]);
-  printf("No Clip : %.2x\n", inp[18]);
+  printf("Remote detonator : %s\n", inp[1]==0?"False":"True");
+  printf("Power : %d\n", inp[6]);
+  printf("Firesuit : %s\n", inp[8]==0?"False":"True");
+  printf("Bombs : %d\n", inp[10]+1);
+  printf("Speed : %d\n", inp[12]);
+  printf("DEBUG : %s\n", inp[16]==0?"False":"True");
+  printf("No Clip : %s\n", inp[18]==0?"False":"True");
 
   return 0;
 }
