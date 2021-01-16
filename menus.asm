@@ -295,6 +295,9 @@
 
 .password
 {
+  ; Mark as invalid password
+  LDA #&00:STA tempz
+
   JSR cls
 
   JSR gamepal
@@ -444,10 +447,10 @@
   LDA BONUS_POWER:ASL A:ASL A:ASL A:ASL A:STA BONUS_POWER
 
   ; Derive stage value by combining nibbles
-  LDA seed+1:ASL A:ASL A:ASL A:ASL A:ORA seed:STA stage
+  LDA tempw:ASL A:ASL A:ASL A:ASL A:ORA stage:STA stage
 
-  ; Jump into gameplay (for now) - needs fixing as causes a stack leak
-  JMP playgame+4
+  ; Mark as a valid password
+  INC tempz
 
 .done
   RTS
@@ -457,7 +460,7 @@
   EQUS "ENTER:SECRET:CODE"
   EQUB &00
 
-  ; Password translation codes (nibbles)
+  ; Password decode translation codes (nibbles)
 .codebyte
   EQUB &05, &00, &09, &04, &0D, &07, &02, &06, &0A, &0F, &0C, &03, &08, &0B, &0E, &01
 }
@@ -473,8 +476,73 @@
 
  ; Locations in zero page where the decoded password variables are placed
 .passdatavars
-  EQUB (score+6 MOD 256), (BONUS_REMOTE MOD 256), (seed MOD 256), (score MOD 256), (tempx MOD 256)
+  EQUB (score+6 MOD 256), (BONUS_REMOTE MOD 256), (stage MOD 256), (score MOD 256), (tempx MOD 256)
   EQUB (score+5 MOD 256), (BONUS_POWER MOD 256), (score+3 MOD 256), (BONUS_FIRESUIT MOD 256), (tempx MOD 256)
   EQUB (BONUS_BOMBS MOD 256), (score+2 MOD 256), (BONUS_SPEED MOD 256), (score+1 MOD 256), (tempx MOD 256)
-  EQUB (score+4 MOD 256), (DEBUG MOD 256), (seed+1 MOD 256), (BONUS_NOCLIP MOD 256), (tempx MOD 256)
+  EQUB (score+4 MOD 256), (DEBUG MOD 256), (tempw MOD 256), (BONUS_NOCLIP MOD 256), (tempx MOD 256)
+}
+
+.gamecompleted
+{
+  JSR cls
+  JSR gamepal
+
+  LDY #&00 ; Position within current string
+  LDX #&07 ; Num. strings to write
+
+.nextstring
+  ; Reset tile cursor
+  LDA #(MODE8BASE) MOD 256:STA sprdst
+  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+
+  JSR nextchar
+  CLC:ADC sprdst:STA sprdst
+  JSR nextchar
+  CLC:ADC sprdst+1:STA sprdst+1
+
+.continuedraw
+  JSR nextchar
+  CMP #&FF
+  BEQ breakdraw
+  STA sprite:JSR writetile
+  BNE continuedraw
+
+.breakdraw
+  DEX
+  BNE nextstring
+  RTS
+
+.nextchar
+  LDA winnertext, Y
+  INY
+  RTS
+
+.winnertext
+  EQUB &80, &00
+  EQUS "CONGRATULATIONS"
+  EQUB &FF
+
+  EQUB &40, &06
+  EQUS "YOU:HAVE:SUCCEEDED:IN"
+  EQUB &FF
+
+  EQUB &20, &0A
+  EQUS "HELPING:BOMBERMAN:TO:BECOME"
+  EQUB &FF
+
+  EQUB &20, &0E
+  EQUS "A:HUMAN:BEING"
+  EQUB &FF
+
+  EQUB &40, &12
+  EQUS "MAYBE:YOU:CAN:RECOGNIZE:HIM"
+  EQUB &FF
+
+  EQUB &20, &16
+  EQUS "IN:ANOTHER:HUDSON:SOFT:GAME"
+  EQUB &FF
+
+  EQUB &B0, &1C
+  EQUS "GOOD:BYE"
+  EQUB &FF
 }

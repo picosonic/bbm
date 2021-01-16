@@ -99,9 +99,14 @@ INCLUDE "sound.asm"
 {
   LDA cursor
   BEQ playgame
-  JSR password
+
+  ; Flip cursor
   LDA cursor:EOR #&01:STA cursor
-  JSR gamestart
+
+  ; Password entry screen
+  JSR password
+  LDA tempz:BNE playgame+4
+  JMP gamestart
 }
 
 ; Handler for VBLANK event
