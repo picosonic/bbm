@@ -20,9 +20,6 @@ ORG &0060
 
 .titleptr EQUW &0000
 
-; Seed for random number generator
-.seed EQUW &0000, &0000
-
 ; Title screen cursor state
 .cursor EQUB &00
 
@@ -37,8 +34,10 @@ ORG &0060
 .timeleft EQUB &00
 
 ; Temporary variables
+.tempw EQUB &00
 .tempx EQUB &00
 .tempy EQUB &00
+.tempz EQUB &00
 
 ; Pointer into level array
 .stagemapptr EQUW &0000
@@ -82,6 +81,9 @@ ORG &0400
 .BOMBMAN_Y           EQUB &00
 .BOMBMAN_V           EQUB &00
 .BOMBMAN_FRAME       EQUB &00
+
+; Seed for random number generator
+.seed EQUW &0000, &0000
 
 .password_buffer
 SKIP 20
