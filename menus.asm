@@ -510,6 +510,21 @@
 .breakdraw
   DEX
   BNE nextstring
+
+  ; Draw a row of blocks
+  LDX #&00
+  LDA #0:STA sprx
+  LDA #&0B:STA spry
+  LDA #&1A:STA sprite
+
+.loop
+  JSR drawbigtile
+
+  INC sprx
+
+  INX
+  CPX #16
+  BNE loop
   RTS
 
 .nextchar
