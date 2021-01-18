@@ -397,10 +397,12 @@
 .loop
   ; Top half
   LDA (sprsrc), Y
+  EOR (sprdst), Y
   STA (sprdst), Y
 
   ; Bottom half
   LDA (sprsrc2), Y
+  EOR (sprdst2), Y
   STA (sprdst2), Y
 
   INY
