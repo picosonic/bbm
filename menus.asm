@@ -525,6 +525,37 @@
   INX
   CPX #16
   BNE loop
+
+  ; Draw bomberman
+  LDA #&10:STA BOMBMAN_FRAME
+  LDA #&0A:STA BOMBMAN_Y
+  LDA #&0F:STA tempx:STA tempy
+  STA BOMBMAN_X
+  JSR waitvsync
+  JSR drawbomberman
+
+.run
+  JSR waitvsync
+
+  LDA tempy:STA BOMBMAN_X
+  JSR drawbomberman
+
+  DEC tempx:LDA tempx
+  BPL noreset
+  LDA #&0F:STA tempx
+
+.noreset
+  STA BOMBMAN_X:STA tempy
+
+  INC BOMBMAN_FRAME
+  LDA BOMBMAN_FRAME:CMP #&13
+  BNE framecycle
+  LDA #&10:STA BOMBMAN_FRAME
+.framecycle
+  JSR drawbomberman
+
+  JMP run
+
   RTS
 
 .nextchar
@@ -550,7 +581,7 @@
   EQUB &FF
 
   EQUB &40, &12
-  EQUS "MAYBE:YOU:CAN:RECOGNIZE:HIM"
+  EQUS "MAYBE:YOU:CAN:RECOGNISE:HIM"
   EQUB &FF
 
   EQUB &20, &16
