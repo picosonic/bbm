@@ -529,24 +529,20 @@
   ; Draw bomberman
   LDA #&10:STA BOMBMAN_FRAME
   LDA #&0A:STA BOMBMAN_Y
-  LDA #&0F:STA tempx:STA tempy
-  STA BOMBMAN_X
+  LDA #&0F:STA BOMBMAN_X
   JSR waitvsync
   JSR drawbomberman
 
 .run
   JSR waitvsync
 
-  LDA tempy:STA BOMBMAN_X
   JSR drawbomberman
 
-  DEC tempx:LDA tempx
+  DEC BOMBMAN_X:LDA BOMBMAN_X
   BPL noreset
-  LDA #&0F:STA tempx
+  LDA #&0F:STA BOMBMAN_X
 
 .noreset
-  STA BOMBMAN_X:STA tempy
-
   INC BOMBMAN_FRAME
   LDA BOMBMAN_FRAME:CMP #&13
   BNE framecycle
@@ -592,3 +588,11 @@
   EQUS "GOOD:BYE"
   EQUB &FF
 }
+
+.HUMAN_ANIM
+  EQUB &10, &11, &12, &11
+.BOMBER_ANIM
+  EQUB &00, &01, &02, &01 ; Walk
+  EQUB &03, &04, &05, &04 ; Climb facing
+  EQUB &06, &07, &08, &07 ; Climb away
+  EQUB &09, &0A, &0B, &0C, &0D, &0E, &0F ; Explode
