@@ -53,60 +53,37 @@
   RTS
 }
 
-.blankpal
+; Palettes
+PAL_BLANK = &00
+PAL_TITLE = &01
+PAL_GAME  = &02
+
+.setpal
 {
-  LDY #&00
+  CLC:ROL A:ROL A:ROL A:TAY
+  LDX #&00
 .loop
   LDA #&13:JSR OSWRCH
-  LDA thispal, Y:JSR OSWRCH:INY
-  LDA thispal, Y:JSR OSWRCH:INY
+  LDA paltable, Y:JSR OSWRCH:INY:INX
+  LDA paltable, Y:JSR OSWRCH:INY:INX
   LDA #&00:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH
-  CPY #&08
+  CPX #&08
   BNE loop
 
   RTS
 
-.thispal
+.paltable
+  ; blank palette
   ; black, black, black, black
   EQUB 0,0, 1,0, 2,0, 3,0
-}
 
-.titlepal
-{
-  LDY #&00
-.loop
-  LDA #&13:JSR OSWRCH
-  LDA thispal, Y:JSR OSWRCH:INY
-  LDA thispal, Y:JSR OSWRCH:INY
-  LDA #&00:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH
-  CPY #&08
-  BNE loop
-
-  RTS
-
-.thispal
+  ; Title palette
   ; black, red, white, yellow
   EQUB 0,0, 1,1, 2,7, 3,3
-}
 
-.gamepal
-{
-  LDY #&00
-.loop
-  LDA #&13:JSR OSWRCH
-  LDA thispal, Y:JSR OSWRCH:INY
-  LDA thispal, Y:JSR OSWRCH:INY
-  LDA #&00:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH
-  CPY #&08
-  BNE loop
-
-  RTS
-
-.thispal
+  ; Game palette
   ; black, blue, red, white
   EQUB 0,0, 1,4, 2,1, 3,7
-
-  RTS
 }
 
 .cls

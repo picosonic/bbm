@@ -35,7 +35,7 @@
 .drawtitle
 {
   ; Clear palette whilst drawing
-  JSR blankpal
+  LDA #PAL_BLANK:JSR setpal
   JSR cls
 
   ; Store a pointer to title data
@@ -62,7 +62,7 @@
   BNE loop
 
   ; Show graphics
-  JSR titlepal
+  LDA #PAL_TITLE:JSR setpal
 
   JSR drawtitletext
 
@@ -192,7 +192,7 @@
 {
   JSR cls
 
-  JSR gamepal
+  LDA #PAL_GAME:JSR setpal
 
   ; Position text cursor to write "STAGE n"
   LDX #&0A:LDY #&0D
@@ -251,7 +251,7 @@
 {
   JSR cls
 
-  JSR gamepal
+  LDA #PAL_GAME:JSR setpal
 
   ; Position text cursor to write "BONUS STAGE"
   LDX #&0A:LDY #&0D
@@ -274,7 +274,7 @@
 {
   JSR cls
 
-  JSR gamepal
+  LDA #PAL_GAME:JSR setpal
 
   ; Position text cursor to write "GAME OVER"
   LDX #&0A:LDY #&0D
@@ -300,7 +300,7 @@
 
   JSR cls
 
-  JSR gamepal
+  LDA #PAL_GAME:JSR setpal
 
   ; Position text cursor to write prompt
   LDX #&07:LDY #&05
@@ -485,7 +485,7 @@
 .gamecompleted
 {
   JSR cls
-  JSR gamepal
+  LDA #PAL_GAME:JSR setpal
 
   LDY #&00 ; Position within current string
   LDX #&07 ; Num. strings to write
