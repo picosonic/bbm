@@ -405,7 +405,7 @@ INCLUDE "sound.asm"
   CLC:ADC sprdst+1:STA sprdst+1
 
   ; Write trailing zeroes of score
-  LDA #&30:STA sprite:JSR writetile:JSR writetile
+  LDA #'0':STA sprite:JSR writetile:JSR writetile
 
   ; Set text coordinates
   LDA #&40
@@ -547,30 +547,6 @@ INCLUDE "sound.asm"
 .multtabx
   EQUB (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256)
   EQUB (levelmap DIV 256), (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1
-
-.alldone
-  JMP alldone
-
-.anim
-  JSR waitvsync
-
-  ; Draw sprite to screen
-  JSR drawtile
-
-  LDA sprx:CLC:ADC #&10:STA sprx
-
-  LDA #5:STA delayframes:JSR delay
-
-  INC sprite
-  LDA sprite
-  ;CMP #&80
-  BNE finished
-  LDA #&00:STA sprite
-
-.finished
-  NOP
-  JMP anim
-  RTS
 
 ; Delay specified number of frames
 .delay

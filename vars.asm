@@ -10,10 +10,12 @@ ORG &0060
 .sprdst EQUW &0000
 .sprdst2 EQUW &0000
 
-; Sprite number and x, y position
+; Sprite number and x, y block position, and u, v offset (4 px)
 .sprite EQUB &00
 .sprx EQUB &00
 .spry EQUB &00
+.spru EQUB &00
+.sprv EQUB &00
 
 ; Number of frames to delay by
 .delayframes EQUB &00

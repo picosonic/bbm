@@ -109,7 +109,7 @@
 .nodigits
   LDA topscore, X
   BNE decimals
-  LDA #&3A:STA sprite:JSR writetile
+  LDA #':':STA sprite:JSR writetile
   INX
   CPX #&07
   BNE nodigits
@@ -117,15 +117,14 @@
 
 .decimals
   LDA topscore, X
-  CLC:ADC #&30
+  CLC:ADC #'0'
   STA sprite:JSR writetile
   INX
   CPX #&07
   BNE decimals
 
 .digitend
-  LDA #&30:STA sprite:JSR writetile
-  LDA #&30:STA sprite:JSR writetile
+  LDA #'0':STA sprite:JSR writetile:JSR writetile
 
   RTS
 }

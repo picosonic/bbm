@@ -58,6 +58,7 @@ PAL_BLANK = &00
 PAL_TITLE = &01
 PAL_GAME  = &02
 
+; Set palette to one specified in A
 .setpal
 {
   ASL A:ASL A:ASL A:TAY
@@ -86,6 +87,7 @@ PAL_GAME  = &02
   EQUB 0,0, 1,4, 2,1, 3,7
 }
 
+; Clear graphics screen
 .cls
 {
   LDA #(MODE8BASE) MOD 256:STA sprdst
@@ -105,6 +107,7 @@ PAL_GAME  = &02
   RTS
 }
 
+; Write an 8x8 tile to screen at current cursor position, then advance
 .writetile
 {
   PHA
@@ -190,7 +193,7 @@ PAL_GAME  = &02
   CMP #&10
   BNE loop
 
-  ; Advance to next tile position
+  ; Advance to next 8x8 tile position
   LDA sprdst:CLC:ADC #&10:STA sprdst
   BCC samepage
   INC sprdst+1
@@ -201,48 +204,6 @@ PAL_GAME  = &02
   PLA
   TAX
   PLA
-
-  RTS
-}
-
-.drawtile
-{
-  ; Store a pointer to spritesheet
-  LDA #(tilesheet) MOD 256:STA sprsrc
-  LDA #(tilesheet) DIV 256:STA sprsrc+1
-
-  ; Store a pointer to the screen
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
-  ; Calculate pointer to requested sprite within spritesheet
-  LDA sprite
-  BEQ calcdone
-  TAX
-  LDA #&00
-.calc
-  CLC:ADC #&10
-  BCC norm
-  INC sprsrc+1
-.norm
-  DEX
-  BNE calc
-  STA sprsrc
-.calcdone
-
-  ; Calculate pointer to x,y position of sprite within screen RAM - TODO FIX
-  LDA sprdst+1:CLC:ADC spry:STA sprdst+1
-  LDA sprdst:CLC:ADC sprx:STA sprdst
-
-  ; Now draw it
-  LDY #&00
-.loop
-  LDA (sprsrc), Y
-  STA (sprdst), Y
-
-  INY
-  CPY #&10
-  BNE loop
 
   RTS
 }
