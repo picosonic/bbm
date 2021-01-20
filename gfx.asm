@@ -141,8 +141,8 @@ PAL_GAME  = &02
 
   LDA sprite
 
-  ; Is sprite => &5A
-  CMP #&5A
+  ; Is sprite > 'Z'
+  CMP #&5B
   BCS nochange
 
   LDA (sprsrc), Y
