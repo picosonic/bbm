@@ -60,7 +60,7 @@ PAL_GAME  = &02
 
 .setpal
 {
-  CLC:ROL A:ROL A:ROL A:TAY
+  ASL A:ASL A:ASL A:TAY
   LDX #&00
 .loop
   LDA #&13:JSR OSWRCH
