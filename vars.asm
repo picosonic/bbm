@@ -26,8 +26,8 @@ ORG &0060
 .cursor EQUB &00
 
 ; Top score and current score
-.topscore EQUW &0000, &0000, &0000
-.score EQUW &0000, &0000, &0000
+.topscore EQUB &00, &00, &00, &00, &00, &00, &00
+.score EQUB &00, &00, &00, &00, &00, &00, &00
 
 ; Current stage
 .stage EQUB &00
@@ -36,6 +36,12 @@ ORG &0060
 .timeleft EQUB &00
 
 ; Temporary variables
+.tempp EQUB &00
+.tempq EQUB &00
+.tempr EQUB &00
+.temps EQUB &00
+.tempu EQUB &00
+.tempv EQUB &00
 .tempw EQUB &00
 .tempx EQUB &00
 .tempy EQUB &00
