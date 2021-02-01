@@ -227,8 +227,10 @@ INCLUDE "sound.asm"
 
   JSR drawgameoverscreen
 
-  ; Wait 1 second
-  LDA #50:STA delayframes:JSR delay
+  ; wait for RETURN before clearing resume code
+.endwait
+  LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
+  BEQ endwait
 
   ; TODO
   JMP gamestart
