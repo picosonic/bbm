@@ -368,9 +368,6 @@
   CPX #21
   BNE nextpwchar 
 
-.broke
-  JMP broke
-
   RTS
 
 .gameoverstring
