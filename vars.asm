@@ -94,7 +94,7 @@ ORG &0400
 .seed EQUW &0000, &0000
 
 .password_buffer
-SKIP 20
+SKIP 21
 
 ALIGN &100
 

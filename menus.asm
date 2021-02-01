@@ -286,10 +286,116 @@
   DEX
   BPL nextchar
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Create a secret code
+
+  ; High nibble of bonus power
+  LDA BONUS_POWER
+  LSR A:LSR A:LSR A:LSR A
+  STA tempu
+
+  ; Low nibble of stage
+  LDA stage
+  AND #&0F
+  STA tempv
+
+  ; High nibble of stage
+  LDA stage
+  LSR A:LSR A:LSR A:LSR A
+  STA tempw
+
+  ; Calculate the first 3 checksums
+  LDY #&00
+  LDX #&00
+  LDA #&03:STA tempz
+
+.loop
+  JSR calcsum
+  JSR getpassptr
+  LDA tempx
+  STA (stagemapptr), Y
+  DEC tempz
+  BNE loop
+
+  ; Calculate final checksum
+  JSR calcsum
+
+  ; Add checksum 1 * 2
+  LDA tempp
+  ASL A
+  CLC:ADC tempx
+  STA tempx
+
+  ; Add checksum 2 * 2
+  LDA tempq
+  ASL A
+  CLC:ADC tempx
+  STA tempx
+
+  ; Add checksum 3 * 2
+  LDA tempr
+  ASL A
+  CLC:ADC tempx
+  STA temps
+
+  LDY #&00
+  STY seed
+  LDX #&00
+
+.loop2
+  JSR getpassptr
+  LDA (stagemapptr), Y
+  AND #&0F
+  SEC:SBC seed
+  SEC:SBC #&07
+  AND #&0F
+  STA password_buffer, X
+  STA seed
+  CPX #20
+  BNE loop2
+
+  ; Position text cursor to write secret code
+  LDX #&06:LDY #&16
+  JSR positiontextcursor
+
+  ; Write the secret code
+  LDX #&01
+.nextpwchar
+  LDA password_buffer, X:TAY
+  LDA passwordencode, Y
+  STA sprite:JSR writetile
+  INX
+  CPX #21
+  BNE nextpwchar 
+
+.broke
+  JMP broke
+
   RTS
 
 .gameoverstring
   EQUS "REVO:EMAG"
+
+.passwordencode
+  EQUS "AOFKCPGELBHMJDNI"
+}
+
+; Calculate a sum of 4 bytes, from X reg offset onwards
+.calcsum
+{
+  LDA #&04:STA tempy
+  LDA #&00:STA tempx
+
+.loop
+  JSR getpassptr
+
+  LDA (stagemapptr), Y
+  CLC:ADC tempx:STA tempx
+
+  DEC tempy
+  BNE loop
+
+  RTS
 }
 
 .password
@@ -443,10 +549,10 @@
   BNE passloop5
 
   ; Shift low nibble to high nibble of BONUS_POWER
-  LDA BONUS_POWER:ASL A:ASL A:ASL A:ASL A:STA BONUS_POWER
+  LDA tempu:ASL A:ASL A:ASL A:ASL A:STA BONUS_POWER
 
   ; Derive stage value by combining nibbles
-  LDA tempw:ASL A:ASL A:ASL A:ASL A:ORA stage:STA stage
+  LDA tempw:ASL A:ASL A:ASL A:ASL A:ORA tempv:STA stage
 
   ; Mark as a valid password
   INC tempz
@@ -475,10 +581,10 @@
 
  ; Locations in zero page where the decoded password variables are placed
 .passdatavars
-  EQUB (score+6 MOD 256), (BONUS_REMOTE MOD 256), (stage MOD 256), (score MOD 256), (tempx MOD 256)
-  EQUB (score+5 MOD 256), (BONUS_POWER MOD 256), (score+3 MOD 256), (BONUS_FIRESUIT MOD 256), (tempx MOD 256)
-  EQUB (BONUS_BOMBS MOD 256), (score+2 MOD 256), (BONUS_SPEED MOD 256), (score+1 MOD 256), (tempx MOD 256)
-  EQUB (score+4 MOD 256), (DEBUG MOD 256), (tempw MOD 256), (BONUS_NOCLIP MOD 256), (tempx MOD 256)
+  EQUB (score+6 MOD 256), (BONUS_REMOTE MOD 256), (tempv MOD 256), (score MOD 256), (tempp MOD 256)
+  EQUB (score+5 MOD 256), (tempu MOD 256), (score+3 MOD 256), (BONUS_FIRESUIT MOD 256), (tempq MOD 256)
+  EQUB (BONUS_BOMBS MOD 256), (score+2 MOD 256), (BONUS_SPEED MOD 256), (score+1 MOD 256), (tempr MOD 256)
+  EQUB (score+4 MOD 256), (DEBUG MOD 256), (tempw MOD 256), (BONUS_NOCLIP MOD 256), (temps MOD 256)
 }
 
 .gamecompleted
