@@ -60,16 +60,26 @@ ORG &0060
 .inmenu EQUB &00
 
 ; Bonuses
-.BONUS_POWER         EQUB &00
-.BONUS_BOMBS         EQUB &00
-.BONUS_SPEED         EQUB &00
-.BONUS_NOCLIP        EQUB &00
-.BONUS_REMOTE        EQUB &00
-.BONUS_BOMBWALK      EQUB &00
-.BONUS_FIRESUIT      EQUB &00
+.BONUS_POWER        EQUB &00
+.BONUS_BOMBS        EQUB &00
+.BONUS_SPEED        EQUB &00
+.BONUS_NOCLIP       EQUB &00
+.BONUS_REMOTE       EQUB &00
+.BONUS_BOMBWALK     EQUB &00
+.BONUS_FIRESUIT     EQUB &00
 
 ; Debug mode boolean (show powerups and exit)
 .DEBUG              EQUB &00
+
+; Pointer
+.sound_ptr EQUW &0000
+
+; Progress through each channel of current melody
+.sound_cnt EQUB &00, &00, &00
+
+; Sound vars (unknown)
+.unk_C7 EQUB &00, &00, &00
+.unk_CA EQUB &00, &00, &00
 
 ; ---------------------------------------------------------
 ; Variables in LANGUAGE workspace, &400 to &7FF
@@ -100,3 +110,5 @@ ALIGN &100
 
 .levelmap
 SKIP (32*13) ; Reserve bytes for in-game level data
+
+.end_of_vars RTS

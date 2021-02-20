@@ -30,9 +30,11 @@ INCLUDE "sound.asm"
   JSR mode8
 
   ; Load data files
-  LDX #(titlestr) MOD 256:LDY #(titlestr) DIV 256:JSR OSCLI
-  LDX #(tilestr) MOD 256:LDY #(tilestr) DIV 256:JSR OSCLI
-  LDX #(sprstr) MOD 256:LDY #(sprstr) DIV 256:JSR OSCLI
+  LDX #titlestr MOD 256:LDY #titlestr DIV 256:JSR OSCLI
+  LDX #tilestr MOD 256:LDY #tilestr DIV 256:JSR OSCLI
+  LDX #sprstr MOD 256:LDY #sprstr DIV 256:JSR OSCLI
+  LDX #tunestr MOD 256:LDY #tunestr DIV 256:JSR OSCLI
+  LDX #tunestr2 MOD 256:LDY #tunestr DIV 256:JSR OSCLI
 
   ; Initialise sprite
   LDA #&00:STA sprite
@@ -60,10 +62,15 @@ INCLUDE "sound.asm"
   ; Initialise game state
   LDA #&01:STA inmenu
 
+  ; Initialise sound
+  JSR sound_init
+
   ; Set up vsync event handler
   LDA #&00:STA framecounter
-  LDA #(eventhandler) MOD 256:STA EVNTV
-  LDA #(eventhandler) DIV 256:STA EVNTV+1
+  SEI
+  LDA #eventhandler MOD 256:STA EVNTV
+  LDA #eventhandler DIV 256:STA EVNTV+1
+  CLI
   LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
 
 .gamestart
@@ -72,6 +79,9 @@ INCLUDE "sound.asm"
 
   JSR waitvsync
   JSR drawtitle
+
+  ; Start playing music
+  LDA #&01:STA sound_music
 
 .awaitkeys
   JSR rand
@@ -122,6 +132,8 @@ INCLUDE "sound.asm"
 
   INC framecounter
 
+  JSR sound_eventvhandler
+
   ; Restore registers
   PLA
   TAY
@@ -138,8 +150,14 @@ INCLUDE "sound.asm"
   LDA #&01:STA stage
   JSR drawstagescreen
 
-  ; Wait 1 second
-  LDA #50:STA delayframes:JSR delay
+  ; Play stage screen melody
+  LDA #&02:STA sound_music
+
+  ; Wait for tune to finish
+  JSR sound_waittune
+
+  ; Play stage screen melody
+  LDA #&03:STA sound_music
 
   ; Generate level map
   JSR buildmap
@@ -152,6 +170,9 @@ INCLUDE "sound.asm"
 
   ; Clear the screen
   JSR cls
+
+  ; Start playing music
+  LDA #&03:STA sound_music
 
   ; Draw TIME/SCORE/LIVES
   JSR showstatus
@@ -226,6 +247,9 @@ INCLUDE "sound.asm"
   BEQ gameloop
 
   JSR drawgameoverscreen
+
+  LDA #&09:STA sound_music
+  JSR sound_waittune
 
   ; wait for RETURN before clearing resume code
 .endwait
@@ -566,6 +590,10 @@ EQUS "L.TITLE", &0D
 EQUS "L.TILES", &0D
 .sprstr
 EQUS "L.SPRITES", &0D
+.tunestr
+EQUS "L.TUNES", &0D
+.tunestr2
+EQUS "L.TUNES2", &0D
 .end
 
 ALIGN &100
@@ -579,11 +607,88 @@ INCBIN "TILES.beeb"
 .spritesheet
 INCBIN "SPRITES.beeb"
 
-.eof
+.dataend
   RTS ; Here just to advise on remaining space
+
+ORG &900
+.melodies
+
+.melody_01_c1
+INCBIN "melodies/M01C1.bin"
+.melody_01_c2
+INCBIN "melodies/M01C2.bin"
+.melody_01_c3
+INCBIN "melodies/M01C3.bin"
+
+.melody_02_c1
+INCBIN "melodies/M02C1.bin"
+.melody_02_c2
+INCBIN "melodies/M02C2.bin"
+.melody_02_c3
+INCBIN "melodies/M02C3.bin"
+
+.melody_03_c3
+INCBIN "melodies/M03C3.bin"
+
+.melody_04_c1
+INCBIN "melodies/M04C1.bin"
+.melody_04_c2
+INCBIN "melodies/M04C2.bin"
+.melody_04_c3
+INCBIN "melodies/M04C3.bin"
+
+.melody_05_c1
+INCBIN "melodies/M05C1.bin"
+.melody_05_c2
+INCBIN "melodies/M05C2.bin"
+.melody_05_c3
+INCBIN "melodies/M05C3.bin"
+
+.melody_06_c1
+INCBIN "melodies/M06C1.bin"
+.melody_06_c2
+INCBIN "melodies/M06C2.bin"
+.melody_06_c3
+INCBIN "melodies/M06C3.bin"
+
+.melody_08_c1
+INCBIN "melodies/M08C1.bin"
+.melody_08_c2
+INCBIN "melodies/M08C2.bin"
+
+.melody_09_c1
+INCBIN "melodies/M09C1.bin"
+
+.eof_tunes RTS
+
+ORG &E00
+.melodies_2
+
+.melody_07_c1
+INCBIN "melodies/M07C1.bin"
+.melody_07_c2
+INCBIN "melodies/M07C2.bin"
+.melody_07_c3
+INCBIN "melodies/M07C3.bin"
+
+.melody_09_c2
+INCBIN "melodies/M09C2.bin"
+.melody_09_c3
+INCBIN "melodies/M09C3.bin"
+
+.melody_10_c1
+INCBIN "melodies/M10C1.bin"
+.melody_10_c2
+INCBIN "melodies/M10C2.bin"
+.melody_10_c3
+INCBIN "melodies/M10C3.bin"
+
+.eof RTS
 
 SAVE "BBM", start, end
 SAVE "TITLE", titles, tilesheet
 SAVE "TILES", tilesheet, spritesheet
-SAVE "SPRITES", spritesheet, eof
+SAVE "SPRITES", spritesheet, dataend
+SAVE "TUNES", melodies, eof_tunes
+SAVE "TUNES2", melodies_2, eof
 

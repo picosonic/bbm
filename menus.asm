@@ -183,7 +183,7 @@
   EQUB &FF
 
   EQUB &00, &36
-  EQUS "BBC", &B0, "MICRO", &B0, "PORT", &B0, "2020", &B0, "BY", &B0, "PICOSONIC"
+  EQUS "BBC", &B0, "MICRO", &B0, "PORT", &B0, "2021", &B0, "BY", &B0, "PICOSONIC"
   EQUB &FF
 }
 
@@ -627,6 +627,8 @@
   INX
   CPX #16
   BNE loop
+
+  LDA #&07:STA sound_music
 
   ; Draw bomberman
   LDA #&10:STA BOMBMAN_FRAME
