@@ -156,7 +156,7 @@ INCLUDE "sound.asm"
   ; Wait for tune to finish
   JSR sound_waittune
 
-  ; Play stage screen melody
+  ; Play main game melody
   LDA #&03:STA sound_music
 
   ; Generate level map
@@ -353,14 +353,8 @@ INCLUDE "sound.asm"
 
 .drawtime
 {
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
   ; Set text coordinates
-  LDA #&50
-  CLC:ADC sprdst:STA sprdst
-  LDA #&0
-  CLC:ADC sprdst+1:STA sprdst+1
+  LDX #&05:LDY #&00:JSR positiontextcursor
 
   LDA timeleft
   CMP #255
@@ -407,14 +401,8 @@ INCLUDE "sound.asm"
 
 .showstatus
 {
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
-
   ; Set text coordinates
-  LDA #&0
-  CLC:ADC sprdst:STA sprdst
-  LDA #&0
-  CLC:ADC sprdst+1:STA sprdst+1
+  LDX #&00:LDY #&00:JSR positiontextcursor
 
   ; Write "TIME"
   LDX #&03
@@ -424,7 +412,7 @@ INCLUDE "sound.asm"
   DEX
   BPL nextchar
 
-  ; Set text coordinates
+  ; Advance text coordinates
   LDA #&C0
   CLC:ADC sprdst:STA sprdst
   LDA #&01
@@ -433,7 +421,7 @@ INCLUDE "sound.asm"
   ; Write trailing zeroes of score
   LDA #'0':STA sprite:JSR writetile:JSR writetile
 
-  ; Set text coordinates
+  ; Advance text coordinates
   LDA #&40
   CLC:ADC sprdst:STA sprdst
   LDA #&00
