@@ -400,8 +400,13 @@
   ; Mark as invalid password
   LDA #&00:STA tempz
 
+  ; Stop any music playing
+  LDA #&00:STA sound_music
+
+  ; Clear screen
   JSR cls
 
+  ; Set palette
   LDA #PAL_GAME:JSR setpal
 
   ; Position text cursor to write prompt

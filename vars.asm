@@ -1,7 +1,7 @@
 ; ---------------------------------------------------------
 ; Zero page variables
 
-ORG &0060
+ORG &0000
 
 ; Sprite source dest pointers, top and bottom halves
 .sprsrc EQUW &0000
