@@ -238,7 +238,8 @@ INCLUDE "sound.asm"
   ; Check if game is paused
   JSR paused
   ; TODO JSR SPRD
-  ; TODO check button presses
+  ; Check button presses
+  JSR process_inputs
   JSR bombtick ; bomb timer operations
   JSR drawbomberman
   ; TODO THINK
@@ -277,6 +278,42 @@ INCLUDE "sound.asm"
   LDA #INKEY_RETURN:JSR unpressed ; Wait until it's not pressed
 
 .not_paused
+  RTS
+}
+
+.process_inputs
+{
+.case_right
+  LDA #INKEY_X:JSR scankey ; Scan for X (right)
+  BEQ case_left
+  ;INC BOMBMAN_X
+
+.case_left
+  LDA #INKEY_Z:JSR scankey ; Scan for Z (right)
+  BEQ case_up
+  ;DEC BOMBMAN_X
+
+.case_up
+  LDA #INKEY_COLON:JSR scankey ; Scan for : (up)
+  BEQ case_down
+  ;DEC BOMBMAN_Y
+
+.case_down
+  LDA #INKEY_FULLSTOP:JSR scankey ; Scan for . (down)
+  BEQ case_bomb
+  ;INC BOMBMAN_Y
+
+.case_bomb
+  LDA #INKEY_SPACE:JSR scankey ; Scan for SPACE (bomb)
+  BEQ case_detonate
+  ; JSR drop_bomb
+
+.case_detonate
+  LDA #INKEY_A:JSR scankey ; Scan for A (detonate)
+  BEQ done
+  ; JSR detonate
+
+.done
   RTS
 }
 
