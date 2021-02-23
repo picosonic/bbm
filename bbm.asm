@@ -11,6 +11,7 @@ GUARD ROMSBASE
 MODE8BASE  = &4800
 
 .start
+{
   ; TODO move any data which overlaps start screen memory
 
   ; Make sure we are not in decimal mode
@@ -18,6 +19,7 @@ MODE8BASE  = &4800
 
   ; Jump to initialisation
   JMP init
+}
 
 ; Import modules
 INCLUDE "input.asm"
