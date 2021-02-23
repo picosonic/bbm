@@ -235,7 +235,8 @@ INCLUDE "sound.asm"
 
 .gameloop
 {
-  ; TODO Check if game is paused
+  ; Check if game is paused
+  JSR paused
   ; TODO JSR SPRD
   ; TODO check button presses
   JSR bombtick ; bomb timer operations
@@ -245,7 +246,7 @@ INCLUDE "sound.asm"
   JSR stagetimer ; tick game stage timer
 
   ; check for keypress
-  LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
+  LDA #INKEY_SPACE:JSR scankey ; Scan for RETURN
   BEQ gameloop
 
   JSR drawgameoverscreen
@@ -260,6 +261,23 @@ INCLUDE "sound.asm"
 
   ; TODO
   JMP gamestart
+}
+
+.paused
+{
+  LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
+  BEQ not_paused
+  LDA #&01:STA sound_disable
+  LDA #INKEY_RETURN:JSR unpressed ; Wait until it's not pressed
+
+.wait_start
+  LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
+  BEQ wait_start
+  LDA #&00:STA sound_disable
+  LDA #INKEY_RETURN:JSR unpressed ; Wait until it's not pressed
+
+.not_paused
+  RTS
 }
 
 .drawbomberman

@@ -35,6 +35,10 @@
 
 .sound_eventvhandler
 {
+  ; Check if melody playback disabled
+  LDA sound_disable
+  BNE sound_abort
+
   ; Check if any melody playing
   LDA sound_music
   BEQ sound_abort
@@ -367,6 +371,9 @@
 }
 
 ; ---------------------------------------------------------
+
+.sound_disable
+  EQUW &00
 
 ; Current melody channel data (3 x pointers, plus 2 bytes)
 .sound_chandat
