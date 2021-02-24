@@ -222,15 +222,15 @@ INCLUDE "sound.asm"
   JSR drawbomberman
 
   ; Place a test bomb
-  LDX #&00
-  LDA #&02:STA BOMB_X, X
-  LDA #&02:STA BOMB_Y, X
-  LDA #&01:STA BOMB_ACTIVE, X
-
-  LDX #&01
-  LDA #&01:STA BOMB_X, X
-  LDA #&03:STA BOMB_Y, X
-  LDA #&01:STA BOMB_ACTIVE, X
+  ;LDX #&00
+  ;LDA #&02:STA BOMB_X, X
+  ;LDA #&02:STA BOMB_Y, X
+  ;LDA #&01:STA BOMB_ACTIVE, X
+  ;
+  ;LDX #&01
+  ;LDA #&01:STA BOMB_X, X
+  ;LDA #&03:STA BOMB_Y, X
+  ;LDA #&01:STA BOMB_ACTIVE, X
 }
 
 .gameloop
@@ -238,10 +238,13 @@ INCLUDE "sound.asm"
   ; Check if game is paused
   JSR paused
   ; TODO JSR SPRD
-  ; Check button presses
-  JSR process_inputs
+  
+  JSR waitvsync
+  JSR drawbomberman ; clear bomberman in old pos
+  JSR process_inputs ; Check button presses
+  JSR drawbomberman ; draw bomberman in new pos
+
   JSR bombtick ; bomb timer operations
-  JSR drawbomberman
   ; TODO THINK
   JSR bombanim ; animate bombs
   JSR stagetimer ; tick game stage timer
@@ -283,37 +286,240 @@ INCLUDE "sound.asm"
 
 .process_inputs
 {
-.case_right
-  LDA #INKEY_X:JSR scankey ; Scan for X (right)
+  LDA #INKEY_X:JSR scankey ; Scan for "X" (right)
   BEQ case_left
-  ;INC BOMBMAN_X
+  JSR move_right
 
 .case_left
-  LDA #INKEY_Z:JSR scankey ; Scan for Z (right)
+  LDA #INKEY_Z:JSR scankey ; Scan for "Z" (left)
   BEQ case_up
-  ;DEC BOMBMAN_X
+  JSR move_left
 
 .case_up
-  LDA #INKEY_COLON:JSR scankey ; Scan for : (up)
+  LDA #INKEY_COLON:JSR scankey ; Scan for ":" (up)
   BEQ case_down
-  ;DEC BOMBMAN_Y
+  JSR move_up
 
 .case_down
-  LDA #INKEY_FULLSTOP:JSR scankey ; Scan for . (down)
-  BEQ case_bomb
-  ;INC BOMBMAN_Y
+  LDA #INKEY_FWDSLASH:JSR scankey ; Scan for "." (down)
+  BEQ case_action
+  JSR move_down
 
-.case_bomb
-  LDA #INKEY_SPACE:JSR scankey ; Scan for SPACE (bomb)
-  BEQ case_detonate
-  ; JSR drop_bomb
+.case_action
+;  LDA #INKEY_SPACE:JSR scankey ; Scan for "SPACE" (bomb)
+;  BNE drop_bomb
 
-.case_detonate
-  LDA #INKEY_A:JSR scankey ; Scan for A (detonate)
-  BEQ done
-  ; JSR detonate
+;  ; Check we have detonator
+;  LDA BONUS_REMOTE
+;  BEQ done
+
+;  LDA #INKEY_CLOSESQBRACKET:JSR scankey ; Scan for "[" (detonate)
+;  BEQ done
+;  JSR detonate
 
 .done
+  RTS
+}
+
+.drop_bomb
+{
+  RTS
+}
+
+.move_right
+{
+   ; Are we on the edge of this cell
+  LDA BOMBMAN_U
+  CMP #&04
+  BCS nextcell
+  INC BOMBMAN_U
+  JMP done
+
+.nextcell
+  ; Check if we can move to the next cell
+  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+  LDY BOMBMAN_X:INY:JSR checkmap:BNE done
+
+  ; Move offset down
+  ; JSR adjust_bombman_vpos
+  INC BOMBMAN_U
+  LDA BOMBMAN_U
+  CMP #&08
+  BNE done
+
+  ; Move down to start of next cell
+  LDA #&00
+  STA BOMBMAN_U
+  INC BOMBMAN_X
+
+  ; TODO flip sprite horizontally
+
+  ; Set animation frame (0..2)
+  LDA #&00:LDY #&02:JSR setframe
+
+.done
+  RTS
+}
+
+.move_left
+{
+  ; Are we on the edge of this cell
+  LDA BOMBMAN_U
+  CMP #&05
+  BCC nextcell
+  DEC BOMBMAN_U
+  JMP done
+
+.nextcell
+  ; Check if we can move to the next cell
+  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+  LDY BOMBMAN_X:DEY:JSR checkmap:BNE done
+
+  ; Move offset left
+  ; JSR adjust_bombman_vpos
+  DEC BOMBMAN_U
+  BPL done
+
+  ; Move down to start of next cell
+  LDA #&07
+  STA BOMBMAN_U
+  DEC BOMBMAN_X
+
+  ; TODO disable horizontal flip
+
+  ; Set animation frame (0..2)
+  LDA #&00:LDY #&02:JSR setframe
+
+.done
+  RTS
+}
+
+.move_up
+{
+  ; Are we on the edge of this cell
+  LDA BOMBMAN_V
+  CMP #&05
+  BCC nextcell
+  DEC BOMBMAN_V
+  JMP done
+
+.nextcell
+  ; Check if we can move to the next cell
+  LDY BOMBMAN_Y:DEY:LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+  LDY BOMBMAN_X:JSR checkmap:BNE done
+
+  ; Move offset up
+  ; JSR adjust_bombman_hpos
+  DEC BOMBMAN_V
+  BPL done
+
+  ; Move down to start of next cell
+  LDA #&07
+  STA BOMBMAN_V
+  DEC BOMBMAN_Y
+
+  ; Set animation frame (6..8)
+  LDA #&06:LDY #&08:JSR setframe
+
+.done
+  RTS
+}
+
+.move_down
+{
+  ; Are we on the edge of this cell
+  LDA BOMBMAN_V
+  CMP #&04
+  BCS nextcell
+  INC BOMBMAN_V
+  JMP done
+
+.nextcell
+  ; Check if we can move to the next cell
+  LDY BOMBMAN_Y:INY:LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+  LDY BOMBMAN_X:JSR checkmap:BNE done
+
+  ; Move offset down
+  ; JSR adjust_bombman_hpos
+  INC BOMBMAN_V
+  LDA BOMBMAN_V
+  CMP #&08
+  BNE done
+
+  ; Move down to start of next cell
+  LDA #&00
+  STA BOMBMAN_V
+  INC BOMBMAN_Y
+
+  ; Set animation frame (3..5)
+  LDA #&03:LDY #&05:JSR setframe
+
+.done
+  RTS
+}
+
+.setframe
+{
+  ; Is this the same set of animation frames?
+  CMP BOMBMAN_FRAMESTART
+  BEQ same
+
+  ; Update the new animation frame set
+  STA BOMBMAN_FRAME
+  STA BOMBMAN_FRAMESTART
+
+.same
+  ; Move on to the next frame of this set
+  INC BOMBMAN_FRAME
+  ; Is this frame now out of range?
+  CPY BOMBMAN_FRAME
+  BCS done
+
+  ; Reset to first frame of set
+  STA BOMBMAN_FRAME
+
+.done
+  RTS
+}
+
+.detonate
+{
+  RTS
+}
+
+.checkmap
+{
+  LDA (stagemapptr), Y
+  BEQ done ; empty
+  CMP #&08:BEQ done
+  CMP #&06:BEQ done
+
+  CMP #&02:BEQ has_noclip
+  CMP #&04:BEQ has_noclip ; exit
+  CMP #&05:BEQ has_noclip ; bonus
+  
+  CMP #&03:BEQ has_bombwalk ; bomb
+.done
+  RTS
+}
+
+.has_noclip
+{
+  LDA BONUS_NOCLIP
+  EOR #&01
+
+  RTS
+}
+
+.has_bombwalk
+{
+  LDA BONUS_BOMBWALK
+  EOR #&01
+
   RTS
 }
 
@@ -321,6 +527,7 @@ INCLUDE "sound.asm"
 {
   LDA BOMBMAN_X:STA sprx
   LDA BOMBMAN_Y:STA spry
+  INC spry ; TEMPORARILY HERE
   LDA BOMBMAN_FRAME:STA sprite
   JSR drawsprite
 }

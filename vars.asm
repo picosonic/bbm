@@ -100,6 +100,9 @@ ORG &0400
 .BOMBMAN_V           EQUB &00
 .BOMBMAN_FRAME       EQUB &00
 
+; First frame of current animation set
+.BOMBMAN_FRAMESTART  EQUB &00
+
 ; Seed for random number generator
 .seed EQUW &0000, &0000
 
