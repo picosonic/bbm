@@ -35,8 +35,8 @@ INCLUDE "sound.asm"
   LDX #titlestr MOD 256:LDY #titlestr DIV 256:JSR OSCLI
   LDX #tilestr MOD 256:LDY #tilestr DIV 256:JSR OSCLI
   LDX #sprstr MOD 256:LDY #sprstr DIV 256:JSR OSCLI
+  LDX #extrastr MOD 256:LDY #extrastr DIV 256:JSR OSCLI
   LDX #tunestr MOD 256:LDY #tunestr DIV 256:JSR OSCLI
-  LDX #tunestr2 MOD 256:LDY #tunestr DIV 256:JSR OSCLI
 
   ; Initialise sprite
   LDA #&00:STA sprite
@@ -844,8 +844,8 @@ EQUS "L.TILES", &0D
 EQUS "L.SPRITES", &0D
 .tunestr
 EQUS "L.TUNES", &0D
-.tunestr2
-EQUS "L.TUNES2", &0D
+.extrastr
+EQUS "L.EXTRA", &0D
 .end
 
 ALIGN &100
@@ -911,10 +911,8 @@ INCBIN "melodies/M08C2.bin"
 .melody_09_c1
 INCBIN "melodies/M09C1.bin"
 
-.eof_tunes RTS
-
-ORG &E00
-.melodies_2
+  EQUS "JR" ; Padding
+  RTI ; At &0D00 to allow use of NMI workspace
 
 .melody_07_c1
 INCBIN "melodies/M07C1.bin"
@@ -935,12 +933,13 @@ INCBIN "melodies/M10C2.bin"
 .melody_10_c3
 INCBIN "melodies/M10C3.bin"
 
+.extradata
+INCLUDE "extra.asm"
 .eof RTS
 
 SAVE "BBM", start, end
 SAVE "TITLE", titles, tilesheet
 SAVE "TILES", tilesheet, spritesheet
 SAVE "SPRITES", spritesheet, dataend
-SAVE "TUNES", melodies, eof_tunes
-SAVE "TUNES2", melodies_2, eof
-
+SAVE "TUNES", melodies, extradata
+SAVE "EXTRA", extradata, eof
