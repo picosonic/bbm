@@ -34,7 +34,7 @@
             "taskName": "Run 'bbm.ssd' in Emulator",
             "isTestCommand": true,
             "args": [
-                "beebjit -0 ${workspaceFolder}/bbm.ssd"
+                "beebjit -0 ${workspaceFolder}/bbm.ssd -autoboot"
             ]
         }
     ]
