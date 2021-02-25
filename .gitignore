@@ -4,6 +4,7 @@ src
 # Reference guides
 *.pdf
 AllMem
+bbcmemmap1.txt
 
 # Disk images
 *.ssd
