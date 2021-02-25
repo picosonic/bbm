@@ -158,9 +158,6 @@ INCLUDE "sound.asm"
   ; Wait for tune to finish
   JSR sound_waittune
 
-  ; Play main game melody
-  LDA #&03:STA sound_music
-
   ; Generate level map
   JSR buildmap
 
@@ -555,8 +552,8 @@ INCLUDE "sound.asm"
 
 .drawbomberman
 {
-  LDA BOMBMAN_X:STA sprx
-  LDA BOMBMAN_Y:STA spry
+  LDA BOMBMAN_X:STA sprx:DEC sprx
+  LDA BOMBMAN_Y:STA spry:DEC spry
   LDA BOMBMAN_U:STA spru
   LDA BOMBMAN_V:STA sprv
 
@@ -918,56 +915,53 @@ INCBIN "melodies/M02C3.bin"
 .melody_03_c3
 INCBIN "melodies/M03C3.bin"
 
-.melody_04_c1
-INCBIN "melodies/M04C1.bin"
-.melody_04_c2
-INCBIN "melodies/M04C2.bin"
-.melody_04_c3
-INCBIN "melodies/M04C3.bin"
-
-.melody_05_c1
-INCBIN "melodies/M05C1.bin"
-.melody_05_c2
-INCBIN "melodies/M05C2.bin"
-.melody_05_c3
-INCBIN "melodies/M05C3.bin"
-
-.melody_06_c1
-INCBIN "melodies/M06C1.bin"
-.melody_06_c2
-INCBIN "melodies/M06C2.bin"
-.melody_06_c3
-INCBIN "melodies/M06C3.bin"
-
-.melody_08_c1
-INCBIN "melodies/M08C1.bin"
-.melody_08_c2
-INCBIN "melodies/M08C2.bin"
-
 .melody_09_c1
 INCBIN "melodies/M09C1.bin"
-
-  EQUS "JR" ; Padding
-  RTI ; At &0D00 to allow use of NMI workspace
-
-.melody_07_c1
-INCBIN "melodies/M07C1.bin"
-.melody_07_c2
-INCBIN "melodies/M07C2.bin"
-.melody_07_c3
-INCBIN "melodies/M07C3.bin"
-
 .melody_09_c2
 INCBIN "melodies/M09C2.bin"
 .melody_09_c3
 INCBIN "melodies/M09C3.bin"
 
+.melody_04_c1
+;INCBIN "melodies/M04C1.bin"
+.melody_04_c2
+;INCBIN "melodies/M04C2.bin"
+.melody_04_c3
+;INCBIN "melodies/M04C3.bin"
+
+.melody_05_c1
+;INCBIN "melodies/M05C1.bin"
+.melody_05_c2
+;INCBIN "melodies/M05C2.bin"
+.melody_05_c3
+;INCBIN "melodies/M05C3.bin"
+
+.melody_06_c1
+;INCBIN "melodies/M06C1.bin"
+.melody_06_c2
+;INCBIN "melodies/M06C2.bin"
+
+.melody_06_c3
+;INCBIN "melodies/M06C3.bin"
+
+.melody_08_c1
+;INCBIN "melodies/M08C1.bin"
+.melody_08_c2
+;INCBIN "melodies/M08C2.bin"
+
+.melody_07_c1
+;INCBIN "melodies/M07C1.bin"
+.melody_07_c2
+;INCBIN "melodies/M07C2.bin"
+.melody_07_c3
+;INCBIN "melodies/M07C3.bin"
+
 .melody_10_c1
-INCBIN "melodies/M10C1.bin"
+;INCBIN "melodies/M10C1.bin"
 .melody_10_c2
-INCBIN "melodies/M10C2.bin"
+;INCBIN "melodies/M10C2.bin"
 .melody_10_c3
-INCBIN "melodies/M10C3.bin"
+;INCBIN "melodies/M10C3.bin"
 
 .extradata
 INCLUDE "extra.asm"
