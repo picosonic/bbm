@@ -6,10 +6,6 @@ src
 AllMem
 bbcmemmap1.txt
 
-# Disk images
-*.ssd
-*.dsd
-
 # Other files
 *.jpg
 *.webp
