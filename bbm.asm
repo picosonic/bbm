@@ -355,8 +355,8 @@ INCLUDE "sound.asm"
 
   ; TODO flip sprite horizontally
 
-  ; Set animation frame (0..2)
-  LDA #&00:LDY #&02:JSR setframe
+  ; Set animation frame (0..3)
+  LDA #&00:LDY #&03:JSR setframe
 
 .done
   RTS
@@ -389,8 +389,8 @@ INCLUDE "sound.asm"
 
   ; TODO disable horizontal flip
 
-  ; Set animation frame (0..2)
-  LDA #&00:LDY #&02:JSR setframe
+  ; Set animation frame (0..3)
+  LDA #&00:LDY #&03:JSR setframe
 
 .done
   RTS
@@ -421,8 +421,8 @@ INCLUDE "sound.asm"
   STA BOMBMAN_V
   DEC BOMBMAN_Y
 
-  ; Set animation frame (6..8)
-  LDA #&06:LDY #&08:JSR setframe
+  ; Set animation frame (8..11)
+  LDA #&08:LDY #&0B:JSR setframe
 
 .done
   RTS
@@ -455,8 +455,8 @@ INCLUDE "sound.asm"
   STA BOMBMAN_V
   INC BOMBMAN_Y
 
-  ; Set animation frame (3..5)
-  LDA #&03:LDY #&05:JSR setframe
+  ; Set animation frame (4..7)
+  LDA #&04:LDY #&07:JSR setframe
 
 .done
   RTS
@@ -528,7 +528,7 @@ INCLUDE "sound.asm"
   LDA BOMBMAN_X:STA sprx
   LDA BOMBMAN_Y:STA spry
   INC spry ; TEMPORARILY HERE
-  LDA BOMBMAN_FRAME:STA sprite
+  LDX BOMBMAN_FRAME:LDA BOMBER_ANIM, X:STA sprite
   JSR drawsprite
 }
 
