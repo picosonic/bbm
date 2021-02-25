@@ -326,6 +326,26 @@ PAL_GAME  = &02
 
 .nox
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add x offset
+  LDA spru
+  BEQ no_x_offs
+  LSR A
+  ASL A:ASL A:ASL A
+  CLC:ADC sprdst:STA sprdst
+.no_x_offs
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add y offset
+  LDA sprv
+  BEQ no_y_offs
+  LSR A:LSR A
+  BEQ no_y_offs
+  LDA sprdst+1:CLC:ADC #&02:STA sprdst+1
+.no_y_offs
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
   ; Calculate bottom part as being + 0x200 from top
   LDA sprdst:STA sprdst2
   LDA sprdst+1:CLC:ADC #&02:STA sprdst2+1

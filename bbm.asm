@@ -342,7 +342,7 @@ INCLUDE "sound.asm"
   LDY BOMBMAN_X:INY:JSR checkmap:BNE done
 
   ; Move offset down
-  ; JSR adjust_bombman_vpos
+  JSR adjust_bombman_vpos
   INC BOMBMAN_U
   LDA BOMBMAN_U
   CMP #&08
@@ -378,7 +378,7 @@ INCLUDE "sound.asm"
   LDY BOMBMAN_X:DEY:JSR checkmap:BNE done
 
   ; Move offset left
-  ; JSR adjust_bombman_vpos
+  JSR adjust_bombman_vpos
   DEC BOMBMAN_U
   BPL done
 
@@ -412,7 +412,7 @@ INCLUDE "sound.asm"
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
   ; Move offset up
-  ; JSR adjust_bombman_hpos
+  JSR adjust_bombman_hpos
   DEC BOMBMAN_V
   BPL done
 
@@ -444,7 +444,7 @@ INCLUDE "sound.asm"
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
   ; Move offset down
-  ; JSR adjust_bombman_hpos
+  JSR adjust_bombman_hpos
   INC BOMBMAN_V
   LDA BOMBMAN_V
   CMP #&08
@@ -459,6 +459,36 @@ INCLUDE "sound.asm"
   LDA #&04:LDY #&07:JSR setframe
 
 .done
+  RTS
+}
+
+.adjust_bombman_hpos
+{
+  LDA BOMBMAN_U
+  CMP #&04
+  BCC adjust_right ; < 4
+  BEQ done         ; = 4
+  DEC BOMBMAN_U
+.done
+  RTS
+
+.adjust_right
+  INC BOMBMAN_U
+  RTS
+}
+
+.adjust_bombman_vpos
+{
+  LDA BOMBMAN_V
+  CMP #&04
+  BCC adjust_down ; < 4
+  BEQ done        ; = 4
+  DEC BOMBMAN_V
+.done
+  RTS
+
+.adjust_down
+  INC BOMBMAN_V
   RTS
 }
 
@@ -527,9 +557,15 @@ INCLUDE "sound.asm"
 {
   LDA BOMBMAN_X:STA sprx
   LDA BOMBMAN_Y:STA spry
+  LDA BOMBMAN_U:STA spru
+  LDA BOMBMAN_V:STA sprv
+
   INC spry ; TEMPORARILY HERE
   LDX BOMBMAN_FRAME:LDA BOMBER_ANIM, X:STA sprite
   JSR drawsprite
+
+  ; Reset sprite offsets
+  LDA #&00:STA spru:STA sprv
 }
 
 .bombtick
