@@ -922,6 +922,8 @@ INCBIN "melodies/M09C2.bin"
 .melody_09_c3
 INCBIN "melodies/M09C3.bin"
 
+  RTS
+
 .melody_04_c1
 ;INCBIN "melodies/M04C1.bin"
 .melody_04_c2
