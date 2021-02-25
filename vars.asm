@@ -1,7 +1,15 @@
 ; ---------------------------------------------------------
+; After compare, branch if
+;
+;  reg <  data : BCC
+;  reg =  data : BEQ
+;  reg >  data : {BEQ elsewhere} BCS
+;  reg <= data : BCC BEQ
+;  reg >= data : BCS
+; ---------------------------------------------------------
 ; Zero page variables
 
-ORG &0000
+ORG &0050
 
 ; Sprite source dest pointers, top and bottom halves
 .sprsrc EQUW &0000
