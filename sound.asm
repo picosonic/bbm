@@ -18,12 +18,12 @@
   EQUB 0   ; Number of steps in section 1
   EQUB 0   ; Number of steps in section 2
   EQUB 0   ; Number of steps in section 3
-  EQUB 126 ; Change of amplitude per step during attack phase
+  EQUB 60 ; Change of amplitude per step during attack phase
   EQUB -4  ; Change of amplitude per step during decay phase
   EQUB -4  ; Change of amplitude per step during sustain phase
   EQUB -4  ; Change of amplitude per step during release phase
-  EQUB 126 ; Target level at end of attack phase
-  EQUB 50  ; Target level at end of decay phase
+  EQUB 60 ; Target level at end of attack phase
+  EQUB 30  ; Target level at end of decay phase
 }
 
 ; Stop playing melody
