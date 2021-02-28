@@ -1,6 +1,7 @@
 ; OS defines
 INCLUDE "os.asm"
 INCLUDE "inkey.asm"
+INCLUDE "internal.asm"
 
 ; Variable defines
 INCLUDE "vars.asm"
@@ -283,22 +284,26 @@ INCLUDE "sound.asm"
 
 .process_inputs
 {
-  LDA #INKEY_X:JSR scankey ; Scan for "X" (right)
+  JSR read_input
+  LDX keys
+
+.case_right
+  TXA:AND #&01
   BEQ case_left
   JSR move_right
 
 .case_left
-  LDA #INKEY_Z:JSR scankey ; Scan for "Z" (left)
+  TXA:AND #&02
   BEQ case_up
   JSR move_left
 
 .case_up
-  LDA #INKEY_COLON:JSR scankey ; Scan for ":" (up)
+  TXA:AND #&08
   BEQ case_down
   JSR move_up
 
 .case_down
-  LDA #INKEY_FWDSLASH:JSR scankey ; Scan for "." (down)
+  TXA:AND #&04
   BEQ case_action
   JSR move_down
 

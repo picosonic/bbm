@@ -11,6 +11,9 @@
 
 ORG &0050
 
+; Input bitfield
+.keys EQUB &00
+
 ; Sprite source dest pointers, top and bottom halves
 .sprsrc EQUW &0000
 .sprsrc2 EQUW &0000
