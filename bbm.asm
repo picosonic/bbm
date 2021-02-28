@@ -216,6 +216,7 @@ INCLUDE "sound.asm"
   ; Draw bomberman
   LDA #1:STA BOMBMAN_X
   LDA #2:STA BOMBMAN_Y
+  LDA #8:STA BOMBMAN_U:STA BOMBMAN_V
   LDA #0:STA BOMBMAN_FRAME
   JSR drawbomberman
 
