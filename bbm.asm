@@ -144,7 +144,7 @@ INCLUDE "sound.asm"
   TAX
   PLA
   PLP
-  
+
   RTS
 }
 
@@ -237,7 +237,7 @@ INCLUDE "sound.asm"
   ; Check if game is paused
   JSR paused
   ; TODO JSR SPRD
-  
+
   JSR waitvsync
   JSR drawbomberman ; clear bomberman in old pos
   JSR process_inputs ; Check button presses
@@ -329,113 +329,11 @@ INCLUDE "sound.asm"
   RTS
 }
 
-.move_right
-{
-   ; Are we on the edge of this cell
-  LDA BOMBMAN_U
-  CMP #&04
-  BCS nextcell
-  INC BOMBMAN_U
-  JMP done
-
-.nextcell
-  ; Check if we can move to the next cell
-  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
-  LDY BOMBMAN_X:INY:JSR checkmap:BNE done
-
-  ; Move offset down
-  JSR adjust_bombman_vpos
-  INC BOMBMAN_U
-  LDA BOMBMAN_U
-  CMP #&08
-  BNE done
-
-  ; Move down to start of next cell
-  LDA #&00
-  STA BOMBMAN_U
-  INC BOMBMAN_X
-
-  ; TODO flip sprite horizontally
-
-  ; Set animation frame (0..3)
-  LDA #&00:LDY #&03:JSR setframe
-
-.done
-  RTS
-}
-
-.move_left
-{
-  ; Are we on the edge of this cell
-  LDA BOMBMAN_U
-  CMP #&05
-  BCC nextcell
-  DEC BOMBMAN_U
-  JMP done
-
-.nextcell
-  ; Check if we can move to the next cell
-  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
-  LDY BOMBMAN_X:DEY:JSR checkmap:BNE done
-
-  ; Move offset left
-  JSR adjust_bombman_vpos
-  DEC BOMBMAN_U
-  BPL done
-
-  ; Move down to start of next cell
-  LDA #&07
-  STA BOMBMAN_U
-  DEC BOMBMAN_X
-
-  ; TODO disable horizontal flip
-
-  ; Set animation frame (0..3)
-  LDA #&00:LDY #&03:JSR setframe
-
-.done
-  RTS
-}
-
-.move_up
-{
-  ; Are we on the edge of this cell
-  LDA BOMBMAN_V
-  CMP #&05
-  BCC nextcell
-  DEC BOMBMAN_V
-  JMP done
-
-.nextcell
-  ; Check if we can move to the next cell
-  LDY BOMBMAN_Y:DEY:LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
-  LDY BOMBMAN_X:JSR checkmap:BNE done
-
-  ; Move offset up
-  JSR adjust_bombman_hpos
-  DEC BOMBMAN_V
-  BPL done
-
-  ; Move down to start of next cell
-  LDA #&07
-  STA BOMBMAN_V
-  DEC BOMBMAN_Y
-
-  ; Set animation frame (8..11)
-  LDA #&08:LDY #&0B:JSR setframe
-
-.done
-  RTS
-}
-
 .move_down
 {
   ; Are we on the edge of this cell
   LDA BOMBMAN_V
-  CMP #&04
+  CMP #&08
   BCS nextcell
   INC BOMBMAN_V
   JMP done
@@ -446,11 +344,10 @@ INCLUDE "sound.asm"
   LDA multtabx, Y:STA stagemapptr+1
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
-  ; Move offset down
   JSR adjust_bombman_hpos
   INC BOMBMAN_V
   LDA BOMBMAN_V
-  CMP #&08
+  CMP #&10
   BNE done
 
   ; Move down to start of next cell
@@ -458,17 +355,116 @@ INCLUDE "sound.asm"
   STA BOMBMAN_V
   INC BOMBMAN_Y
 
+.done
   ; Set animation frame (4..7)
   LDA #&04:LDY #&07:JSR setframe
 
+  RTS
+}
+
+.move_up
+{
+  ; Are we on the edge of this cell
+  LDA BOMBMAN_V
+  CMP #&09
+  BCC nextcell
+  DEC BOMBMAN_V
+  JMP done
+
+.nextcell
+  ; Check if we can move to the next cell
+  LDY BOMBMAN_Y:DEY:LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+  LDY BOMBMAN_X:JSR checkmap:BNE done
+
+  JSR adjust_bombman_hpos
+  DEC BOMBMAN_V
+  BPL done
+
+  ; Move down to start of next cell
+  LDA #&0F
+  STA BOMBMAN_V
+  DEC BOMBMAN_Y
+
 .done
+  ; Set animation frame (8..11)
+  LDA #&08:LDY #&0B:JSR setframe
+
+  RTS
+}
+
+.move_left
+{
+  ; Are we on the edge of this cell
+  LDA BOMBMAN_U
+  CMP #&09
+  BCC nextcell
+  DEC BOMBMAN_U
+  JMP done
+
+.nextcell
+  ; Check if we can move to the next cell
+  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+  LDY BOMBMAN_X:DEY:JSR checkmap:BNE done
+
+  JSR adjust_bombman_vpos
+  DEC BOMBMAN_U
+  BPL done
+
+  ; Move to start of next cell
+  LDA #&0F
+  STA BOMBMAN_U
+  DEC BOMBMAN_X
+
+  ; TODO disable horizontal flip
+
+.done
+  ; Set animation frame (0..3)
+  LDA #&00:LDY #&03:JSR setframe
+
+  RTS
+}
+
+.move_right
+{
+  ; Are we on the edge of this cell
+  LDA BOMBMAN_U
+  CMP #&08
+  BCS nextcell
+  INC BOMBMAN_U
+  JMP done
+
+.nextcell
+  ; Check if we can move to the next cell
+  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+  LDY BOMBMAN_X:INY:JSR checkmap:BNE done
+
+  JSR adjust_bombman_vpos
+  INC BOMBMAN_U
+  LDA BOMBMAN_U
+  CMP #&10
+  BNE done
+
+  ; Move to start of next cell
+  LDA #&00
+  STA BOMBMAN_U
+  INC BOMBMAN_X
+
+  ; TODO flip sprite horizontally
+
+.done
+  ; Set animation frame (0..3)
+  LDA #&00:LDY #&03:JSR setframe
+
   RTS
 }
 
 .adjust_bombman_hpos
 {
   LDA BOMBMAN_U
-  CMP #&04
+  CMP #&08
   BCC adjust_right ; < 4
   BEQ done         ; = 4
   DEC BOMBMAN_U
@@ -483,7 +479,7 @@ INCLUDE "sound.asm"
 .adjust_bombman_vpos
 {
   LDA BOMBMAN_V
-  CMP #&04
+  CMP #&08
   BCC adjust_down ; < 4
   BEQ done        ; = 4
   DEC BOMBMAN_V
@@ -534,7 +530,7 @@ INCLUDE "sound.asm"
   CMP #&02:BEQ has_noclip
   CMP #&04:BEQ has_noclip ; exit
   CMP #&05:BEQ has_noclip ; bonus
-  
+
   CMP #&03:BEQ has_bombwalk ; bomb
 .done
   RTS
