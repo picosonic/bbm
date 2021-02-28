@@ -330,9 +330,11 @@ PAL_GAME  = &02
   ; Add x offset
   LDA spru
   BEQ no_x_offs
-  LSR A
-  ASL A:ASL A:ASL A
+  ASL A
+  AND #&F8
   CLC:ADC sprdst:STA sprdst
+  BCC no_x_offs ; Check for page boundary crossed
+  INC sprdst+1
 .no_x_offs
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -340,9 +342,9 @@ PAL_GAME  = &02
   ; Add y offset
   LDA sprv
   BEQ no_y_offs
-  LSR A:LSR A
-  BEQ no_y_offs
-  LDA sprdst+1:CLC:ADC #&02:STA sprdst+1
+  LSR A:LSR A:LSR A
+  ASL A
+  CLC:ADC sprdst+1:STA sprdst+1
 .no_y_offs
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

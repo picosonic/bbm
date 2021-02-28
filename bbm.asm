@@ -555,11 +555,11 @@ INCLUDE "sound.asm"
 .drawbomberman
 {
   LDA BOMBMAN_X:STA sprx:DEC sprx
-  LDA BOMBMAN_Y:STA spry:DEC spry
-  LDA BOMBMAN_U:STA spru
-  LDA BOMBMAN_V:STA sprv
+  LDA BOMBMAN_Y:STA spry
 
-  INC spry ; TEMPORARILY HERE
+  LDA BOMBMAN_U:CLC:ADC #&08:STA spru
+  LDA BOMBMAN_V:CLC:ADC #&08:STA sprv
+
   LDX BOMBMAN_FRAME:LDA BOMBER_ANIM, X:STA sprite
   JSR drawsprite
 
