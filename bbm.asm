@@ -219,17 +219,6 @@ INCLUDE "sound.asm"
   LDA #8:STA BOMBMAN_U:STA BOMBMAN_V
   LDA #0:STA BOMBMAN_FRAME
   JSR drawbomberman
-
-  ; Place a test bomb
-  ;LDX #&00
-  ;LDA #&02:STA BOMB_X, X
-  ;LDA #&02:STA BOMB_Y, X
-  ;LDA #&01:STA BOMB_ACTIVE, X
-  ;
-  ;LDX #&01
-  ;LDA #&01:STA BOMB_X, X
-  ;LDA #&03:STA BOMB_Y, X
-  ;LDA #&01:STA BOMB_ACTIVE, X
 }
 
 .gameloop
@@ -248,9 +237,12 @@ INCLUDE "sound.asm"
   JSR bombanim ; animate bombs
   JSR stagetimer ; tick game stage timer
 
-  ; check for keypress
-  LDA #INKEY_SPACE:JSR scankey ; Scan for RETURN
+    ; check for keypress
+  LDA #INKEY_ESCAPE:JSR scankey ; Scan for ESCAPE
   BEQ gameloop
+
+  ; acknowledge ESC
+  LDA #&7E:JSR OSBYTE
 
   JSR drawgameoverscreen
 
@@ -309,16 +301,16 @@ INCLUDE "sound.asm"
   JSR move_down
 
 .case_action
-;  LDA #INKEY_SPACE:JSR scankey ; Scan for "SPACE" (bomb)
-;  BNE drop_bomb
+  TXA:AND #&80
+  BNE drop_bomb
 
-;  ; Check we have detonator
-;  LDA BONUS_REMOTE
-;  BEQ done
+  ; Check we have detonator
+  LDA BONUS_REMOTE
+  BEQ done
 
-;  LDA #INKEY_CLOSESQBRACKET:JSR scankey ; Scan for "[" (detonate)
-;  BEQ done
-;  JSR detonate
+  TXA:AND #&40
+  BEQ done
+  JSR detonate
 
 .done
   RTS
@@ -326,6 +318,46 @@ INCLUDE "sound.asm"
 
 .drop_bomb
 {
+  ; See if map is empty here
+  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+  LDY BOMBMAN_X:JSR checkmap:BNE done
+
+  ; Centre bomberman
+  JSR adjust_bombman_hpos
+  JSR adjust_bombman_vpos
+
+  ; Find non-active bomb slot
+  LDX BONUS_BOMBS
+.loop
+  LDA BOMB_ACTIVE, X
+  BEQ place_bomb
+  DEX
+  BPL loop
+
+.done
+  RTS
+}
+
+.place_bomb
+{
+  ; Place bomb onto map
+  LDA #&03
+  STA (stagemapptr), Y
+
+  ; Record where we placed it
+  LDA BOMBMAN_X:STA BOMB_X, X
+  LDA BOMBMAN_Y:CLC:ADC #&01:STA BOMB_Y, X
+
+  ; Start bomb timer
+  LDA #&00:STA BOMB_TIME_ELAPSED, X
+  LDA #160:STA BOMB_TIME_LEFT, X
+
+  ; Mark bomb slot as active
+  LDA #&01:STA BOMB_ACTIVE, X
+
+  ; TODO - play sound effect 3
+
   RTS
 }
 
