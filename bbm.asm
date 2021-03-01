@@ -39,28 +39,8 @@ INCLUDE "sound.asm"
   LDX #extrastr MOD 256:LDY #extrastr DIV 256:JSR OSCLI
   LDX #tunestr MOD 256:LDY #tunestr DIV 256:JSR OSCLI
 
-  ; Initialise sprite
-  LDA #&00:STA sprite
-
   ; Initialise cursor
-  STA cursor
-
-  ; Initialise bombs
-  LDX #9
-  LDA #0
-.clearbombs
-  STA BOMB_ACTIVE, X
-  DEX
-  BPL clearbombs
-
-  ; Initialise scores
-  LDX #&00
-.scoreinit
-  STA topscore, X
-  STA score, X
-  INX
-  CPX #&07
-  BNE scoreinit
+  LDA #&00:STA cursor
 
   ; Initialise game state
   LDA #&01:STA inmenu
@@ -150,6 +130,23 @@ INCLUDE "sound.asm"
 
 .playgame
 {
+  ; Initialise bombs
+  LDX #9
+  LDA #0
+.clearbombs
+  STA BOMB_ACTIVE, X
+  DEX
+  BPL clearbombs
+
+  ; Initialise scores
+  LDX #&00
+.scoreinit
+  STA topscore, X
+  STA score, X
+  INX
+  CPX #&07
+  BNE scoreinit
+
   LDA #&01:STA stage
   JSR drawstagescreen
 
@@ -237,7 +234,7 @@ INCLUDE "sound.asm"
   JSR bombanim ; animate bombs
   JSR stagetimer ; tick game stage timer
 
-    ; check for keypress
+  ; check for keypress
   LDA #INKEY_ESCAPE:JSR scankey ; Scan for ESCAPE
   BEQ gameloop
 
