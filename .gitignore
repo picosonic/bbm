@@ -15,3 +15,6 @@ bbcmemmap1.txt
 
 # Password decoder
 password_test
+
+# Melody extractor
+melody_extract
