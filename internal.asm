@@ -16,7 +16,7 @@ KEY_5 = &13
 KEY_6 = &34
 KEY_7 = &24
 KEY_8 = &15
-KEY_9 = &25
+KEY_9 = &26
 KEY_COLON = &48
 KEY_SEMICOLON = &57
 
@@ -29,7 +29,7 @@ KEY_E = &22
 KEY_F = &43
 KEY_G = &53
 KEY_H = &54
-KEY_I = &26
+KEY_I = &25
 KEY_J = &45
 KEY_K = &46
 KEY_L = &56
