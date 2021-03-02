@@ -17,12 +17,16 @@
 #define END  0xff
 #define LOOP 0xfe
 
+// Data check
+#define CHECK 0xa8
+
 int main(int argc, char **argv)
 {
   FILE *fp; // File handle
   int ch; // Input character
   struct stat st; // File metadata structure
   uint8_t *mem; // Memory pointer to loaded ROM
+  uint8_t check; // Checksum calculation to make sure we have the right input file
   uint8_t melody; // Current melody number
   uint8_t channel; // Current channel number
   char filename[20]; // Output filename string
@@ -56,7 +60,7 @@ int main(int argc, char **argv)
   fp=fopen(argv[1], "rb");
   if (fp==NULL)
   {
-    fprintf(stderr, "Unable to open the inpu file\n");
+    fprintf(stderr, "Unable to open the input file\n");
     free(mem);
     return 4;
   }
@@ -64,6 +68,18 @@ int main(int argc, char **argv)
   // Read the whole file into the buffer
   fread(mem, 1, st.st_size, fp);
   fclose(fp);
+
+  // Check we have the right file loaded
+  check=0;
+  for (offs=0; offs<st.st_size; offs++)
+    check+=mem[offs];
+
+  if (check!=CHECK)
+  {
+    fprintf(stderr, "Incorrect input file\n");
+    free(mem);
+    return 5;
+  }
 
   // Read each entry from melodies table
   for (melody=0; melody<MELODIES; melody++)
