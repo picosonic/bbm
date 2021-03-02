@@ -45,6 +45,8 @@
 ;
 .read_input \\ X=11, Y=&FF, A=keys_state ; [ A B s S U D L R ]
 {
+  SEI
+
   ; Use internal key numbering
   LDX #&7F : STX SYSVIA_DDRA \\ when keyboard selected, write key val to b0-6 and read key STAte (1=down) from b7
   LDX #3+0 : STX SYSVIA_REGB \\ "enable" keyboard - allows reading keys: write key value to SYSVIA_REGA and read from b7:1=pressed
@@ -68,5 +70,7 @@
   LDX #&FF : STX SYSVIA_DDRA \\ put back ready for sound (all 8 bits write only)
 
 .reset
+  CLI
+
   RTS
 }
