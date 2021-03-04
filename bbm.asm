@@ -1014,6 +1014,9 @@ INCBIN "melodies/M09C3.bin"
 
   RTS
 
+; Allow re-use of memory range
+;CLEAR &900, &B70
+
 ; Stage 2
 .melody_04_c1
 ;INCBIN "melodies/M04C1.bin"
