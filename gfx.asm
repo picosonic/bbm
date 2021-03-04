@@ -57,6 +57,7 @@
 PAL_BLANK = &00
 PAL_TITLE = &01
 PAL_GAME  = &02
+PAL_DBG   = &03
 
 ; Set palette to one specified in A
 .setpal
@@ -85,6 +86,10 @@ PAL_GAME  = &02
   ; Game palette
   ; black, blue, red, white
   EQUB 0,0, 1,4, 2,1, 3,7
+
+  ; Debug palette
+  ; cyan, magenta, yellow, black
+  EQUB 0,6, 1,5, 2,3, 3,0
 }
 
 ; Clear graphics screen
