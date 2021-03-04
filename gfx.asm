@@ -331,6 +331,34 @@ PAL_DBG   = &03
 
 .nox
 
+  LDA sprflip:BEQ noflip
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Flip the sprite horizontally
+  LDY #&00:LDX #24
+.fliploop
+
+  LDA (sprsrc), Y:JSR flip_byte:STA flip_upper, X
+  LDA (sprsrc2), Y:JSR flip_byte:STA flip_lower, X
+
+  INX
+  
+  CPX #32:BNE nextcol:LDX #16:CLC:BCC same
+ .nextcol
+  CPX #24:BNE nextcol2:LDX #8:CLC:BCC same
+ .nextcol2
+  CPX #16:BNE same:LDX #0
+ .same
+
+  INY:CPY #&20:BNE fliploop
+
+  LDA #flip_upper MOD 256:STA sprsrc
+  LDA #flip_upper DIV 256:STA sprsrc+1
+
+  LDA #flip_lower MOD 256:STA sprsrc2
+  LDA #flip_lower DIV 256:STA sprsrc2+1
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.noflip
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Add x offset
   LDA spru
