@@ -277,6 +277,7 @@ INCLUDE "sound.asm"
 {
   JSR read_input
   LDX keys
+  BEQ done
 
 .case_right
   TXA:AND #&01
