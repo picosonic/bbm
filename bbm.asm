@@ -139,6 +139,8 @@ INCLUDE "sound.asm"
   DEX
   BPL clearbombs
 
+  STA BONUS_REMOTE
+
   ; Initialise scores
   LDX #&00
 .scoreinit
@@ -618,8 +620,48 @@ INCLUDE "sound.asm"
   LDA BOMB_ACTIVE, X
   BEQ nextbomb
 
+  ; See what's on the map where this bomb is
+  LDY BOMB_Y, X
+  LDA multtaby, Y:STA stagemapptr
+  LDA multtabx, Y:STA stagemapptr+1
+
+  LDY BOMB_X, X
+  LDA (stagemapptr), Y
+
+  ; Check if it's a bomb
+  CMP #3
+  BNE bombend
+
   ; Advance animation frame
   INC BOMB_TIME_ELAPSED, X
+
+  ; Check for remote detonator (don't tick)
+  LDA BONUS_REMOTE
+  BNE nextbomb
+
+  ; Reduce bomb fuse time remaining, then skip if time hasn't run out
+  DEC BOMB_TIME_LEFT, X
+  BNE nextbomb
+
+  ; LDA #0
+
+.bombend
+ ; AND #7
+ ; JSR sub_C9B6
+ ; LDA byte_A5
+ ; CMP #$FF
+ ; BEQ loc_C9A6
+ ; INC byte_A5
+
+;loc_C9A6:
+  ; JSR PLAY_BOOM_SOUND ; Play the sound of the bombshell
+
+  ; Remove from map
+  LDA #0
+  STA (stagemapptr), Y
+
+  ; Set as inactive
+  STA BOMB_ACTIVE, X
 
 .nextbomb
   DEX
