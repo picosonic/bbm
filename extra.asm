@@ -7,3 +7,8 @@
   EQUB &03, &04, &05, &04 ; Climb facing
   EQUB &06, &07, &08, &07 ; Climb away
   EQUB &09, &0A, &0B, &0C, &0D, &0E, &0F ; Explode
+
+.flip_upper
+  SKIP 32 ; Top half of flipped sprite
+.flip_lower
+  SKIP 32 ; Bottom half of flipped sprite
