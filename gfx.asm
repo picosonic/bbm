@@ -381,3 +381,30 @@ PAL_DBG   = &03
 
   RTS
 }
+
+; Flip 4 pixels packed into one byte horizontally
+.flip_byte
+{
+  STA tempp
+
+  AND #&11
+  CLC:ROL A:ROL A:ROL A
+  STA tempq
+
+  LDA tempp
+  AND #&22
+  CLC:ROL A
+  ORA tempq:STA tempq
+
+  LDA tempp
+  AND #&44
+  CLC:LSR A
+  ORA tempq:STA tempq
+
+  LDA tempp
+  AND #&88
+  CLC:LSR A:LSR A:LSR A
+  ORA tempq
+
+  RTS
+}
