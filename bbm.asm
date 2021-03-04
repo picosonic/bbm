@@ -41,6 +41,7 @@ INCLUDE "sound.asm"
 
   ; Initialise cursor
   LDA #&00:STA cursor
+  STA sprflip
 
   ; Initialise game state
   LDA #&01:STA inmenu
@@ -360,6 +361,9 @@ INCLUDE "sound.asm"
 
 .move_down
 {
+  ; Disable horizontal flip
+  LDA #00:STA BOMBMAN_FLIP
+
   ; Are we on the edge of this cell
   LDA BOMBMAN_V
   CMP #&08
@@ -393,6 +397,9 @@ INCLUDE "sound.asm"
 
 .move_up
 {
+  ; Disable horizontal flip
+  LDA #00:STA BOMBMAN_FLIP
+
   ; Are we on the edge of this cell
   LDA BOMBMAN_V
   CMP #&09
@@ -424,6 +431,9 @@ INCLUDE "sound.asm"
 
 .move_left
 {
+  ; Disable horizontal flip
+  LDA #00:STA BOMBMAN_FLIP
+
   ; Are we on the edge of this cell
   LDA BOMBMAN_U
   CMP #&09
@@ -457,6 +467,9 @@ INCLUDE "sound.asm"
 
 .move_right
 {
+  ; Flip sprite horizontally
+  LDA #01:STA BOMBMAN_FLIP
+
   ; Are we on the edge of this cell
   LDA BOMBMAN_U
   CMP #&08
@@ -561,6 +574,7 @@ INCLUDE "sound.asm"
   CMP #&05:BEQ has_noclip ; bonus
 
   CMP #&03:BEQ has_bombwalk ; bomb
+
 .done
   RTS
 }
@@ -590,10 +604,12 @@ INCLUDE "sound.asm"
   LDA BOMBMAN_V:CLC:ADC #&08:STA sprv
 
   LDX BOMBMAN_FRAME:LDA BOMBER_ANIM, X:STA sprite
+
+  LDA BOMBMAN_FLIP:STA sprflip
   JSR drawsprite
 
-  ; Reset sprite offsets
-  LDA #&00:STA spru:STA sprv
+  ; Reset sprite properties
+  LDA #&00:STA spru:STA sprv:STA sprflip
 }
 
 .bombtick

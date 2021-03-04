@@ -27,6 +27,7 @@ ORG &0050
 .spry EQUB &00
 .spru EQUB &00
 .sprv EQUB &00
+.sprflip EQUB &00
 
 ; Number of frames to delay by
 .delayframes EQUB &00
@@ -110,6 +111,7 @@ ORG &0400
 .BOMBMAN_Y           EQUB &00
 .BOMBMAN_V           EQUB &00
 .BOMBMAN_FRAME       EQUB &00
+.BOMBMAN_FLIP        EQUB &00
 
 ; First frame of current animation set
 .BOMBMAN_FRAMESTART  EQUB &00
