@@ -346,7 +346,7 @@ INCLUDE "sound.asm"
 
   ; Record where we placed it
   LDA BOMBMAN_X:STA BOMB_X, X
-  LDA BOMBMAN_Y:CLC:ADC #&01:STA BOMB_Y, X
+  LDA BOMBMAN_Y:STA BOMB_Y, X
 
   ; Start bomb timer
   LDA #&00:STA BOMB_TIME_ELAPSED, X
@@ -457,8 +457,6 @@ INCLUDE "sound.asm"
   STA BOMBMAN_U
   DEC BOMBMAN_X
 
-  ; TODO disable horizontal flip
-
 .done
   ; Set animation frame (0..3)
   LDA #&00:LDY #&03:JSR setframe
@@ -494,8 +492,6 @@ INCLUDE "sound.asm"
   LDA #&00
   STA BOMBMAN_U
   INC BOMBMAN_X
-
-  ; TODO flip sprite horizontally
 
 .done
   ; Set animation frame (0..3)
@@ -567,12 +563,12 @@ INCLUDE "sound.asm"
 {
   LDA (stagemapptr), Y
   BEQ done ; empty
-  CMP #&08:BEQ done
-  CMP #&06:BEQ done
+  CMP #&08:BEQ done ; exit
+  CMP #&06:BEQ done ; bonus
 
-  CMP #&02:BEQ has_noclip
-  CMP #&04:BEQ has_noclip ; exit
-  CMP #&05:BEQ has_noclip ; bonus
+  CMP #&02:BEQ has_noclip ; brick
+  CMP #&04:BEQ has_noclip ; hidden exit
+  CMP #&05:BEQ has_noclip ; hidden bonus
 
   CMP #&03:BEQ has_bombwalk ; bomb
 
@@ -649,7 +645,7 @@ INCLUDE "sound.asm"
 
   ; Cache X, Y position for this bomb
   LDA BOMB_X, X:STA sprx
-  LDA BOMB_Y, X:STA spry
+  LDA BOMB_Y, X:STA spry:INC spry
 
   ; Concentrate on bits 0111 0000
   LDA BOMB_TIME_ELAPSED, X
