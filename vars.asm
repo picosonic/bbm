@@ -105,13 +105,13 @@ ORG &0400
 .BOMB_TIME_LEFT      EQUW &0000, &0000, &0000, &0000, &0000
 .BOMB_TIME_ELAPSED   EQUW &0000, &0000, &0000, &0000, &0000
 
-; Bomberman X and Y position in level array, with U and Y offsets
-.BOMBMAN_X           EQUB &00
-.BOMBMAN_U           EQUB &00
-.BOMBMAN_Y           EQUB &00
-.BOMBMAN_V           EQUB &00
-.BOMBMAN_FRAME       EQUB &00
-.BOMBMAN_FLIP        EQUB &00
+; Bomberman X and Y position in level array, with U and Y offsets (plus cache)
+.BOMBMAN_X           EQUB &00, &00
+.BOMBMAN_U           EQUB &00, &00
+.BOMBMAN_Y           EQUB &00, &00
+.BOMBMAN_V           EQUB &00, &00
+.BOMBMAN_FRAME       EQUB &00, &00
+.BOMBMAN_FLIP        EQUB &00, &00
 
 ; First frame of current animation set
 .BOMBMAN_FRAMESTART  EQUB &00
