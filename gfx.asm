@@ -337,8 +337,13 @@ PAL_DBG   = &03
   LDY #&00:LDX #24
 .fliploop
 
-  LDA (sprsrc), Y:JSR flip_byte:STA flip_upper, X
-  LDA (sprsrc2), Y:JSR flip_byte:STA flip_lower, X
+  ; Use function
+  ;LDA (sprsrc), Y:JSR flip_byte:STA flip_upper, X
+  ;LDA (sprsrc2), Y:JSR flip_byte:STA flip_lower, X
+
+  ; Use look up table
+  TYA:PHA:LDA (sprsrc), Y:TAY:LDA flip_lut, Y:STA flip_upper, X:PLA:TAY
+  TYA:PHA:LDA (sprsrc2), Y:TAY:LDA flip_lut, Y:STA flip_lower, X:PLA:TAY
 
   INX
   
