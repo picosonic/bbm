@@ -228,9 +228,34 @@ INCLUDE "sound.asm"
   ; TODO JSR SPRD
 
   JSR waitvsync
-  JSR drawbomberman ; clear bomberman in old pos
+  ;LDA #PAL_DBG:JSR setpal
+
   JSR process_inputs ; Check button presses
+
+  ; Decide if anything has changed
+  LDA BOMBMAN_X:CMP BOMBMAN_X+1:BNE moved
+  LDA BOMBMAN_Y:CMP BOMBMAN_Y+1:BNE moved
+  LDA BOMBMAN_U:CMP BOMBMAN_U+1:BNE moved
+  LDA BOMBMAN_V:CMP BOMBMAN_V+1:BNE moved
+  LDA BOMBMAN_FRAME:CMP BOMBMAN_FRAME+1:BNE moved
+  LDA BOMBMAN_FLIP:CMP BOMBMAN_FLIP+1:BNE moved
+  CLC:BCC still
+
+.moved
+  JSR drawbomberman ; clear bomberman in old pos
+
+  ; Cache
+  LDA BOMBMAN_X:STA BOMBMAN_X+1
+  LDA BOMBMAN_Y:STA BOMBMAN_Y+1
+  LDA BOMBMAN_U:STA BOMBMAN_U+1
+  LDA BOMBMAN_V:STA BOMBMAN_V+1
+  LDA BOMBMAN_FRAME:STA BOMBMAN_FRAME+1
+  LDA BOMBMAN_FLIP:STA BOMBMAN_FLIP+1
+
   JSR drawbomberman ; draw bomberman in new pos
+
+.still
+  ;LDA #PAL_GAME:JSR setpal
 
   JSR bombtick ; bomb timer operations
   ; TODO THINK
@@ -596,15 +621,15 @@ INCLUDE "sound.asm"
 
 .drawbomberman
 {
-  LDA BOMBMAN_X:STA sprx:DEC sprx
-  LDA BOMBMAN_Y:STA spry
+  LDA BOMBMAN_X+1:STA sprx:DEC sprx
+  LDA BOMBMAN_Y+1:STA spry
 
-  LDA BOMBMAN_U:CLC:ADC #&08:STA spru
-  LDA BOMBMAN_V:CLC:ADC #&08:STA sprv
+  LDA BOMBMAN_U+1:CLC:ADC #&08:STA spru
+  LDA BOMBMAN_V+1:CLC:ADC #&08:STA sprv
 
-  LDX BOMBMAN_FRAME:LDA BOMBER_ANIM, X:STA sprite
+  LDX BOMBMAN_FRAME+1:LDA BOMBER_ANIM, X:STA sprite
 
-  LDA BOMBMAN_FLIP:STA sprflip
+  LDA BOMBMAN_FLIP+1:STA sprflip
   JSR drawsprite
 
   ; Reset sprite properties
