@@ -356,6 +356,7 @@ PAL_DBG   = &03
 
   INY:CPY #&20:BNE fliploop
 
+  ; Update source pointer to flip buffer
   LDA #flip_upper MOD 256:STA sprsrc
   LDA #flip_upper DIV 256:STA sprsrc+1
 

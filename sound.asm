@@ -259,24 +259,26 @@
 }
 
 ; FD
+; Set up pause/sustain for this channel (counter is next byte)
 .effect_3
 {
   LDY sound_cnt, X
   LDA (sound_ptr), Y
-  STA unk_CA, X
+  STA sound_pause_counter, X
   INY
   STY sound_cnt, X
-  STY unk_C7, X
+  STY sound_pause_point, X
 
   JMP sound_write_regs
 }
 
 ; FC
+; Action a pause/sustain for this channel
 .effect_4
 {
-  DEC unk_CA, X
+  DEC sound_pause_counter, X
   BEQ loc_E618
-  LDA unk_C7, X
+  LDA sound_pause_point, X
   STA sound_cnt, X
 
 .loc_E618

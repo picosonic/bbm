@@ -89,9 +89,9 @@ ORG &0050
 ; Progress through each channel of current melody
 .sound_cnt EQUB &00, &00, &00
 
-; Sound vars (unknown)
-.unk_C7 EQUB &00, &00, &00
-.unk_CA EQUB &00, &00, &00
+; Sound sustain per channel
+.sound_pause_point EQUB &00, &00, &00
+.sound_pause_counter EQUB &00, &00, &00
 
 ; ---------------------------------------------------------
 ; Variables in LANGUAGE workspace, &400 to &7FF
