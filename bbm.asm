@@ -295,8 +295,11 @@ INCLUDE "sound.asm"
 .wait_start
   LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
   BEQ wait_start
-  LDA #&00:STA sound_disable
   LDA #INKEY_RETURN:JSR unpressed ; Wait until it's not pressed
+  LDA #&00:STA sound_disable
+
+  ; Reset frame counter
+  LDA #&00:STA framecounter
 
 .not_paused
   RTS
