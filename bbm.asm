@@ -140,13 +140,13 @@ INCLUDE "sound.asm"
 
   JSR drawbomberman ; draw bomberman in new pos
 
+  JSR process_inputs ; Check button presses
+
   ;LDA #PAL_GAME:JSR setpal
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .menu
 
   JSR sound_eventvhandler
-
-  JSR process_inputs ; Check button presses
 
   ; Restore registers
   PLA
@@ -272,12 +272,14 @@ INCLUDE "sound.asm"
   JSR drawgameoverscreen
 
   LDA #&09:STA sound_music
-  JSR sound_waittune
 
   ; wait for RETURN before clearing resume code
 .endwait
   LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
   BEQ endwait
+
+  ; Stop end music playing (if it still is)
+  LDA #&00:STA sound_music
 
   ; TODO
   JMP gamestart
