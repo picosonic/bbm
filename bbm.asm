@@ -49,6 +49,13 @@ INCLUDE "sound.asm"
   ; Initialise sound
   JSR sound_init
 
+  ; Init bomberman sprite
+  LDA #1:STA BOMBMAN_X:STA BOMBMAN_X+1
+  LDA #2:STA BOMBMAN_Y:STA BOMBMAN_Y+1
+  LDA #8:STA BOMBMAN_U:STA BOMBMAN_V:STA BOMBMAN_U+1:STA BOMBMAN_V+1
+  LDA #0:STA BOMBMAN_FRAME:STA BOMBMAN_FRAME+1
+  LDA #0:STA BOMBMAN_FLIP:STA BOMBMAN_FLIP+1
+
   ; Set up vsync event handler
   LDA #&00:STA framecounter
   SEI
@@ -116,7 +123,30 @@ INCLUDE "sound.asm"
 
   INC framecounter
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  LDA inmenu:BNE menu
+
+  ;LDA #PAL_DBG:JSR setpal
+
+  JSR drawbomberman ; clear bomberman in old pos
+
+  ; Cache
+  LDA BOMBMAN_X:STA BOMBMAN_X+1
+  LDA BOMBMAN_Y:STA BOMBMAN_Y+1
+  LDA BOMBMAN_U:STA BOMBMAN_U+1
+  LDA BOMBMAN_V:STA BOMBMAN_V+1
+  LDA BOMBMAN_FRAME:STA BOMBMAN_FRAME+1
+  LDA BOMBMAN_FLIP:STA BOMBMAN_FLIP+1
+
+  JSR drawbomberman ; draw bomberman in new pos
+
+  ;LDA #PAL_GAME:JSR setpal
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.menu
+
   JSR sound_eventvhandler
+
+  JSR process_inputs ; Check button presses
 
   ; Restore registers
   PLA
@@ -178,7 +208,6 @@ INCLUDE "sound.asm"
   JSR showstatus
   JSR drawtime
   LDA #&00:STA framecounter
-  LDA #&00:STA inmenu
 
   ; Draw level
   LDX #&00:LDY #&00
@@ -214,11 +243,9 @@ INCLUDE "sound.asm"
   BNE loop
 
   ; Draw bomberman
-  LDA #1:STA BOMBMAN_X
-  LDA #2:STA BOMBMAN_Y
-  LDA #8:STA BOMBMAN_U:STA BOMBMAN_V
-  LDA #0:STA BOMBMAN_FRAME
   JSR drawbomberman
+
+  LDA #&00:STA inmenu
 }
 
 .gameloop
@@ -226,36 +253,6 @@ INCLUDE "sound.asm"
   ; Check if game is paused
   JSR paused
   ; TODO JSR SPRD
-
-  JSR waitvsync
-  ;LDA #PAL_DBG:JSR setpal
-
-  JSR process_inputs ; Check button presses
-
-  ; Decide if anything has changed
-  LDA BOMBMAN_X:CMP BOMBMAN_X+1:BNE moved
-  LDA BOMBMAN_Y:CMP BOMBMAN_Y+1:BNE moved
-  LDA BOMBMAN_U:CMP BOMBMAN_U+1:BNE moved
-  LDA BOMBMAN_V:CMP BOMBMAN_V+1:BNE moved
-  LDA BOMBMAN_FRAME:CMP BOMBMAN_FRAME+1:BNE moved
-  LDA BOMBMAN_FLIP:CMP BOMBMAN_FLIP+1:BNE moved
-  CLC:BCC still
-
-.moved
-  JSR drawbomberman ; clear bomberman in old pos
-
-  ; Cache
-  LDA BOMBMAN_X:STA BOMBMAN_X+1
-  LDA BOMBMAN_Y:STA BOMBMAN_Y+1
-  LDA BOMBMAN_U:STA BOMBMAN_U+1
-  LDA BOMBMAN_V:STA BOMBMAN_V+1
-  LDA BOMBMAN_FRAME:STA BOMBMAN_FRAME+1
-  LDA BOMBMAN_FLIP:STA BOMBMAN_FLIP+1
-
-  JSR drawbomberman ; draw bomberman in new pos
-
-.still
-  ;LDA #PAL_GAME:JSR setpal
 
   JSR bombtick ; bomb timer operations
   ; TODO THINK
@@ -268,6 +265,9 @@ INCLUDE "sound.asm"
 
   ; acknowledge ESC
   LDA #&7E:JSR OSBYTE
+
+  ; Stop sprites being drawn (by vsync)
+  LDA #&01:STA inmenu
 
   JSR drawgameoverscreen
 
@@ -990,9 +990,11 @@ EQUS "L.SPRITES", &0D
 EQUS "L.TUNES", &0D
 .extrastr
 EQUS "L.EXTRA", &0D
+
+  RTS ; Here just to advise on remaining space
 .end
 
-ALIGN &100
+ORG MODE8BASE-&2200
 
 .titles
 INCBIN "TITLE.beeb"
@@ -1004,7 +1006,6 @@ INCBIN "TILES.beeb"
 INCBIN "SPRITES.beeb"
 
 .dataend
-  RTS ; Here just to advise on remaining space
 
 ORG &900
 .melodies
