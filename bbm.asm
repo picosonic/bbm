@@ -147,12 +147,11 @@ INCLUDE "sound.asm"
 
   JSR drawbomberman ; draw bomberman in new pos
 
-  JSR process_inputs ; Check button presses
-
   ;LDA #PAL_GAME:JSR setpal
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .menu
 
+  JSR read_input
   JSR sound_eventvhandler
 
   ; Restore registers
@@ -261,6 +260,9 @@ INCLUDE "sound.asm"
   JSR paused
   ; TODO JSR SPRD
 
+  JSR process_inputs ; Check button presses
+  JSR waitvsync
+
   JSR bombtick ; bomb timer operations
   ; TODO THINK
   JSR bombanim ; animate bombs
@@ -311,7 +313,6 @@ INCLUDE "sound.asm"
 
 .process_inputs
 {
-  JSR read_input
   LDX keys
   BEQ done
 
