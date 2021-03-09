@@ -578,6 +578,12 @@ INCLUDE "sound.asm"
   STA BOMBMAN_FRAMESTART
 
 .same
+  ; Limit animation updates to every 4th frame
+  PHA:LDA framecounter:AND #&03:CMP #&02:BEQ anim:PLA:RTS
+
+.anim
+  PLA
+
   ; Move on to the next frame of this set
   INC BOMBMAN_FRAME
   ; Is this frame now out of range?
