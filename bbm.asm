@@ -214,7 +214,6 @@ INCLUDE "sound.asm"
   ; Draw TIME/SCORE/LIVES
   JSR showstatus
   JSR drawtime
-  LDA #&00:STA framecounter
 
   ; Draw level
   LDX #&00:LDY #&00
@@ -305,9 +304,6 @@ INCLUDE "sound.asm"
   BEQ wait_start
   LDA #INKEY_RETURN:JSR unpressed ; Wait until it's not pressed
   LDA #&00:STA sound_disable
-
-  ; Reset frame counter
-  LDA #&00:STA framecounter
 
 .not_paused
   RTS
@@ -746,13 +742,12 @@ INCLUDE "sound.asm"
   EQUB 33, 34, 33, 32
 }
 
-; Reduce time left by a second
+; Reduce time left by about a second (1.28s)
 .stagetimer
 {
   LDA framecounter
-  CMP #50
+  AND #&3F ; Every 64 frames
   BNE done
-  LDA #&00:STA framecounter
 
 ; Here temporarily
   JSR drawtime
