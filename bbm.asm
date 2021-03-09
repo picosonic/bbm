@@ -49,12 +49,7 @@ INCLUDE "sound.asm"
   ; Initialise sound
   JSR sound_init
 
-  ; Init bomberman sprite
-  LDA #1:STA BOMBMAN_X:STA BOMBMAN_X+1
-  LDA #2:STA BOMBMAN_Y:STA BOMBMAN_Y+1
-  LDA #8:STA BOMBMAN_U:STA BOMBMAN_V:STA BOMBMAN_U+1:STA BOMBMAN_V+1
-  LDA #0:STA BOMBMAN_FRAME:STA BOMBMAN_FRAME+1
-  LDA #0:STA BOMBMAN_FLIP:STA BOMBMAN_FLIP+1
+  JSR init_bomberman
 
   ; Set up vsync event handler
   LDA #&00:STA framecounter
@@ -95,6 +90,18 @@ INCLUDE "sound.asm"
   LDA #INKEY_SPACE:JSR unpressed ; Wait for SPACEBAR to be released
 
   JMP awaitkeys
+
+.init_bomberman
+{
+  ; Init bomberman sprite
+  LDA #1:STA BOMBMAN_X:STA BOMBMAN_X+1
+  LDA #2:STA BOMBMAN_Y:STA BOMBMAN_Y+1
+  LDA #8:STA BOMBMAN_U:STA BOMBMAN_V:STA BOMBMAN_U+1:STA BOMBMAN_V+1
+  LDA #0:STA BOMBMAN_FRAME:STA BOMBMAN_FRAME+1
+  LDA #0:STA BOMBMAN_FLIP:STA BOMBMAN_FLIP+1
+
+  RTS
+}
 
 .startpressed
 {
@@ -243,6 +250,7 @@ INCLUDE "sound.asm"
   BNE loop
 
   ; Draw bomberman
+  JSR init_bomberman
   JSR drawbomberman
 
   LDA #&00:STA inmenu
