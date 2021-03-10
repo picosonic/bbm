@@ -26,6 +26,33 @@
   EQUB 30  ; Target level at end of decay phase
 }
 
+.sound_explosion
+{
+  PHA:TXA:PHA:TYA:PHA
+
+  ; Set pointer to sound params in XY
+  LDX #effectparams MOD 256
+  LDY #effectparams DIV 256
+
+  ; Action OS sound function
+  LDA #&07:JSR OSWORD
+
+  PLA:TAY:PLA:TAX:PLA
+
+  RTS
+
+  ; Sound parameter block
+.effectparams
+  EQUB &10 ; Channel LSB (noise channel 0, with flush)
+  EQUB &00 ; Channel MSB
+  EQUB &F7 ; Amplitude LSB
+  EQUB &FF ; Amplitude MSB
+  EQUB &06 ; Pitch LSB (low frequency white noise)
+  EQUB &00 ; Pitch MSB
+  EQUB &0C ; Duration LSB
+  EQUB &00 ; Duration MSB
+}
+
 ; Stop playing melody
 .sound_stop
   LDA #&00:STA sound_music

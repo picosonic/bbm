@@ -702,7 +702,7 @@ INCLUDE "sound.asm"
  ; INC byte_A5
 
 ;loc_C9A6:
-  ; JSR PLAY_BOOM_SOUND ; Play the sound of the bombshell
+  JSR sound_explosion
 
   ; Remove from map
   LDA #0
