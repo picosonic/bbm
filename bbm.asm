@@ -394,6 +394,12 @@ INCLUDE "sound.asm"
 
   ; TODO - play sound effect 3
 
+  ; Draw bomb
+  LDA BOMB_X, X:STA sprx
+  LDA BOMB_Y, X:STA spry:INC spry
+  LDA #33:STA BOMB_FRAME, X:STA sprite
+  JSR drawbigtile
+
   RTS
 }
 
@@ -681,6 +687,7 @@ INCLUDE "sound.asm"
   BNE nextbomb
 
   ; Reduce bomb fuse time remaining, then skip if time hasn't run out
+  LDA framecounter:AND #&01:BNE nextbomb
   DEC BOMB_TIME_LEFT, X
   BNE nextbomb
 
@@ -703,6 +710,12 @@ INCLUDE "sound.asm"
 
   ; Set as inactive
   STA BOMB_ACTIVE, X
+
+  ; Clear bomb sprite
+  LDA BOMB_X, X:STA sprx
+  LDA BOMB_Y, X:STA spry:INC spry
+  LDA BOMB_FRAME, X:STA sprite
+  JSR drawbigtile
 
 .nextbomb
   DEX
@@ -736,8 +749,8 @@ INCLUDE "sound.asm"
   AND #&03
   TAY
   ; Select bomb frame from lookup
-  LDA bombframes, Y
-  STA sprite:JSR drawbigtile
+  LDA BOMB_FRAME, X:STA sprite:JSR drawbigtile
+  LDA bombframes, Y:STA BOMB_FRAME, X:STA sprite:JSR drawbigtile
 
 .nextbomb
   DEX

@@ -104,6 +104,7 @@ ORG &0400
 .BOMB_Y              EQUW &0000, &0000, &0000, &0000, &0000
 .BOMB_TIME_LEFT      EQUW &0000, &0000, &0000, &0000, &0000
 .BOMB_TIME_ELAPSED   EQUW &0000, &0000, &0000, &0000, &0000
+.BOMB_FRAME          EQUW &0000, &0000, &0000, &0000, &0000
 
 ; Bomberman X and Y position in level array, with U and Y offsets (plus cache)
 .BOMBMAN_X           EQUB &00, &00
