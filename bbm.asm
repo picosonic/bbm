@@ -3,7 +3,8 @@ INCLUDE "os.asm"
 INCLUDE "inkey.asm"
 INCLUDE "internal.asm"
 
-; Variable defines
+; Variable and constant defines
+INCLUDE "consts.asm"
 INCLUDE "vars.asm"
 
 ORG &1200
@@ -378,7 +379,7 @@ INCLUDE "sound.asm"
 .place_bomb
 {
   ; Place bomb onto map
-  LDA #&03
+  LDA #MAP_BOMB
   STA (stagemapptr), Y
 
   ; Record where we placed it
@@ -612,14 +613,15 @@ INCLUDE "sound.asm"
 {
   LDA (stagemapptr), Y
   BEQ done ; empty
-  CMP #&08:BEQ done ; exit
-  CMP #&06:BEQ done ; bonus
 
-  CMP #&02:BEQ has_noclip ; brick
-  CMP #&04:BEQ has_noclip ; hidden exit
-  CMP #&05:BEQ has_noclip ; hidden bonus
+  CMP #MAP_EXIT:BEQ done ; exit
+  CMP #MAP_BONUS:BEQ done ; bonus
 
-  CMP #&03:BEQ has_bombwalk ; bomb
+  CMP #MAP_BRICK:BEQ has_noclip ; brick
+  CMP #MAP_HIDDEN_EXIT:BEQ has_noclip ; hidden exit
+  CMP #MAP_HIDDEN_BONUS:BEQ has_noclip ; hidden bonus
+
+  CMP #MAP_BOMB:BEQ has_bombwalk ; bomb
 
 .done
   RTS
@@ -676,7 +678,7 @@ INCLUDE "sound.asm"
   LDA (stagemapptr), Y
 
   ; Check if it's a bomb
-  CMP #3
+  CMP #MAP_BOMB
   BNE bombend
 
   ; Advance animation frame
@@ -705,8 +707,7 @@ INCLUDE "sound.asm"
   JSR sound_explosion
 
   ; Remove from map
-  LDA #0
-  STA (stagemapptr), Y
+  LDA #MAP_EMPTY:STA (stagemapptr), Y
 
   ; Set as inactive
   STA BOMB_ACTIVE, X
@@ -888,11 +889,11 @@ INCLUDE "sound.asm"
 
   ; Place exit (under brick) randomly on map
   JSR randomcoords
-  LDA #&04:STA (stagemapptr), Y
+  LDA #MAP_HIDDEN_EXIT:STA (stagemapptr), Y
 
   ; Place bonus (under brick) randomly on map
   JSR randomcoords
-  LDA #&05:STA (stagemapptr), Y
+  LDA #MAP_HIDDEN_BONUS:STA (stagemapptr), Y
 
   ; Place 50 + (2*stage) bricks randomly
   LDA #&32
@@ -903,7 +904,7 @@ INCLUDE "sound.asm"
 .nextbrick
   ; Place brick on map
   JSR randomcoords
-  LDA #&02:STA (stagemapptr), Y
+  LDA #MAP_BRICK:STA (stagemapptr), Y
 
   DEC tempx
   BNE nextbrick
