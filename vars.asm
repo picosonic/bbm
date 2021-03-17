@@ -65,6 +65,9 @@ ORG &0050
 ; Number of frames, wraps around
 .framecounter EQUB &00
 
+; Number of frames so far this second
+.frames EQUB &00
+
 ; Number of lives remaining for current stage
 .lifeleft EQUB &00
 

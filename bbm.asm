@@ -53,7 +53,7 @@ INCLUDE "sound.asm"
   JSR init_bomberman
 
   ; Set up vsync event handler
-  LDA #&00:STA framecounter
+  LDA #&00:STA framecounter:STA frames
   SEI
   LDA #eventhandler MOD 256:STA EVNTV
   LDA #eventhandler DIV 256:STA EVNTV+1
@@ -130,6 +130,7 @@ INCLUDE "sound.asm"
   PHA
 
   INC framecounter
+  INC frames
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   LDA inmenu:BNE menu
@@ -214,6 +215,7 @@ INCLUDE "sound.asm"
   ; Draw TIME/SCORE/LIVES
   JSR showstatus
   JSR drawtime
+  LDA #&00:STA frames
 
   ; Draw level
   LDX #&00:LDY #&00
@@ -307,6 +309,9 @@ INCLUDE "sound.asm"
   BEQ wait_start
   LDA #INKEY_RETURN:JSR unpressed ; Wait until it's not pressed
   LDA #NO:STA sound_disable
+
+  ; Reset frame counter
+  LDA #&00:STA frames
 
 .not_paused
   RTS
@@ -762,12 +767,15 @@ INCLUDE "sound.asm"
   EQUB 33, 34, 33, 32
 }
 
-; Reduce time left by about a second (1.28s)
+; Reduce time left by a second
 .stagetimer
 {
-  LDA framecounter
-  AND #&3F ; Every 64 frames
-  BNE done
+  LDA frames
+  CMP #FPS
+  BCC done
+
+  ; Reset frame counter for this second
+  LDA #&00:STA frames
 
 ; Here temporarily
   JSR drawtime
