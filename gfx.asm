@@ -337,13 +337,12 @@ PAL_DBG   = &03
   LDY #&00:LDX #24
 .fliploop
 
-  ; Use function
-  ;LDA (sprsrc), Y:JSR flip_byte:STA flip_upper, X
-  ;LDA (sprsrc2), Y:JSR flip_byte:STA flip_lower, X
-
   ; Use look up table
-  TYA:PHA:LDA (sprsrc), Y:TAY:LDA flip_lut, Y:STA flip_upper, X:PLA:TAY
-  TYA:PHA:LDA (sprsrc2), Y:TAY:LDA flip_lut, Y:STA flip_lower, X:PLA:TAY
+  STY tempy
+  LDA (sprsrc), Y:TAY:LDA flip_lut, Y:STA flip_upper, X
+  LDY tempy
+  LDA (sprsrc2), Y:TAY:LDA flip_lut, Y:STA flip_lower, X
+  LDY tempy
 
   INX
   
@@ -416,29 +415,3 @@ PAL_DBG   = &03
   RTS
 }
 
-; Flip 4 pixels packed into one byte horizontally
-.flip_byte
-{
-  STA tempp
-
-  AND #&11
-  CLC:ROL A:ROL A:ROL A
-  STA tempq
-
-  LDA tempp
-  AND #&22
-  CLC:ROL A
-  ORA tempq:STA tempq
-
-  LDA tempp
-  AND #&44
-  CLC:LSR A
-  ORA tempq:STA tempq
-
-  LDA tempp
-  AND #&88
-  CLC:LSR A:LSR A:LSR A
-  ORA tempq
-
-  RTS
-}

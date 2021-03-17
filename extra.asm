@@ -1,5 +1,6 @@
 ; Extra data
 
+; Horizontal flip look up table
 .flip_lut
   EQUB &00, &08, &04, &0c, &02, &0a, &06, &0e, &01, &09, &05, &0d, &03, &0b, &07, &0f
   EQUB &80, &88, &84, &8c, &82, &8a, &86, &8e, &81, &89, &85, &8d, &83, &8b, &87, &8f
@@ -18,6 +19,13 @@
   EQUB &70, &78, &74, &7c, &72, &7a, &76, &7e, &71, &79, &75, &7d, &73, &7b, &77, &7f
   EQUB &f0, &f8, &f4, &fc, &f2, &fa, &f6, &fe, &f1, &f9, &f5, &fd, &f3, &fb, &f7, &ff
 
+; Flipped sprite buffer
+.flip_upper
+  SKIP 32 ; Top half of flipped sprite
+.flip_lower
+  SKIP 32 ; Bottom half of flipped sprite
+
+; Animation frames
 .HUMAN_ANIM
   EQUB &10, &11, &12, &11
 .BOMBER_ANIM
@@ -25,8 +33,3 @@
   EQUB &03, &04, &05, &04 ; Climb facing
   EQUB &06, &07, &08, &07 ; Climb away
   EQUB &09, &0A, &0B, &0C, &0D, &0E, &0F ; Explode
-
-.flip_upper
-  SKIP 32 ; Top half of flipped sprite
-.flip_lower
-  SKIP 32 ; Bottom half of flipped sprite
