@@ -6,6 +6,7 @@ YES = 1
 
 ; Hardware specific
 FPS = 50
+MODE8BASE  = &4800
 
 PAD_RIGHT  = &01
 PAD_LEFT   = &02

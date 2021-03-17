@@ -8,9 +8,7 @@ INCLUDE "consts.asm"
 INCLUDE "vars.asm"
 
 ORG &1200
-GUARD ROMSBASE
-
-MODE8BASE  = &4800
+GUARD MODE8BASE
 
 .start
 {
@@ -1030,7 +1028,7 @@ EQUS "L.EXTRA", &0D
   RTS ; Here just to advise on remaining space
 .end
 
-ORG MODE8BASE-&2200
+ALIGN &100
 
 .titles
 INCBIN "TITLE.beeb"
@@ -1043,7 +1041,8 @@ INCBIN "SPRITES.beeb"
 
 .dataend
 
-ORG &900
+ORG &0900
+GUARD &0D00
 .melodies
 
 ; Title
