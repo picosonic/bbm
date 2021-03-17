@@ -900,10 +900,8 @@ INCLUDE "sound.asm"
   JSR randomcoords
   LDA #MAP_HIDDEN_BONUS:STA (stagemapptr), Y
 
-  ; Place 50 + (2*stage) bricks randomly
-  LDA #&32
-  CLC:ADC stage
-  CLC:ADC stage
+  ; Place (2*stage) + 50 bricks randomly
+  LDA stage:ASL A:CLC:ADC #&32
   STA tempx
 
 .nextbrick
