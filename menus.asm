@@ -68,7 +68,7 @@
 
   JSR drawtopscore
 
-  LDA #&40:JSR drawcursor
+  LDA #TILE_CURSOR:JSR drawcursor
 
   RTS
 }

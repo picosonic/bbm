@@ -45,7 +45,7 @@ INCLUDE "sound.asm"
   STA sprflip
 
   ; Initialise game state
-  LDA #&01:STA inmenu
+  LDA #YES:STA inmenu
 
   ; Initialise sound
   JSR sound_init
@@ -62,7 +62,7 @@ INCLUDE "sound.asm"
 
 .gamestart
 
-  LDA #&01:STA inmenu
+  LDA #YES:STA inmenu
 
   JSR waitvsync
   JSR drawtitle
@@ -169,8 +169,8 @@ INCLUDE "sound.asm"
 .playgame
 {
   ; Initialise bombs
-  LDX #9
-  LDA #0
+  LDX #MAX_BOMB-1
+  LDA #NO
 .clearbombs
   STA BOMB_ACTIVE, X
   DEX
@@ -200,7 +200,7 @@ INCLUDE "sound.asm"
   JSR buildmap
 
   ; Set time limit
-  LDA #200:STA timeleft
+  LDA #SECONDSPERLEVEL:STA timeleft
 
   ; Set remaining lives
   LDA #&02:STA lifeleft
@@ -236,23 +236,23 @@ INCLUDE "sound.asm"
   INC sprx
 
   INX
-  CPX #16
+  CPX #MAP_WIDTH/2
   BNE loop
 
   ; Move down a row
   INC spry
   LDX #0:STX sprx
-  LDA stagemapptr:CLC:ADC #15:STA stagemapptr
+  LDA stagemapptr:CLC:ADC #((MAP_WIDTH/2)-1):STA stagemapptr
 
   INY
-  CPY #13
+  CPY #MAP_HEIGHT
   BNE loop
 
   ; Draw bomberman
   JSR init_bomberman
   JSR drawbomberman
 
-  LDA #&00:STA inmenu
+  LDA #NO:STA inmenu
 }
 
 .gameloop
@@ -277,7 +277,7 @@ INCLUDE "sound.asm"
   LDA #&7E:JSR OSBYTE
 
   ; Stop sprites being drawn (by vsync)
-  LDA #&01:STA inmenu
+  LDA #YES:STA inmenu
 
   JSR drawgameoverscreen
 
@@ -289,7 +289,7 @@ INCLUDE "sound.asm"
   BEQ endwait
 
   ; Stop end music playing (if it still is)
-  LDA #&00:STA sound_music
+  LDA #NO:STA sound_music
 
   ; TODO
   JMP gamestart
@@ -299,14 +299,14 @@ INCLUDE "sound.asm"
 {
   LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
   BEQ not_paused
-  LDA #&01:STA sound_disable
+  LDA #YES:STA sound_disable
   LDA #INKEY_RETURN:JSR unpressed ; Wait until it's not pressed
 
 .wait_start
   LDA #INKEY_RETURN:JSR scankey ; Scan for RETURN
   BEQ wait_start
   LDA #INKEY_RETURN:JSR unpressed ; Wait until it's not pressed
-  LDA #&00:STA sound_disable
+  LDA #NO:STA sound_disable
 
 .not_paused
   RTS
@@ -318,34 +318,34 @@ INCLUDE "sound.asm"
   BEQ done
 
 .case_right
-  TXA:AND #&01
+  TXA:AND #PAD_RIGHT
   BEQ case_left
   JSR move_right
 
 .case_left
-  TXA:AND #&02
+  TXA:AND #PAD_LEFT
   BEQ case_up
   JSR move_left
 
 .case_up
-  TXA:AND #&08
+  TXA:AND #PAD_UP
   BEQ case_down
   JSR move_up
 
 .case_down
-  TXA:AND #&04
+  TXA:AND #PAD_DOWN
   BEQ case_action
   JSR move_down
 
 .case_action
-  TXA:AND #&80
+  TXA:AND #PAD_A
   BNE drop_bomb
 
   ; Check we have detonator
   LDA BONUS_REMOTE
   BEQ done
 
-  TXA:AND #&40
+  TXA:AND #PAD_B
   BEQ done
   JSR detonate
 
@@ -379,8 +379,7 @@ INCLUDE "sound.asm"
 .place_bomb
 {
   ; Place bomb onto map
-  LDA #MAP_BOMB
-  STA (stagemapptr), Y
+  LDA #MAP_BOMB:STA (stagemapptr), Y
 
   ; Record where we placed it
   LDA BOMBMAN_X:STA BOMB_X, X
@@ -391,7 +390,7 @@ INCLUDE "sound.asm"
   LDA #160:STA BOMB_TIME_LEFT, X
 
   ; Mark bomb slot as active
-  LDA #&01:STA BOMB_ACTIVE, X
+  LDA #YES:STA BOMB_ACTIVE, X
 
   ; TODO - play sound effect 3
 
@@ -407,7 +406,7 @@ INCLUDE "sound.asm"
 .move_down
 {
   ; Disable horizontal flip
-  LDA #00:STA BOMBMAN_FLIP
+  LDA #NO:STA BOMBMAN_FLIP
 
   ; Are we on the edge of this cell
   LDA BOMBMAN_V
@@ -443,7 +442,7 @@ INCLUDE "sound.asm"
 .move_up
 {
   ; Disable horizontal flip
-  LDA #00:STA BOMBMAN_FLIP
+  LDA #NO:STA BOMBMAN_FLIP
 
   ; Are we on the edge of this cell
   LDA BOMBMAN_V
@@ -477,7 +476,7 @@ INCLUDE "sound.asm"
 .move_left
 {
   ; Disable horizontal flip
-  LDA #00:STA BOMBMAN_FLIP
+  LDA #NO:STA BOMBMAN_FLIP
 
   ; Are we on the edge of this cell
   LDA BOMBMAN_U
@@ -511,7 +510,7 @@ INCLUDE "sound.asm"
 .move_right
 {
   ; Flip sprite horizontally
-  LDA #01:STA BOMBMAN_FLIP
+  LDA #YES:STA BOMBMAN_FLIP
 
   ; Are we on the edge of this cell
   LDA BOMBMAN_U
@@ -548,8 +547,8 @@ INCLUDE "sound.asm"
 {
   LDA BOMBMAN_U
   CMP #&08
-  BCC adjust_right ; < 4
-  BEQ done         ; = 4
+  BCC adjust_right ; < 8
+  BEQ done         ; = 8
   DEC BOMBMAN_U
 .done
   RTS
@@ -563,8 +562,8 @@ INCLUDE "sound.asm"
 {
   LDA BOMBMAN_V
   CMP #&08
-  BCC adjust_down ; < 4
-  BEQ done        ; = 4
+  BCC adjust_down ; < 8
+  BEQ done        ; = 8
   DEC BOMBMAN_V
 .done
   RTS
@@ -662,7 +661,7 @@ INCLUDE "sound.asm"
 
 .bombtick
 {
-  LDX #9
+  LDX #MAX_BOMB-1
 
 .loop
   ; Skip this bomb if it's not active
@@ -700,10 +699,10 @@ INCLUDE "sound.asm"
  ; JSR sub_C9B6
  ; LDA byte_A5
  ; CMP #$FF
- ; BEQ loc_C9A6
+ ; BEQ explode
  ; INC byte_A5
 
-;loc_C9A6:
+.explode
   JSR sound_explosion
 
   ; Remove from map
@@ -728,7 +727,7 @@ INCLUDE "sound.asm"
 ; Animate frame for each active bomb
 .bombanim
 {
-  LDX #9
+  LDX #MAX_BOMB-1
 
 .loop
   ; Skip this bomb if it's not active
@@ -772,7 +771,7 @@ INCLUDE "sound.asm"
 
 ; Here temporarily
   JSR drawtime
-;  LDA #50:STA delayframes:JSR delay
+;  LDA #FPS:STA delayframes:JSR delay
 
   LDA timeleft
   CMP #255
