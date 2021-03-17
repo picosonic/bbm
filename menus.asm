@@ -77,26 +77,17 @@
 {
   PHA
 
-  LDA #(MODE8BASE) MOD 256:STA sprdst
-  LDA #(MODE8BASE) DIV 256:STA sprdst+1
+  LDX cursor:LDA cursorx, X:TAX
+  LDY #&11
 
-  LDX cursor
-  LDA cursorl, X
-  CLC:ADC sprdst:STA sprdst
-
-  LDX cursor
-  LDA cursorh, X
-  CLC:ADC sprdst+1:STA sprdst+1
-
+  JSR positiontextcursor
   PLA:STA sprite:JSR writetile
 
   RTS
 
   ; cursor position lookup
-.cursorl
-  EQUB &80, &00
-.cursorh
-  EQUB &22, &23
+.cursorx
+  EQUB &08, &10
 }
 
 .drawtopscore
