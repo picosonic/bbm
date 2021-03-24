@@ -1126,16 +1126,19 @@ INCBIN "melodies/M09C3.bin"
 INCLUDE "extra.asm"
 .eof RTS
 
+ORG &00
+CLEAR &00, &FF
 .plingboot
 EQUS "*BASIC", &0D ; Reset to BASIC
 EQUS "*FX21", &0D ; Flush buffer
 EQUS "CLOSE#0:*/BBM", &0D ; Close "!BOOT" and run the main code
+EQUS "REM BBM build ", TIME$ ; Add a build date
 .plingend
 
+SAVE "!BOOT", plingboot, plingend
 SAVE "BBM", start, end
 SAVE "TITLE", titles, tilesheet
 SAVE "TILES", tilesheet, spritesheet
 SAVE "SPRITES", spritesheet, dataend
 SAVE "TUNES", melodies, extradata
 SAVE "EXTRA", extradata, eof
-SAVE "!BOOT", plingboot, plingend
