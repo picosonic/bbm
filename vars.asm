@@ -9,7 +9,7 @@
 ; ---------------------------------------------------------
 ; Zero page variables
 
-ORG &0040
+ORG &0000
 GUARD &0090
 
 ; Input bitfield

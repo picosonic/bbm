@@ -1,8 +1,14 @@
 REM BBM Loader
 :
+REM Load loading screen
+MODE2
+VDU23,1,0,0,0,0,0,0,0,0:REM Hide cursor
+*L.LOADSCR
+*FX15
+REPEATUNTILGET=32
+:
 REM Initialise "MODE 8" 256x224
 MODE1
-VDU23,1,0,0,0,0,0,0,0,0:REM Hide cursor
 ?&FE00=1:?&FE01=64:REM Set 256 pixels wide
 ?&FE00=2:?&FE01=89:REM Centre horizontally
 ?&FE00=6:?&FE01=28:REM Set 224 pixels high

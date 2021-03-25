@@ -29,6 +29,13 @@ INCLUDE "gfx.asm"
 INCLUDE "sound.asm"
 
 .init
+  ; Clear zero page
+  LDA #&00:LDX #&00
+.czloop
+  STA 0, X
+  DEX
+  BNE czloop
+
   ; Initialise cursor
   LDA #&00:STA cursor
   STA sprflip
@@ -1107,13 +1114,15 @@ ORG &00
 CLEAR &00, &FF
 .plingboot
 EQUS "*BASIC", &0D ; Reset to BASIC
+EQUS "PAGE=&1900", &0D ; Set PAGE
 EQUS "*FX21", &0D ; Flush buffer
 EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
 EQUS "REM BBM build ", TIME$ ; Add a build date
 .plingend
 
 SAVE "!BOOT", plingboot, plingend
-PUTBASIC "loader.bas","$.LOADER"
+PUTBASIC "loader.bas", "$.LOADER"
+PUTFILE "loadscr", "$.LOADSCR", &3000
 SAVE "BBM", start, end
 SAVE "TITLE", titles, tilesheet
 SAVE "TILES", tilesheet, spritesheet
