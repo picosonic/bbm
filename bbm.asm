@@ -29,24 +29,12 @@ INCLUDE "gfx.asm"
 INCLUDE "sound.asm"
 
 .init
-  JSR mode8
-
-  ; Load data files
-  LDX #titlestr MOD 256:LDY #titlestr DIV 256:JSR OSCLI
-  LDX #tilestr MOD 256:LDY #tilestr DIV 256:JSR OSCLI
-  LDX #sprstr MOD 256:LDY #sprstr DIV 256:JSR OSCLI
-  LDX #extrastr MOD 256:LDY #extrastr DIV 256:JSR OSCLI
-  LDX #tunestr MOD 256:LDY #tunestr DIV 256:JSR OSCLI
-
   ; Initialise cursor
   LDA #&00:STA cursor
   STA sprflip
 
   ; Initialise game state
   LDA #YES:STA inmenu
-
-  ; Initialise sound
-  JSR sound_init
 
   JSR init_bomberman
 
@@ -1012,17 +1000,6 @@ INCLUDE "sound.asm"
   RTS
 }
 
-.titlestr
-EQUS "L.TITLE", &0D
-.tilestr
-EQUS "L.TILES", &0D
-.sprstr
-EQUS "L.SPRITES", &0D
-.tunestr
-EQUS "L.TUNES", &0D
-.extrastr
-EQUS "L.EXTRA", &0D
-
   RTS ; Here just to advise on remaining space
 .end
 
@@ -1131,11 +1108,12 @@ CLEAR &00, &FF
 .plingboot
 EQUS "*BASIC", &0D ; Reset to BASIC
 EQUS "*FX21", &0D ; Flush buffer
-EQUS "CLOSE#0:*/BBM", &0D ; Close "!BOOT" and run the main code
+EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
 EQUS "REM BBM build ", TIME$ ; Add a build date
 .plingend
 
 SAVE "!BOOT", plingboot, plingend
+PUTBASIC "loader.bas","$.LOADER"
 SAVE "BBM", start, end
 SAVE "TITLE", titles, tilesheet
 SAVE "TILES", tilesheet, spritesheet

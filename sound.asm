@@ -1,31 +1,3 @@
-.sound_init
-{
-  ; Define ENVELOPE
-  LDA #&08
-  LDX #envelope MOD 256
-  LDY #envelope DIV 256
-  JSR OSWORD
-
-  RTS
-
-.envelope
-  ; "Marimba"
-  EQUB 1   ; Envelope number
-  EQUB 2   ; Length of each step (hundredths of a second) and auto repeat (top bit)
-  EQUB 0   ; Change of pitch per step in section 1
-  EQUB 0   ; Change of pitch per step in section 2
-  EQUB 0   ; Change of pitch per step in section 3
-  EQUB 0   ; Number of steps in section 1
-  EQUB 0   ; Number of steps in section 2
-  EQUB 0   ; Number of steps in section 3
-  EQUB 60 ; Change of amplitude per step during attack phase
-  EQUB -4  ; Change of amplitude per step during decay phase
-  EQUB -4  ; Change of amplitude per step during sustain phase
-  EQUB -4  ; Change of amplitude per step during release phase
-  EQUB 60 ; Target level at end of attack phase
-  EQUB 30  ; Target level at end of decay phase
-}
-
 .sound_explosion
 {
   PHA:TXA:PHA:TYA:PHA
