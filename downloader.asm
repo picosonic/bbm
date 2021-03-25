@@ -41,7 +41,7 @@ ORG downaddr
   INX:BNE clearvars
 
   LDX #&00
-  LDY #&34 ; program length in pages
+  LDY #HI(MODE8BASE-MAIN_RELOC_ADDR) ; MAX program length in pages
 .relocate
   LDA MAIN_LOAD_ADDR,X:STA MAIN_RELOC_ADDR,X
   INX:BNE relocate
