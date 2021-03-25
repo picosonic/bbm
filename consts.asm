@@ -1,5 +1,8 @@
 ; Constants
 
+MAIN_LOAD_ADDR = &1900
+MAIN_RELOC_ADDR = &0E00
+
 ; Booleans for flags
 NO  = 0
 YES = 1

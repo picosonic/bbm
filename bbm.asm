@@ -7,19 +7,24 @@ INCLUDE "internal.asm"
 INCLUDE "consts.asm"
 INCLUDE "vars.asm"
 
-ORG &1200
-GUARD MODE8BASE
+ORG MAIN_RELOC_ADDR
 
 .start
-{
-  ; TODO move any data which overlaps start screen memory
+.datastart
 
-  ; Make sure we are not in decimal mode
-  CLD
+.titles
+INCBIN "TITLE.beeb"
 
-  ; Jump to initialisation
+.tilesheet
+INCBIN "TILES.beeb"
+
+.spritesheet
+INCBIN "SPRITES.beeb"
+
+.dataend
+
+.codestart
   JMP init
-}
 
 ; Import modules
 INCLUDE "input.asm"
@@ -29,13 +34,6 @@ INCLUDE "gfx.asm"
 INCLUDE "sound.asm"
 
 .init
-  ; Clear zero page
-  LDA #&00:LDX #&00
-.czloop
-  STA 0, X
-  DEX
-  BNE czloop
-
   ; Initialise cursor
   LDA #&00:STA cursor
   STA sprflip
@@ -1007,66 +1005,13 @@ INCLUDE "sound.asm"
   RTS
 }
 
-  RTS ; Here just to advise on remaining space
-.end
-
-ALIGN &100
-
-.titles
-INCBIN "TITLE.beeb"
-
-.tilesheet
-INCBIN "TILES.beeb"
-
-.spritesheet
-INCBIN "SPRITES.beeb"
-
-.dataend
-
-ORG &0900
-GUARD &0D00
-.melodies
-
-; Title
-.melody_01_c1
-INCBIN "melodies/M01C1.bin"
-.melody_01_c2
-INCBIN "melodies/M01C2.bin"
-.melody_01_c3
-INCBIN "melodies/M01C3.bin"
-
-; Stage screen
-.melody_02_c1
-INCBIN "melodies/M02C1.bin"
-.melody_02_c2
-INCBIN "melodies/M02C2.bin"
-.melody_02_c3
-INCBIN "melodies/M02C3.bin"
-
-; Stage
-.melody_03_c3
-INCBIN "melodies/M03C3.bin"
-
-; Game over
-.melody_09_c1
-INCBIN "melodies/M09C1.bin"
-.melody_09_c2
-INCBIN "melodies/M09C2.bin"
-.melody_09_c3
-INCBIN "melodies/M09C3.bin"
-
-  RTS
-
-; Allow re-use of memory range
-;CLEAR &900, &B70
-
 ; Stage 2
 .melody_04_c1
-;INCBIN "melodies/M04C1.bin"
+INCBIN "melodies/M04C1.bin"
 .melody_04_c2
-;INCBIN "melodies/M04C2.bin"
+INCBIN "melodies/M04C2.bin"
 .melody_04_c3
-;INCBIN "melodies/M04C3.bin"
+INCBIN "melodies/M04C3.bin"
 
 ; God mode
 .melody_05_c1
@@ -1106,9 +1051,44 @@ INCBIN "melodies/M09C3.bin"
 .melody_10_c3
 ;INCBIN "melodies/M10C3.bin"
 
+.downloader
+INCBIN "DOWNLOADER"
+.codeend
+
+ORG &0900
+GUARD &0D00
 .extradata
+
+; Title
+.melody_01_c1
+INCBIN "melodies/M01C1.bin"
+.melody_01_c2
+INCBIN "melodies/M01C2.bin"
+.melody_01_c3
+INCBIN "melodies/M01C3.bin"
+
+; Stage screen
+.melody_02_c1
+INCBIN "melodies/M02C1.bin"
+.melody_02_c2
+INCBIN "melodies/M02C2.bin"
+.melody_02_c3
+INCBIN "melodies/M02C3.bin"
+
+; Stage
+.melody_03_c3
+INCBIN "melodies/M03C3.bin"
+
+; Game over
+.melody_09_c1
+INCBIN "melodies/M09C1.bin"
+.melody_09_c2
+INCBIN "melodies/M09C2.bin"
+.melody_09_c3
+INCBIN "melodies/M09C3.bin"
+
 INCLUDE "extra.asm"
-.eof RTS
+.extraend
 
 ORG &00
 CLEAR &00, &FF
@@ -1122,10 +1102,22 @@ EQUS "REM BBM build ", TIME$ ; Add a build date
 
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
-PUTFILE "loadscr", "$.LOADSCR", &3000
-SAVE "BBM", start, end
-SAVE "TITLE", titles, tilesheet
-SAVE "TILES", tilesheet, spritesheet
-SAVE "SPRITES", spritesheet, dataend
-SAVE "TUNES", melodies, extradata
-SAVE "EXTRA", extradata, eof
+PUTFILE "loadscr", "$.LOADSCR", MODE2BASE
+SAVE "BBM", start, codeend, downloader+(MAIN_LOAD_ADDR-MAIN_RELOC_ADDR), MAIN_LOAD_ADDR
+SAVE "EXTRA", extradata, extraend
+
+PRINT "-------------------------------------------"
+PRINT "Zero page from 0 to ", ~zpend-1, "  (", &A0-zpend, " bytes left )"
+PRINT "Vars from &400 to ", ~end_of_vars-1, "  (", &800-end_of_vars, " bytes left )"
+PRINT ""
+PRINT "DATA from ", ~datastart, " to ", ~dataend-1
+PRINT ""
+PRINT "Code start : ", ~codestart
+PRINT "Code end : ", ~codeend-1
+PRINT "Code length : ", ~codeend-codestart, "  (", codeend-codestart, " bytes )"
+PRINT ""
+PRINT "TUNES/EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", &0D00-extraend, " bytes left )"
+PRINT ""
+remaining = MODE8BASE-codeend
+PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
+PRINT "-------------------------------------------"

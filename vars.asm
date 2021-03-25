@@ -98,6 +98,8 @@ GUARD &0090
 .sound_pause_point EQUB &00, &00, &00
 .sound_pause_counter EQUB &00, &00, &00
 
+.zpend
+
 ; ---------------------------------------------------------
 ; Variables in LANGUAGE workspace, &400 to &7FF
 
@@ -181,4 +183,4 @@ ALIGN &100
 .levelmap
 SKIP (32*13) ; Reserve bytes for in-game level data
 
-.end_of_vars RTS
+.end_of_vars

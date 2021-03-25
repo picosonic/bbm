@@ -21,3 +21,6 @@ melody_extract
 
 # Flip lookup table generator
 flip_lut
+
+# Downloader binary
+DOWNLOADER
