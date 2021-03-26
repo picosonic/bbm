@@ -1007,11 +1007,11 @@ INCLUDE "sound.asm"
 
 ; Stage 2
 .melody_04_c1
-INCBIN "melodies/M04C1.bin"
+;INCBIN "melodies/M04C1.bin"
 .melody_04_c2
-INCBIN "melodies/M04C2.bin"
+;INCBIN "melodies/M04C2.bin"
 .melody_04_c3
-INCBIN "melodies/M04C3.bin"
+;INCBIN "melodies/M04C3.bin"
 
 ; God mode
 .melody_05_c1
@@ -1039,9 +1039,9 @@ INCBIN "melodies/M04C3.bin"
 
 ; Died
 .melody_08_c1
-;INCBIN "melodies/M08C1.bin"
+INCBIN "melodies/M08C1.bin"
 .melody_08_c2
-;INCBIN "melodies/M08C2.bin"
+INCBIN "melodies/M08C2.bin"
 
 ; Final
 .melody_10_c1
@@ -1113,13 +1113,13 @@ PRINT "-------------------------------------------"
 PRINT "Zero page from 0 to ", ~zpend-1, "  (", &A0-zpend, " bytes left )"
 PRINT "Vars from &400 to ", ~end_of_vars-1, "  (", &800-end_of_vars, " bytes left )"
 PRINT ""
+PRINT "TUNES/EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", &0D00-extraend, " bytes left )"
+PRINT ""
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1
 PRINT ""
 PRINT "Code start : ", ~codestart
 PRINT "Code end : ", ~codeend-1
 PRINT "Code length : ", ~codeend-codestart, "  (", codeend-codestart, " bytes )"
-PRINT ""
-PRINT "TUNES/EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", &0D00-extraend, " bytes left )"
 PRINT ""
 remaining = MODE8BASE-usedmemory
 PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
