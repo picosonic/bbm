@@ -4,7 +4,7 @@
 INCLUDE "os.asm"
 INCLUDE "consts.asm"
 
-downaddr = (MAIN_LOAD_ADDR-MAIN_RELOC_ADDR)+&4192
+downaddr = MAIN_LOAD_ADDR+&5000
 
 ORG downaddr
 

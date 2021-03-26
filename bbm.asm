@@ -1051,6 +1051,9 @@ INCBIN "melodies/M04C3.bin"
 .melody_10_c3
 ;INCBIN "melodies/M10C3.bin"
 
+.usedmemory
+
+ORG MAIN_LOAD_ADDR+&5000-(MAIN_LOAD_ADDR-MAIN_RELOC_ADDR)
 .downloader
 INCBIN "DOWNLOADER"
 .codeend
@@ -1103,7 +1106,7 @@ EQUS "REM BBM build ", TIME$ ; Add a build date
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "loadscr", "$.LOADSCR", MODE2BASE
-SAVE "BBM", start, codeend, downloader+(MAIN_LOAD_ADDR-MAIN_RELOC_ADDR), MAIN_LOAD_ADDR
+SAVE "BBM", start, codeend, MAIN_LOAD_ADDR+&5000, MAIN_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
 
 PRINT "-------------------------------------------"
@@ -1118,6 +1121,6 @@ PRINT "Code length : ", ~codeend-codestart, "  (", codeend-codestart, " bytes )"
 PRINT ""
 PRINT "TUNES/EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", &0D00-extraend, " bytes left )"
 PRINT ""
-remaining = MODE8BASE-codeend
+remaining = MODE8BASE-usedmemory
 PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
 PRINT "-------------------------------------------"
