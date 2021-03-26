@@ -422,6 +422,12 @@
 
   ; read password input
 
+  ; Turn keyboard IRQs on
+  LDA #&C9:LDX #&00:LDY #&00:JSR OSBYTE
+
+  ; Flush keyboard buffer
+  LDA #&15:LDX #&00:JSR OSBYTE
+
   ; set current string length to 0
   LDA #&00:STA tempx
 .back
@@ -434,7 +440,8 @@
   ; acknowledge ESC
   LDA #&7E:JSR OSBYTE
   ; password entry cancelled
-  RTS
+
+  JMP done
 
 .noescape
   ; is it DEL (0x7f)?
@@ -551,6 +558,8 @@
   INC tempz
 
 .done
+  ; Turn keyboard IRQs off
+  LDA #&C9:LDX #&01:LDY #&00:JSR OSBYTE
   RTS
 
   ; Password prompt string
