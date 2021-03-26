@@ -30,6 +30,8 @@ ORG downaddr
   STA 0,X:DEX:BNE clearzp
   STA 0
 
+  LDX #&FF:TXS ; Clear stack
+
   CLI
 
   ; Clear variables in language workspace
