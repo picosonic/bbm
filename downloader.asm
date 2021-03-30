@@ -1,4 +1,7 @@
 ; This does some initial setup and relocates main code to maximise RAM use
+;
+; Uses some ideas seen in Crazee Rider BBC Micro source (by Kevin Edwards)
+;   https://github.com/KevEdwards/CrazeeRiderBBC
 
 ; OS defines
 INCLUDE "os.asm"
