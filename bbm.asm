@@ -8,6 +8,7 @@ INCLUDE "consts.asm"
 INCLUDE "vars.asm"
 
 ORG MAIN_RELOC_ADDR
+GUARD ROMSBASE
 
 .start
 .datastart
