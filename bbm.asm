@@ -1054,7 +1054,7 @@ INCBIN "melodies/M08C2.bin"
 
 .usedmemory
 
-ORG MAIN_LOAD_ADDR+&5000-(MAIN_LOAD_ADDR-MAIN_RELOC_ADDR)
+ORG MAIN_LOAD_ADDR+MAX_OBJ_SIZE-(MAIN_LOAD_ADDR-MAIN_RELOC_ADDR)
 .downloader
 INCBIN "DOWNLOADER"
 .codeend
@@ -1107,8 +1107,8 @@ EQUS "REM BBM build ", TIME$ ; Add a build date
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "loadscr", "$.LOADSCR", MODE2BASE
-SAVE "BBM", start, codeend, MAIN_LOAD_ADDR+&5000, MAIN_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
+SAVE "BBM", start, codeend, DOWNLOADER_ADDR, MAIN_LOAD_ADDR
 
 PRINT "-------------------------------------------"
 PRINT "Zero page from 0 to ", ~zpend-1, "  (", &A0-zpend, " bytes left )"

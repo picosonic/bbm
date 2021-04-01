@@ -1,15 +1,17 @@
 ; Constants
 
+; Hardware specific
+MODE8BASE  = &4800
+FPS = 50
+
 MAIN_LOAD_ADDR = &1900
 MAIN_RELOC_ADDR = &0E00
+MAX_OBJ_SIZE = MODE8BASE-MAIN_RELOC_ADDR
+DOWNLOADER_ADDR = MAIN_LOAD_ADDR+MAX_OBJ_SIZE
 
 ; Booleans for flags
 NO  = 0
 YES = 1
-
-; Hardware specific
-FPS = 50
-MODE8BASE  = &4800
 
 PAD_RIGHT  = &01
 PAD_LEFT   = &02

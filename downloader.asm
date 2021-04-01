@@ -7,9 +7,7 @@
 INCLUDE "os.asm"
 INCLUDE "consts.asm"
 
-downaddr = MAIN_LOAD_ADDR+&5000
-
-ORG downaddr
+ORG DOWNLOADER_ADDR
 
   ; Make sure we are not in decimal mode
   CLD
@@ -103,5 +101,5 @@ ORG downaddr
   EQUB 60 ; Target level at end of attack phase
   EQUB 30  ; Target level at end of decay phase
 
-PRINT "Saving downloader from ", ~downaddr, " to ", ~P%
-SAVE "DOWNLOADER", downaddr, P%
+PRINT "Saving downloader from ", ~DOWNLOADER_ADDR, " to ", ~P%
+SAVE "DOWNLOADER", DOWNLOADER_ADDR, P%
