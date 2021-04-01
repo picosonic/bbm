@@ -40,6 +40,7 @@ ORG DOWNLOADER_ADDR
   LDA #&C9:LDX #&01:LDY #&00:JSR OSBYTE ; Kbd irqs off!
   LDA #&04:LDX #&01:JSR OSBYTE ; Disable cursor editing
   LDA #26:JSR OSWRCH ; Remove text window (tape needs this!)
+  LDA #&8F:LDX #&0C:LDY #&FF:JSR OSBYTE ; Disable NMIs to claim absolute workspace (&E00)
 
   SEI
 
