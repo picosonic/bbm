@@ -28,6 +28,12 @@ IND1V = &0230
 IND2V = &0232
 IND3V = &0234
 
+; OS memory locations
+ZP_ECONET_WORKSPACE = &90
+LANGUAGE_WORKSPACE = &400
+SOUND_WORKSPACE = &800
+NMI_WORKSPACE = &D00
+
 ; OS function call locations
 
 OSFSC  = &F1B1 ; filing system control (entry via FSCV)

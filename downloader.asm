@@ -39,7 +39,7 @@ ORG DOWNLOADER_ADDR
   LDA #&0F:LDX #&00:JSR OSBYTE ; Flush all buffers
   LDA #&C9:LDX #&01:LDY #&00:JSR OSBYTE ; Kbd irqs off!
   LDA #&04:LDX #&01:JSR OSBYTE ; Disable cursor editing
-  LDA #26:JSR OSWRCH ; Remove text window (tape needs this!)
+  LDA #&1A:JSR OSWRCH ; Remove text window (tape needs this!)
   LDA #&8F:LDX #&0C:LDY #&FF:JSR OSBYTE ; Disable NMIs to claim absolute workspace (&E00)
 
   SEI
@@ -50,7 +50,7 @@ ORG DOWNLOADER_ADDR
   STA &2A1,X:DEX:BPL zaproms
  
   ; Clear zero page
-  LDX #&8F
+  LDX #ZP_ECONET_WORKSPACE-1
 .clearzp
   STA 0,X:DEX:BNE clearzp
   STA 0
@@ -61,10 +61,10 @@ ORG DOWNLOADER_ADDR
 
   ; Clear variables in language workspace
 .clearvars
-  STA &400,X
-  STA &500,X
-  STA &600,X
-  STA &700,X
+  STA LANGUAGE_WORKSPACE,X
+  STA LANGUAGE_WORKSPACE+&100,X
+  STA LANGUAGE_WORKSPACE+&200,X
+  STA LANGUAGE_WORKSPACE+&300,X
   INX:BNE clearvars
 
   LDX #&00

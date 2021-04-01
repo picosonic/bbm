@@ -1111,16 +1111,11 @@ SAVE "EXTRA", extradata, extraend
 SAVE "BBM", start, codeend, DOWNLOADER_ADDR, MAIN_LOAD_ADDR
 
 PRINT "-------------------------------------------"
-PRINT "Zero page from 0 to ", ~zpend-1, "  (", &A0-zpend, " bytes left )"
-PRINT "Vars from &400 to ", ~end_of_vars-1, "  (", &800-end_of_vars, " bytes left )"
-PRINT ""
-PRINT "TUNES/EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", &0D00-extraend, " bytes left )"
-PRINT ""
-PRINT "DATA from ", ~datastart, " to ", ~dataend-1
-PRINT ""
-PRINT "Code start : ", ~codestart
-PRINT "Code end : ", ~codeend-1
-PRINT "Code length : ", ~codeend-codestart, "  (", codeend-codestart, " bytes )"
+PRINT "Zero page from &00 to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
+PRINT "VARS from &400 to ", ~end_of_vars-1, "  (", SOUND_WORKSPACE-end_of_vars, " bytes left )"
+PRINT "TUNES/EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
+PRINT "SPRITES/TILES from ", ~datastart, " to ", ~dataend-1
+PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
 PRINT ""
 remaining = MODE8BASE-usedmemory
 PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
