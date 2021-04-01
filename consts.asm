@@ -23,8 +23,10 @@ PAD_A      = &80
 ; Sprites
 
 
-; Tiles
+; Tiles (8x8)
 TILE_CURSOR = &40
+
+; Tiles (16x16)
 
 ; Level specific
 SECONDSPERLEVEL = 200
@@ -49,3 +51,5 @@ MAP_EXIT         = 8
 
 MAX_BOMB = 10
 MAX_FIRE = (MAX_BOMB*8)
+
+MAX_PW_CHARS = 20
