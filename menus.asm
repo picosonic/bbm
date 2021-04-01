@@ -483,7 +483,7 @@
   ; increment string length
   INC tempx
   ; is string length < 20?
-  LDA tempx:CMP #20:BCC back
+  LDA tempx:CMP #MAX_PW_CHARS:BCC back
 
   ; validate password string
   LDX #&00:STX seed
@@ -497,7 +497,7 @@
   PLA
   STA seed
   INX
-  CPX #20
+  CPX #MAX_PW_CHARS
   BNE passloop
 
   LDX #&00
@@ -545,7 +545,7 @@
   LDA password_buffer, Y
   STY tempy:LDY #&00:STA (stagemapptr), Y:LDY tempy
   INY
-  CPY #20
+  CPY #MAX_PW_CHARS
   BNE passloop5
 
   ; Shift low nibble to high nibble of BONUS_POWER
