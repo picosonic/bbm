@@ -74,10 +74,8 @@ INCLUDE "sound.asm"
   BEQ awaitkeys
 
   ; toggle cursor
-  JSR waitvsync
   LDA #&3A:JSR drawcursor ; Draw a blank on current position
   LDA cursor:EOR #&01:STA cursor
-  JSR waitvsync
   LDA #&40:JSR drawcursor ; Draw cursor at new position
 
   LDA #INKEY_SPACE:JSR unpressed ; Wait for SPACEBAR to be released
