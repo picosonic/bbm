@@ -915,21 +915,21 @@ INCLUDE "sound.asm"
   LDY #0
 
   LDX #&00:JSR stagerow ; Top wall
-  LDX #&20:JSR stagerow ; Blank row
-  LDX #&40:JSR stagerow ; Alternate concrete
-  LDX #&20:JSR stagerow ; ...
-  LDX #&40:JSR stagerow
-  LDX #&20:JSR stagerow
-  LDX #&40:JSR stagerow
-  LDX #&20:JSR stagerow
-  LDX #&40:JSR stagerow
-  LDX #&20:JSR stagerow
-  LDX #&40:JSR stagerow
-  LDX #&20:JSR stagerow
+  LDX #MAP_WIDTH:JSR stagerow ; Blank row
+  LDX #MAP_WIDTH*2:JSR stagerow ; Alternate concrete
+  LDX #MAP_WIDTH:JSR stagerow ; ...
+  LDX #MAP_WIDTH*2:JSR stagerow
+  LDX #MAP_WIDTH:JSR stagerow
+  LDX #MAP_WIDTH*2:JSR stagerow
+  LDX #MAP_WIDTH:JSR stagerow
+  LDX #MAP_WIDTH*2:JSR stagerow
+  LDX #MAP_WIDTH:JSR stagerow
+  LDX #MAP_WIDTH*2:JSR stagerow
+  LDX #MAP_WIDTH:JSR stagerow
   LDX #&00 ; Bottom wall
 
 .stagerow
-  LDA #&20:STA tempx
+  LDA #MAP_WIDTH:STA tempx
 
 .stagecell
   LDA stagerows, X
@@ -965,7 +965,7 @@ INCLUDE "sound.asm"
   ROR A:ROR A:ROR A ; A = A/8
   AND #&0F ; 0 to 15
   BEQ loop
-  CMP #&0C ; if A >= 13, try again
+  CMP #MAP_HEIGHT-1 ; if A >= 13, try again
   BCS loop
   STA tempy
 
@@ -977,6 +977,8 @@ INCLUDE "sound.asm"
   LDY tempx
   LDA (stagemapptr), Y ; Check what's on the map already
   BNE randomcoords ; If not blank, retry
+
+  ; Make sure nothing is put too close to bomberman
   CPY #&03
   BCS done
   LDA tempy
