@@ -894,14 +894,14 @@ INCLUDE "sound.asm"
 
   ; Place (2*stage) + 50 bricks randomly
   LDA stage:ASL A:CLC:ADC #&32
-  STA tempx
+  STA tempz
 
 .nextbrick
   ; Place brick on map
   JSR randomcoords
   LDA #MAP_BRICK:STA (stagemapptr), Y
 
-  DEC tempx
+  DEC tempz
   BNE nextbrick
 
   RTS
