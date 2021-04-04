@@ -196,7 +196,7 @@ INCLUDE "sound.asm"
   LDA #SECONDSPERLEVEL:STA timeleft
 
   ; Set remaining lives
-  LDA #&02:STA lifeleft
+  LDA #LIVESPERLEVEL-1:STA lifeleft
 
   ; Clear the screen
   JSR cls
