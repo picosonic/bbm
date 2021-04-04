@@ -212,29 +212,27 @@ INCLUDE "sound.asm"
   LDA #0:STA sprx
   LDA #1:STA spry
 
-  LDA #(levelmap) MOD 256:STA stagemapptr
-  LDA #(levelmap) DIV 256:STA stagemapptr+1
+  LDA #levelmap MOD 256:STA stagemapptr
+  LDA #levelmap DIV 256:STA stagemapptr+1
 
 .loop
   LDA (stagemapptr), Y:CLC:ADC #24:STA sprite
 
   INC stagemapptr
-  BNE samepage
-  INC stagemapptr+1
-.samepage
 
   JSR drawbigtile
 
   INC sprx
 
   INX
-  CPX #MAP_WIDTH/2
+  CPX #MAP_WIDTH
   BNE loop
+
+  DEC stagemapptr
 
   ; Move down a row
   INC spry
   LDX #0:STX sprx
-  LDA stagemapptr:CLC:ADC #((MAP_WIDTH/2)-1):STA stagemapptr
 
   INY
   CPY #MAP_HEIGHT
@@ -352,7 +350,7 @@ INCLUDE "sound.asm"
 {
   ; See if map is empty here
   LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
+  LDA #levelmap DIV 256:STA stagemapptr+1
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
   ; Centre bomberman
@@ -413,7 +411,7 @@ INCLUDE "sound.asm"
 .nextcell
   ; Check if we can move to the next cell
   LDY BOMBMAN_Y:INY:LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
+  LDA #levelmap DIV 256:STA stagemapptr+1
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
   JSR adjust_bombman_hpos
@@ -449,7 +447,7 @@ INCLUDE "sound.asm"
 .nextcell
   ; Check if we can move to the next cell
   LDY BOMBMAN_Y:DEY:LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
+  LDA #levelmap DIV 256:STA stagemapptr+1
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
   JSR adjust_bombman_hpos
@@ -483,7 +481,7 @@ INCLUDE "sound.asm"
 .nextcell
   ; Check if we can move to the next cell
   LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
+  LDA #levelmap DIV 256:STA stagemapptr+1
   LDY BOMBMAN_X:DEY:JSR checkmap:BNE done
 
   JSR adjust_bombman_vpos
@@ -517,7 +515,7 @@ INCLUDE "sound.asm"
 .nextcell
   ; Check if we can move to the next cell
   LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
+  LDA #levelmap DIV 256:STA stagemapptr+1
   LDY BOMBMAN_X:INY:JSR checkmap:BNE done
 
   JSR adjust_bombman_vpos
@@ -666,7 +664,7 @@ INCLUDE "sound.asm"
   ; See what's on the map where this bomb is
   LDY BOMB_Y, X
   LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
+  LDA #levelmap DIV 256:STA stagemapptr+1
 
   LDY BOMB_X, X
   LDA (stagemapptr), Y
@@ -892,8 +890,8 @@ INCLUDE "sound.asm"
   JSR randomcoords
   LDA #MAP_HIDDEN_BONUS:STA (stagemapptr), Y
 
-  ; Place (2*stage) + 50 bricks randomly
-  LDA stage:ASL A:CLC:ADC #&32
+  ; Place (stage + 25) bricks randomly
+  LDA stage:CLC:ADC #25
   STA tempz
 
 .nextbrick
@@ -909,10 +907,10 @@ INCLUDE "sound.asm"
 
 .addconcreteblocks
 {
-  LDA #(levelmap) MOD 256:STA stagemapptr
-  LDA #(levelmap) DIV 256:STA stagemapptr+1
+  LDA #levelmap DIV 256:STA stagemapptr+1
+  LDA #0:STA stagemapptr
 
-  LDY #0
+  TAY
 
   LDX #&00:JSR stagerow ; Top wall
   LDX #MAP_WIDTH:JSR stagerow ; Blank row
@@ -935,10 +933,7 @@ INCLUDE "sound.asm"
   LDA stagerows, X
   STA (stagemapptr), Y
   INC stagemapptr
-  BNE hipart
-  INC stagemapptr+1
 
-.hipart
   INX
   DEC tempx
   BNE stagecell
@@ -946,33 +941,36 @@ INCLUDE "sound.asm"
   RTS
 
 .stagerows
-  EQUB 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-  EQUB 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
-  EQUB 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1
+  EQUB 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  EQUB 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+  EQUB 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1
 }
 
-; Find an empty position on the 32x13 map
+; Find an empty position on the 15x13 map
 .randomcoords
 {
-  JSR rand
-  ROR A:ROR A ; A = A/4
-  AND #&1F ; 0 to 31
-  BEQ randomcoords
-  STA tempx
-
-.loop
+.loopx
   JSR rand
   ROR A:ROR A:ROR A ; A = A/8
   AND #&0F ; 0 to 15
-  BEQ loop
-  CMP #MAP_HEIGHT-1 ; if A >= 13, try again
-  BCS loop
+  BEQ loopx
+  CMP #MAP_WIDTH ; if A >= 15, try again
+  BCS loopx
+  STA tempx
+
+.loopy
+  JSR rand
+  ROR A:ROR A:ROR A ; A = A/8
+  AND #&0F ; 0 to 15
+  BEQ loopy
+  CMP #MAP_HEIGHT ; if A >= 13, try again
+  BCS loopy
   STA tempy
 
   TAY
 
   LDA multtaby, Y:STA stagemapptr
-  LDA multtabx, Y:STA stagemapptr+1
+  LDA #levelmap DIV 256:STA stagemapptr+1
 
   LDY tempx
   LDA (stagemapptr), Y ; Check what's on the map already
@@ -991,10 +989,7 @@ INCLUDE "sound.asm"
 
 ; Level data lookup tables
 .multtaby
-  EQUB 0,&20,&40,&60,&80,&A0,&C0,&E0,  0,&20,&40,&60,&80
-.multtabx
-  EQUB (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256), (levelmap DIV 256)
-  EQUB (levelmap DIV 256), (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1, (levelmap DIV 256)+1
+  EQUB 0,MAP_WIDTH,MAP_WIDTH*2,MAP_WIDTH*3,MAP_WIDTH*4,MAP_WIDTH*5,MAP_WIDTH*6,MAP_WIDTH*7,MAP_WIDTH*8,MAP_WIDTH*9,MAP_WIDTH*10,MAP_WIDTH*11,MAP_WIDTH*12
 
 ; Delay specified number of frames
 .delay
