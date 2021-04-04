@@ -181,6 +181,6 @@ SKIP 21
 ALIGN &100
 
 .levelmap
-SKIP (32*13) ; Reserve bytes for in-game level data
+SKIP (MAP_WIDTH*MAP_HEIGHT) ; Reserve bytes for in-game level data
 
 .end_of_vars
