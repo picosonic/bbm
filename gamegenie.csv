@@ -1,0 +1,38 @@
+,,,,From https://www.gamegenie.com/cheats/gamegenie/nes/bomberman.html,,
+,4=C,,,http://games.technoplaza.net/ggencoder/js/,,
+,,,,,,
+Code,Address,Value,Compare,Effect,Note,Checked
+SXPKAG,4498,A5,,Infinite lives ,LDA zpg,
+AEZKLL,43AB,0,,Start with 1 life,,Y
+PEZKLU,43AB,9,,Start with 10 lives ,,Y
+SZIGAT,4650,A5,,Stop timer,LDA zpg,Y
+VPGKGG,444C,96,,Decrease time ,200s to 150s,Y
+VYGKGK,444C,FE,,Increase timer,200s to 254s,Y
+ZELGYU,43B7,A,,Start on stage 10,Affects STAGE,Y
+GOLGYL,43B7,14,,Start on stage 20,Affects STAGE,Y
+TOLGYU,43B7,1E,,Start on stage 30 ,Affects STAGE,Y
+AXLGYU,43B7,28,,Start on stage 40,Affects STAGE,Y
+ZULGYL,43B7,32,,Start on stage 50,Affects STAGE,Y
+AXKKALAP,43C8,20,10,Start with double power bomb blasts ,Affects BONUS_POWER,Y
+AUKKALAP,43C8,30,10,Start with triple power bomb blasts,Affects BONUS_POWER,Y
+EEKKALAP,43C8,80,10,Start with maximum power bomb blasts!,Affects BONUS_POWER,Y
+NYXKUIEX,4D2B,FF,A0,Increase bomb detonation time ,"Affects BOMB_TIME_LEFT,X (160 frames to 255)",Y
+AYXKUIEZ,4D2B,70,A0,Reduce bomb detonation time,"Affects BOMB_TIME_LEFT,X (160 frames to 112)",Y
+GXEKLGSA,448B,24,85,Never lose remote controller after pick-up,Affects BONUS_REMOTE (Changing STA zpg to BIT zpg),Y
+AESKGUIZ,43DC,0,2D,"Demo start--start with remote controller,  bigger bombs and more bombsboy ",,
+OXVGITSX,0x46E5,A9,A5,Immune to bomb blasts,Affects BONUS_FIRESUIT (Changing LDA zpg to LDA imm),Y
+XZEGNIVZ,4D07,A2,A6,In combination with next code,Affects BONUS_BOMBS (Changes LDX zpg to LDX imm),Y
+PAEKEIGN,4D08,9,74,Use up to 9 bombs ,,
+OXEKVPSX,498E,A9,A5,In combination with next code,Change (LDA zpg to LDA imm),Y
+AESKNKTA,4CDF,0,0E,Start with and keep remote controller,,
+OZNKNNPK,4F7F,A9,49,In combination with next code,Affects BONUS_NOCLIP (Changes EOR imm to LDA imm),Y
+AEEGEYPA,4F80,0,1,Walk through walls,,
+,,,,,,
+,,,,New Codes,,
+OXEGKNPK,4F84,A9,49,In combination with next code,,
+AEEGSYPA,4F85,0,1,Walk through bombs,Affects BONUS_BOMBWALK (Changes EOR imm to LDA imm),Y
+PEGKGL,43CC,1,,Start with remote/speed/noclip/firesuit/debug and 2 bombs,Changes LDA #0 to LDA #1,Y
+PAAKLG,440B,1,,Enable bombwalk/invul_unk1,Changes LDA #0 to LDA #1,Y
+PEAGTG,4486,1,,Keep noclip/bombwalk/remote/firesuit/invul_unk1 on death,Changes LDA #0 to LDA #1,Y
+SZSGATVG,4650,A5,C6,Freeze timer,Changes DEC zpg for LDA zpg,Y
+AVPSZT,569A,60,,No monsters,SPAWN_MONSTERS becomes RTS,Y
