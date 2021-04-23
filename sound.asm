@@ -429,15 +429,15 @@
 
 ; Melodies table
 .sound_melodies_table
-  EQUW melody_01_c1, melody_01_c2, melody_01_c3, &8080
-  EQUW melody_02_c1, melody_02_c2, melody_02_c3, &4040
-  EQUW &0000,        &0000,        melody_03_c3, &8080
-  EQUW melody_04_c1, melody_04_c2, melody_04_c3, &8080
-  EQUW melody_05_c1, melody_05_c2, melody_05_c3, &8080
-  EQUW melody_06_c1, melody_06_c2, melody_06_c3, &8080
-  EQUW melody_07_c1, melody_07_c2, melody_07_c3, &0040
-  EQUW melody_08_c1, melody_08_c2, &0000,        &8080
-  EQUW melody_09_c1, melody_09_c2, melody_09_c3, &8080
-  EQUW melody_10_c1, melody_10_c2, melody_10_c3, &0040
+  EQUW melody_01_c1   , melody_01_c2   , melody_01_c3, &8080
+  EQUW melody_02_c1   , melody_02_c2   , melody_02_c3, &4040
+  EQUW           &0000,           &0000, melody_03_c3, &8080
+  EQUW melody_04_c1   , melody_04_c2   , melody_04_c3, &8080
+  EQUW melody_05_c1   , melody_05_c2   , melody_05_c3, &8080
+  EQUW melody_06_c1   , melody_06_c2   , melody_06_c3, &8080
+  EQUW melody_07_c1   , melody_07_c2   , melody_07_c3, &0040
+  EQUW melody_08_c1   , melody_08_c2   ,        &0000, &8080
+  EQUW melody_09_c1   , melody_09_c2   , melody_09_c3, &8080
+  EQUW melody_07_c1+55, melody_07_c2+59, melody_10_c3, &0040
   
 ; ---------------------------------------------------------

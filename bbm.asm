@@ -1040,10 +1040,6 @@ INCBIN "melodies/M08C1.bin"
 INCBIN "melodies/M08C2.bin"
 
 ; Final
-.melody_10_c1
-;INCBIN "melodies/M10C1.bin"
-.melody_10_c2
-;INCBIN "melodies/M10C2.bin"
 .melody_10_c3
 ;INCBIN "melodies/M10C3.bin"
 
