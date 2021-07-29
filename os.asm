@@ -92,8 +92,15 @@ SYSVIA_DDRA = SHEILABASE+&43
 ; 6522 User/Printer VIA
 USERVIA_REGB = SHEILABASE+&60 ; User port
 USERVIA_REGA = SHEILABASE+&61 ; Printer port
-USERVIA_DDRB = SHEILABASE+&62
-USERVIA_DDRA = SHEILABASE+&63
+USERVIA_DDRB = SHEILABASE+&62 ; Data direction register B
+USERVIA_DDRA = SHEILABASE+&63 ; Data direction register A
+USERVIA_T2CL = SHEILABASE+&68 ; T2 low order counter
+USERVIA_T2CH = SHEILABASE+&69 ; T2 high order counter
+USERVIA_SR = SHEILABASE+&6A ; Shift register
+USERVIA_ACR = SHEILABASE+&6B ; Auxilary control register
+USERVIA_PCR = SHEILABASE+&6C ; Peripheral control register
+USERVIA_IFR = SHEILABASE+&6D ; Interrupt flag register
+USERVIA_IER = SHEILABASE+&6E ; Interrupt enable register
 ; 8271 FDC
 FDC_STATUS = SHEILABASE+&80
 FDC_RESULT = SHEILABASE+&81
