@@ -58,13 +58,13 @@
 
   ; Multiply by 8, for offset into melodies table
   LDA sound_temp:ASL A:ASL A:ASL A:TAY
-  LDX #0
 
   ; Copy pointers to the three channels for current melody
+  LDX #0
 .copy_pointers
   LDA sound_melodies_table, Y
   STA sound_chandat, X
-  INY:INX:CPX #&06
+  INY:INX:CPX #(3*2)
   BNE copy_pointers
 
   ; Copy melody flags
@@ -141,21 +141,25 @@
 
   CPX #&02
   BEQ fix_triangle
+
   LSR A:LSR A
   CMP #&10
   BCC fix_delay
+
   LDA #&0F
   BNE fix_delay
 
 .fix_triangle
   ASL A
   BPL fix_delay
+
   LDA #&7F
 
 .fix_delay
   STA byte_D6, X
   LDA byte_D0, X
   BEQ loc_E57B
+
   LSR byte_D6, X
 
 .loc_E57B
@@ -168,6 +172,7 @@
   LDA byte_CD, X
   BEQ loc_E59D
   BPL loc_E593
+
   INC byte_CD, X
   BEQ loc_E59D
 
@@ -185,6 +190,7 @@
   LDA byte_CD, X
   CMP #&02
   BNE set_wavelen
+
   RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -224,11 +230,11 @@
 
   ; Use a case statement
   ASL A:TAY
-  LDA off_E5E6+1, Y:PHA
-  LDA off_E5E6, Y:PHA
+  LDA effect_offsets+1, Y:PHA
+  LDA effect_offsets, Y:PHA
   RTS
 
-.off_E5E6
+.effect_offsets
   EQUW effect_1-1
   EQUW effect_2-1
   EQUW effect_3-1
@@ -276,11 +282,12 @@
 .effect_4
 {
   DEC sound_pause_counter, X
-  BEQ loc_E618
+  BEQ done
+
   LDA sound_pause_point, X
   STA sound_cnt, X
 
-.loc_E618
+.done
   JMP sound_write_regs
 }
 
@@ -289,6 +296,7 @@
 {
   LDA byte_CD, X
   BEQ loc_E626
+
   LDA #&02
   STA byte_CD, X
 
