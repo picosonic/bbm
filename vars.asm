@@ -110,6 +110,9 @@ GUARD &0090
 ORG &0400
 GUARD &0800
 
+.levelmap
+SKIP (MAP_WIDTH*MAP_HEIGHT) ; Reserve bytes for in-game level data
+
 ; Bomb vars (up to 10 bombs)
 .BOMB_ACTIVE         EQUW &0000, &0000, &0000, &0000, &0000
 .BOMB_X              EQUW &0000, &0000, &0000, &0000, &0000
@@ -182,9 +185,10 @@ SKIP 21
   EQUW &0000, &0000, &0000, &0000, &0000
   EQUW &0000, &0000, &0000, &0000, &0000
 
-ALIGN &100
-
-.levelmap
-SKIP (MAP_WIDTH*MAP_HEIGHT) ; Reserve bytes for in-game level data
-
 .end_of_vars
+
+; ---------------------------------------------------------
+; Variables in printer buffer workspace, &880 to &8BF
+
+ORG &880
+GUARD &08C0
