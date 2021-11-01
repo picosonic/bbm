@@ -85,6 +85,10 @@ GUARD &0090
 .BONUS_BOMBWALK     EQUB &00
 .BONUS_FIRESUIT     EQUB &00
 
+.bricks_destroyed   EQUB &00
+.chain_reactions    EQUB &00
+.exit_bombed        EQUB &00
+
 ; Debug mode boolean (show powerups and exit)
 .DEBUG              EQUB &00
 

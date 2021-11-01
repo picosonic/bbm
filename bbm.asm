@@ -205,7 +205,9 @@ INCLUDE "sound.asm"
   ; Draw TIME/SCORE/LIVES
   JSR showstatus
   JSR drawtime
-  LDA #&00:STA frames
+  LDA #&00
+  STA frames:STA chain_reactions:STA exit_bombed
+  STA bricks_destroyed
 
   ; Draw level
   LDX #&00:LDY #&00
@@ -690,10 +692,12 @@ INCLUDE "sound.asm"
 .bombend
  ; AND #7
  ; JSR sub_C9B6
- ; LDA byte_A5
- ; CMP #$FF
- ; BEQ explode
- ; INC byte_A5
+
+; Count chain reactions, limiting to 255
+; LDA chain_reactions
+; CMP #$FF
+; BEQ explode
+; INC chain_reactions
 
 .explode
   JSR sound_explosion
