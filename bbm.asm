@@ -260,6 +260,7 @@ INCLUDE "sound.asm"
   ; TODO THINK
   JSR bombanim ; animate bombs
   JSR stagetimer ; tick game stage timer
+  JSR checkflames ; flame operations
 
   ; check for keypress
   LDA #INKEY_ESCAPE:JSR scankey ; Scan for ESCAPE
@@ -668,7 +669,9 @@ INCLUDE "sound.asm"
   LDA multtaby, Y:STA stagemapptr
   LDA #levelmap DIV 256:STA stagemapptr+1
 
+  STY tempu
   LDY BOMB_X, X
+  STY tempv
   LDA (stagemapptr), Y
 
   ; Check if it's a bomb
@@ -718,6 +721,16 @@ INCLUDE "sound.asm"
   DEX
   BPL loop
 
+  RTS
+}
+
+.checkflames
+{
+  RTS
+}
+
+.process_enemies
+{
   RTS
 }
 
