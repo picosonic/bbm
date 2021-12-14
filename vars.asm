@@ -23,12 +23,16 @@ GUARD &0090
 .sprdst2 EQUW &0000
 
 ; Sprite number and x, y block position, and u, v offset (4 px)
+;   attributes horiz flip / solid / tile layout
 .sprite EQUB &00
 .sprx EQUB &00
 .spry EQUB &00
 .spru EQUB &00
 .sprv EQUB &00
 .sprflip EQUB &00
+.sprsolid EQUB &00
+.sprtile EQUB &00
+.sprnext EQUB &00
 
 ; Number of frames to delay by
 .delayframes EQUB &00
@@ -85,6 +89,7 @@ GUARD &0090
 .BONUS_BOMBWALK     EQUB &00
 .BONUS_FIRESUIT     EQUB &00
 
+; Bonus item validation
 .bricks_destroyed   EQUB &00
 .chain_reactions    EQUB &00
 .exit_bombed        EQUB &00

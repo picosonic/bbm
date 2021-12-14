@@ -186,6 +186,20 @@ PAL_DBG   = &03
   LDA #(tilesheet+&20) MOD 256:STA sprsrc2
   LDA #(tilesheet+&20) DIV 256:STA sprsrc2+1
 
+  LDA #&40:STA sprnext
+
+  ; See how tile is laid out in tilesheet
+  LDA sprtile
+  BEQ inline
+
+  LDA #&20:STA sprnext
+
+  ; Store a pointer to tilesheet bottom half
+  LDA #(tilesheet+&100) MOD 256:STA sprsrc2
+  LDA #(tilesheet+&100) DIV 256:STA sprsrc2+1
+
+.inline
+
   ; Store a pointer to the screen
   LDA #(MODE8BASE) MOD 256:STA sprdst
   LDA #(MODE8BASE) DIV 256:STA sprdst+1
@@ -197,7 +211,7 @@ PAL_DBG   = &03
   LDA sprsrc
 .calc
   CLC
-  ADC #&40
+  ADC sprnext
   BCC norm
   INC sprsrc+1
 .norm
@@ -211,7 +225,7 @@ PAL_DBG   = &03
   LDA sprsrc2
 .calc2
   CLC
-  ADC #&40
+  ADC sprnext
   BCC norm2
   INC sprsrc2+1
 .norm2
@@ -353,12 +367,16 @@ PAL_DBG   = &03
 .loop
   ; Top half
   LDA (sprsrc), Y
+  LDX sprsolid:BNE solidtop
   EOR (sprdst), Y
+.solidtop
   STA (sprdst), Y
 
   ; Bottom half
   LDA (sprsrc2), Y
+  LDX sprsolid:BNE solidbottom
   EOR (sprdst2), Y
+.solidbottom
   STA (sprdst2), Y
 
   INY

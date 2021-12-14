@@ -37,7 +37,7 @@ INCLUDE "sound.asm"
 .init
   ; Initialise cursor
   LDA #&00:STA cursor
-  STA sprflip
+  STA sprflip:STA sprsolid:STA sprtile
 
   ; Initialise game state
   LDA #YES:STA inmenu
@@ -352,8 +352,8 @@ INCLUDE "sound.asm"
 .drop_bomb
 {
   ; See if map is empty here
-  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
-  LDA #levelmap DIV 256:STA stagemapptr+1
+  LDY BOMBMAN_Y
+  JSR make_stage_ptr
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
   ; Centre bomberman
@@ -413,8 +413,8 @@ INCLUDE "sound.asm"
 
 .nextcell
   ; Check if we can move to the next cell
-  LDY BOMBMAN_Y:INY:LDA multtaby, Y:STA stagemapptr
-  LDA #levelmap DIV 256:STA stagemapptr+1
+  LDY BOMBMAN_Y:INY
+  JSR make_stage_ptr
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
   JSR adjust_bombman_hpos
@@ -449,8 +449,8 @@ INCLUDE "sound.asm"
 
 .nextcell
   ; Check if we can move to the next cell
-  LDY BOMBMAN_Y:DEY:LDA multtaby, Y:STA stagemapptr
-  LDA #levelmap DIV 256:STA stagemapptr+1
+  LDY BOMBMAN_Y:DEY
+  JSR make_stage_ptr
   LDY BOMBMAN_X:JSR checkmap:BNE done
 
   JSR adjust_bombman_hpos
@@ -483,8 +483,8 @@ INCLUDE "sound.asm"
 
 .nextcell
   ; Check if we can move to the next cell
-  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
-  LDA #levelmap DIV 256:STA stagemapptr+1
+  LDY BOMBMAN_Y
+  JSR make_stage_ptr
   LDY BOMBMAN_X:DEY:JSR checkmap:BNE done
 
   JSR adjust_bombman_vpos
@@ -517,8 +517,8 @@ INCLUDE "sound.asm"
 
 .nextcell
   ; Check if we can move to the next cell
-  LDY BOMBMAN_Y:LDA multtaby, Y:STA stagemapptr
-  LDA #levelmap DIV 256:STA stagemapptr+1
+  LDY BOMBMAN_Y
+  JSR make_stage_ptr
   LDY BOMBMAN_X:INY:JSR checkmap:BNE done
 
   JSR adjust_bombman_vpos
@@ -655,6 +655,14 @@ INCLUDE "sound.asm"
   LDA #&00:STA spru:STA sprv:STA sprflip
 }
 
+.make_stage_ptr
+{
+  LDA multtaby, Y:STA stagemapptr
+  LDA #levelmap DIV 256:STA stagemapptr+1
+
+  RTS
+}
+
 .bombtick
 {
   LDX #MAX_BOMB-1
@@ -666,8 +674,7 @@ INCLUDE "sound.asm"
 
   ; See what's on the map where this bomb is
   LDY BOMB_Y, X
-  LDA multtaby, Y:STA stagemapptr
-  LDA #levelmap DIV 256:STA stagemapptr+1
+  JSR make_stage_ptr
 
   STY tempu
   LDY BOMB_X, X
@@ -690,22 +697,22 @@ INCLUDE "sound.asm"
   DEC BOMB_TIME_LEFT, X
   BNE nextbomb
 
-  ; LDA #0
+  LDA #0
 
 .bombend
- ; AND #7
- ; JSR sub_C9B6
+  AND #7
+  JSR explode
 
-; Count chain reactions, limiting to 255
-; LDA chain_reactions
-; CMP #$FF
-; BEQ explode
-; INC chain_reactions
+  ; Count chain reactions, limiting to 255
+  LDA chain_reactions
+  CMP #$FF
+  BEQ explosion
+  INC chain_reactions
 
-.explode
+.explosion
   JSR sound_explosion
 
-  ; Remove from map
+  ; Remove bomb from map
   LDA #MAP_EMPTY:STA (stagemapptr), Y
 
   ; Set as inactive
@@ -724,8 +731,274 @@ INCLUDE "sound.asm"
   RTS
 }
 
+.explode
+{
+  STX tempx ; Cache X and Y regs
+  STY tempy
+        
+  TAY
+  LDA explode_lut,Y ; Load from lookup table
+  STA tempt
+        
+  LDA #MAP_RIGHT:JSR expand_flame
+  LDA #MAP_UP:JSR expand_flame
+  LDA #MAP_LEFT:JSR expand_flame
+  LDA #MAP_DOWN:JSR expand_flame
+  LDA #MAP_HERE:JSR expand_flame
+        
+  LDX tempx ; Restore X and Y regs
+  LDY tempy
+
+  RTS
+
+.explode_lut
+  EQUB &FF ; 0 Empty
+  EQUB  3  ; 1 Concrete
+  EQUB  4  ; 2 Brick
+  EQUB  1  ; 3 Bomb
+  EQUB  2  ; 4 Hidden exit
+}
+
+.expand_flame
+{
+  CMP tempt:BEQ done
+
+  ; Cache direction
+  STA temps
+
+  TAX
+  LDY #MAX_FIRE-1
+  JSR FIND_FIRE_SLOT
+  BMI done
+  
+  LDA tempu
+  CLC:ADC FIRE_Y_OFFSET,X
+  STA FIRE_Y,Y
+
+  LDA tempv
+  CLC:ADC FIRE_X_OFFSET,X
+  STA FIRE_X,Y
+
+  ; Restore direction
+  LDA temps
+
+  STA FIRE_EXTRA,Y
+  STA FIRE_EXTRA2,Y
+
+  LDA #YES:STA FIRE_ACTIVE,Y
+
+.done
+  RTS
+}
+
+.FIRE_Y_OFFSET
+  EQUB 0,  0,&FF,  0,  1  ; Y offsets (here, right, up, left, down)
+.FIRE_X_OFFSET
+  EQUB 0,  1,  0,&FF,  0  ; X offsets (here, right, up, left, down)
+
+; Find unused fire
+.FIND_FIRE_SLOT
+{
+  LDA FIRE_ACTIVE, Y
+  BEQ done
+
+  DEY
+  BPL FIND_FIRE_SLOT
+
+.done
+  RTS
+}
+
+.drawsolidtile
+{
+  PHA
+
+  LDA tempx:STA sprx:LDA tempy:STA spry:INC spry
+  LDA #1:STA sprsolid
+  JSR drawbigtile
+  LDA #0:STA sprsolid
+  
+  PLA
+
+  RTS
+}
+
 .checkflames
 {
+  LDX #MAX_FIRE-1
+
+.loop
+  ; Skip this flame if it's not active
+  LDA FIRE_ACTIVE, X
+  BNE burning
+.flame_advance
+  JMP nextflame
+
+.burning
+  ; Point to map where flame[x] is, and store coordinates in tempx,tempy
+  PHA
+  LDY FIRE_Y, X:STY tempy
+  JSR make_stage_ptr
+  LDY FIRE_X, X:STY tempx
+  PLA
+
+  BPL loc_C7CB
+  INC FIRE_ACTIVE, X
+  LDA FIRE_ACTIVE, X
+  CMP #&87
+  BNE flame_advance
+
+  LDA #0
+  STA FIRE_ACTIVE, X ; Disable flame[x]
+  STA (stagemapptr), Y ; Clear map
+  PHA
+  LDA #24:STA sprite:JSR drawsolidtile
+  PLA
+  BEQ flame_advance
+
+.loc_C7CB
+; Check for empty
+  LDA (stagemapptr), Y
+  TAY
+  BEQ loc_C838
+
+; Check for brick
+  CPY #MAP_BRICK
+  BNE IS_BOMB
+
+  INC bricks_destroyed
+  LDA #&80
+  STA FIRE_ACTIVE, X
+  JMP nextflame
+
+; Check for bomb
+.IS_BOMB
+  CPY #MAP_BOMB
+  BNE IS_HIDDEN_EXIT
+
+  LDA FIRE_EXTRA, X
+  ORA #&10
+
+  LDY tempx:STA (stagemapptr), Y
+
+  LDA #8:STA sprite:JSR drawsolidtile
+  JMP loc_C830
+
+; Check for hidden exit
+.IS_HIDDEN_EXIT
+  CPY #MAP_HIDDEN_EXIT
+  BNE IS_HIDDEN_BONUS
+
+  LDY tempx
+  LDA #MAP_EXIT:STA (stagemapptr), Y
+
+  LDA #15:STA sprite:JSR drawsolidtile
+  JMP loc_C830
+
+; Check for hidden bonus
+.IS_HIDDEN_BONUS
+  CPY #MAP_HIDDEN_BONUS
+  BNE IS_EXIT
+
+  LDY tempx
+  LDA #MAP_BONUS
+  STA (stagemapptr), Y
+  LDA #1:STA sprtile
+  LDA #0
+  ;CLC:ADC BONUS_TYPE
+  STA sprite:JSR drawsolidtile
+  LDA #0:STA sprtile
+  JMP loc_C830
+
+; Check for exit then bonus
+.IS_EXIT
+  CPY #MAP_EXIT
+  BEQ loc_C828
+
+  CPY #MAP_BONUS
+  BNE loc_C830
+
+  LDY tempx
+  LDA #0
+  STA (stagemapptr), Y
+
+  LDA #24:STA sprite:JSR drawsolidtile
+  DEC exit_bombed
+
+.loc_C828
+  INC exit_bombed
+  JSR process_enemies
+
+; Put fire out
+.loc_C830
+  LDA #0
+  STA FIRE_ACTIVE, X
+
+.loc_C835
+  JMP nextflame
+
+; ------------------------------------------
+
+.loc_C838
+  LDA FIRE_EXTRA2, X
+  CLC
+  ADC #8
+  STA FIRE_EXTRA2, X
+  AND #&7F
+  CMP #&48
+  BCS IS_HIDDEN_EXIT
+  LDA FIRE_EXTRA, X
+  ;STA byte_36
+  AND #7
+  BEQ loc_C835
+  TAY
+  LDA #0
+  STA FIRE_EXTRA, X
+  LDA FIRE_X, X
+  CLC
+  ADC FIRE_X_OFFSET, Y
+  STA tempx
+  LDA FIRE_Y, X
+  CLC
+  ADC FIRE_Y_OFFSET, Y
+  STA tempy
+  LDY #&4F
+  ;JSR sub_CBE5
+  BNE nextflame
+  LDA tempx
+  STA FIRE_X, Y
+  LDA tempy
+  STA FIRE_Y, Y
+  LDA #1
+  STA FIRE_ACTIVE, Y
+  ;LDA byte_36
+  AND #7
+  STA FIRE_EXTRA2, Y
+  ;LDA byte_36
+  CLC
+  ADC #&10
+  CMP BONUS_POWER
+  BCC loc_C89E
+  LDA #0
+  STA FIRE_ACTIVE, Y
+  LDA FIRE_EXTRA2, X
+  ORA #&80
+  STA FIRE_EXTRA2, X
+  JMP loc_C8A1
+
+.loc_C89E
+  STA FIRE_EXTRA, Y
+
+.loc_C8A1
+  LDX #0
+  STA FIRE_EXTRA, Y
+
+.nextflame
+  DEX
+  BMI done
+  JMP loop
+
+.done
   RTS
 }
 
@@ -924,10 +1197,8 @@ INCLUDE "sound.asm"
 
 .addconcreteblocks
 {
-  LDA #levelmap DIV 256:STA stagemapptr+1
-  LDA #0:STA stagemapptr
-
-  TAY
+  LDY #0
+  JSR make_stage_ptr
 
   LDX #&00:JSR stagerow ; Top wall
   LDX #MAP_WIDTH:JSR stagerow ; Blank row
@@ -986,8 +1257,7 @@ INCLUDE "sound.asm"
 
   TAY
 
-  LDA multtaby, Y:STA stagemapptr
-  LDA #levelmap DIV 256:STA stagemapptr+1
+  JSR make_stage_ptr
 
   LDY tempx
   LDA (stagemapptr), Y ; Check what's on the map already
