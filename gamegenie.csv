@@ -36,3 +36,4 @@ PAAKLG,440B,1,,Enable bombwalk/invul_unk1,Changes LDA #0 to LDA #1,Y
 PEAGTG,4486,1,,Keep noclip/bombwalk/remote/firesuit/invul_unk1 on death,Changes LDA #0 to LDA #1,Y
 SZSGATVG,4650,A5,C6,Freeze timer,Changes DEC zpg for LDA zpg,Y
 AVPSZT,569A,60,,No monsters,SPAWN_MONSTERS becomes RTS,Y
+LEISYG,D4DF,3,,Stop enemies moving,"Monster thinks it constantly hits wall, LDX #0 becomes LDX #3",
