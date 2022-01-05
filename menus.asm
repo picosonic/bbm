@@ -174,7 +174,7 @@
   EQUB &FF
 
   EQUB &00, &36
-  EQUS "BBC", &B0, "MICRO", &B0, "PORT", &B0, "2021", &B0, "BY", &B0, "PICOSONIC"
+  EQUS "BBC", &B0, "MICRO", &B0, "PORT", &B0, "2022", &B0, "BY", &B0, "PICOSONIC"
   EQUB &FF
 }
 
