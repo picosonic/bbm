@@ -13,6 +13,9 @@ bbcmemmap1.txt
 *.gif
 *.bak
 
+# Emulator RAM DUMP file
+DUMP
+
 # Password decoder
 password_test
 
