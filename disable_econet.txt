@@ -1,0 +1,14 @@
+If you have econet type the following
+
+?&224=&A6
+
+Then Shift-Break
+
+--
+
+&0224/5 = NETV  - Network Print vector
+
+Default is &FFA6 (NULL handler - just an RTS)
+
+When econet enabled, points to &FF36 (XNETV).
+Which in turn JSRs to &FF51
