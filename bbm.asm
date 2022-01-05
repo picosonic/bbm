@@ -310,6 +310,44 @@ INCLUDE "sound.asm"
 
 .process_inputs
 {
+  ; If we are in the centre of a square check what is in it
+  LDA BOMBMAN_U
+  CMP #8
+  BNE nocheck
+
+  LDA BOMBMAN_V
+  CMP #8
+  BNE nocheck
+
+  LDY BOMBMAN_Y
+  JSR make_stage_ptr
+  LDY BOMBMAN_X
+  LDA (stagemapptr), Y
+
+  ; Does this location contain the exit?
+  CMP #MAP_EXIT
+  BEQ nocheck ; TODO - Set to exit handler
+
+  ; If this is not the bonus skip forward
+  CMP #MAP_BONUS
+  BNE nocheck
+
+  ; BONUS found - clear map here
+  LDA #MAP_EMPTY:STA (stagemapptr), Y
+
+  STY tempx
+  LDA BOMBMAN_Y:STA tempy
+  LDA #24:STA sprite
+  JSR drawsolidtile
+  JSR drawbomberman
+
+  ; TODO - apply bonus powerup
+
+  ; Play powerup collected melody
+  LDA #&04:STA sound_music
+
+.nocheck
+
   LDX keys
   BEQ done
 
@@ -901,8 +939,7 @@ INCLUDE "sound.asm"
   BNE IS_EXIT
 
   LDY tempx
-  LDA #MAP_BONUS
-  STA (stagemapptr), Y
+  LDA #MAP_BONUS:STA (stagemapptr), Y
   LDA #1:STA sprtile
   LDA #0
   ;CLC:ADC BONUS_TYPE ; TODO
@@ -1290,11 +1327,11 @@ INCLUDE "sound.asm"
 
 ; Stage 2
 .melody_04_c1
-;INCBIN "melodies/M04C1.bin"
+INCBIN "melodies/M04C1.bin"
 .melody_04_c2
-;INCBIN "melodies/M04C2.bin"
+INCBIN "melodies/M04C2.bin"
 .melody_04_c3
-;INCBIN "melodies/M04C3.bin"
+INCBIN "melodies/M04C3.bin"
 
 ; God mode
 .melody_05_c1
