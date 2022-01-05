@@ -337,7 +337,7 @@ INCLUDE "sound.asm"
 
   STY tempx
   LDA BOMBMAN_Y:STA tempy
-  LDA #24:STA sprite
+  LDA #SPR_EMPTY:STA sprite
   JSR drawsolidtile
   JSR drawbomberman
 
@@ -431,7 +431,7 @@ INCLUDE "sound.asm"
   ; Draw bomb
   LDA BOMB_X, X:STA sprx
   LDA BOMB_Y, X:STA spry:INC spry
-  LDA #33:STA BOMB_FRAME, X:STA sprite
+  LDA #SPR_BOMB2:STA BOMB_FRAME, X:STA sprite
   JSR drawbigtile
 
   RTS
@@ -444,7 +444,7 @@ INCLUDE "sound.asm"
 
   ; Are we on the edge of this cell
   LDA BOMBMAN_V
-  CMP #&08
+  CMP #SPR_HALFSIZE
   BCS nextcell
   INC BOMBMAN_V
   JMP done
@@ -458,7 +458,7 @@ INCLUDE "sound.asm"
   JSR adjust_bombman_hpos
   INC BOMBMAN_V
   LDA BOMBMAN_V
-  CMP #&10
+  CMP #SPR_SIZE
   BNE done
 
   ; Move down to start of next cell
@@ -480,7 +480,7 @@ INCLUDE "sound.asm"
 
   ; Are we on the edge of this cell
   LDA BOMBMAN_V
-  CMP #&09
+  CMP #SPR_HALFSIZE+1
   BCC nextcell
   DEC BOMBMAN_V
   JMP done
@@ -496,7 +496,7 @@ INCLUDE "sound.asm"
   BPL done
 
   ; Move down to start of next cell
-  LDA #&0F
+  LDA #SPR_SIZE-1
   STA BOMBMAN_V
   DEC BOMBMAN_Y
 
@@ -514,7 +514,7 @@ INCLUDE "sound.asm"
 
   ; Are we on the edge of this cell
   LDA BOMBMAN_U
-  CMP #&09
+  CMP #SPR_HALFSIZE+1
   BCC nextcell
   DEC BOMBMAN_U
   JMP done
@@ -530,7 +530,7 @@ INCLUDE "sound.asm"
   BPL done
 
   ; Move to start of next cell
-  LDA #&0F
+  LDA #SPR_SIZE-1
   STA BOMBMAN_U
   DEC BOMBMAN_X
 
@@ -548,7 +548,7 @@ INCLUDE "sound.asm"
 
   ; Are we on the edge of this cell
   LDA BOMBMAN_U
-  CMP #&08
+  CMP #SPR_HALFSIZE
   BCS nextcell
   INC BOMBMAN_U
   JMP done
@@ -562,7 +562,7 @@ INCLUDE "sound.asm"
   JSR adjust_bombman_vpos
   INC BOMBMAN_U
   LDA BOMBMAN_U
-  CMP #&10
+  CMP #SPR_SIZE
   BNE done
 
   ; Move to start of next cell
@@ -580,7 +580,7 @@ INCLUDE "sound.asm"
 .adjust_bombman_hpos
 {
   LDA BOMBMAN_U
-  CMP #&08
+  CMP #SPR_HALFSIZE
   BCC adjust_right ; < 8
   BEQ done         ; = 8
   DEC BOMBMAN_U
@@ -595,7 +595,7 @@ INCLUDE "sound.asm"
 .adjust_bombman_vpos
 {
   LDA BOMBMAN_V
-  CMP #&08
+  CMP #SPR_HALFSIZE
   BCC adjust_down ; < 8
   BEQ done        ; = 8
   DEC BOMBMAN_V
@@ -681,8 +681,8 @@ INCLUDE "sound.asm"
   LDA BOMBMAN_X+1:STA sprx:DEC sprx
   LDA BOMBMAN_Y+1:STA spry
 
-  LDA BOMBMAN_U+1:CLC:ADC #&08:STA spru
-  LDA BOMBMAN_V+1:CLC:ADC #&08:STA sprv
+  LDA BOMBMAN_U+1:CLC:ADC #SPR_HALFSIZE:STA spru
+  LDA BOMBMAN_V+1:CLC:ADC #SPR_HALFSIZE:STA sprv
 
   LDX BOMBMAN_FRAME+1:LDA BOMBER_ANIM, X:STA sprite
 
@@ -890,7 +890,7 @@ INCLUDE "sound.asm"
   STA FIRE_ACTIVE, X ; Disable flame[x]
   STA (stagemapptr), Y ; Clear map
   PHA
-  LDA #24:STA sprite:JSR drawsolidtile
+  LDA #SPR_EMPTY:STA sprite:JSR drawsolidtile
   PLA
   BEQ flame_advance
 
@@ -959,7 +959,7 @@ INCLUDE "sound.asm"
   LDA #MAP_EMPTY
   STA (stagemapptr), Y
 
-  LDA #24:STA sprite:JSR drawsolidtile
+  LDA #SPR_EMPTY:STA sprite:JSR drawsolidtile
   DEC exit_bombed
 
 .loc_C828
