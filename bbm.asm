@@ -905,7 +905,7 @@ INCLUDE "sound.asm"
   STA (stagemapptr), Y
   LDA #1:STA sprtile
   LDA #0
-  ;CLC:ADC BONUS_TYPE
+  ;CLC:ADC BONUS_TYPE ; TODO
   STA sprite:JSR drawsolidtile
   LDA #0:STA sprtile
   JMP loc_C830
@@ -919,7 +919,7 @@ INCLUDE "sound.asm"
   BNE loc_C830
 
   LDY tempx
-  LDA #0
+  LDA #MAP_EMPTY
   STA (stagemapptr), Y
 
   LDA #24:STA sprite:JSR drawsolidtile
