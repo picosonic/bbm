@@ -1349,7 +1349,7 @@ EQUS "REM BBM build ", TIME$ ; Add a build date
 
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
-PUTFILE "loadscr", "$.LOADSCR", MODE2BASE
+PUTFILE "loadscr2", "$.LOADSCR", MODE2BASE
 SAVE "EXTRA", extradata, extraend
 SAVE "BDATA", swrdata, swrend, &4000, &4000
 SAVE "BBM", start, codeend, DOWNLOADER_ADDR, MAIN_LOAD_ADDR
