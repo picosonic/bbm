@@ -1,6 +1,6 @@
 REM Bomberman
 REM Original game by Hudson Soft 1987
-REM BBC Micro version by picosonic 2022
+REM BBC Micro version by picosonic 2023
 :
 REM Instructions from English NES manual
 REM   contributed by Mick Brown
@@ -62,8 +62,9 @@ PRINT'" Choose"CHR$(129)"START"CHR$(135)"or"CHR$(129)"CONTINUE"CHR$(135)"using"C
 PROCSPACE
 CLS:*FX200,3
 :
-REM Load loading screen
+REM Disable ESC processing
 *FX229,1
+:
 MODE2
 VDU23,1,0;0;0;0;:REM Hide cursor
 *L.LOADSCR
@@ -73,6 +74,52 @@ A=INKEY(500)
 MODE1
 VDU23,1,0;0;0;0;:REM Hide cursor
 VDU19,1,0;0;19,2,0;0;19,3,0;0;19,4,0;0;:REM Blank palette
+:
+REM Sideways RAM loader
+DIM code 80
+swrpage=&100
+romsel=&FE30
+swrcheck=&8008
+FOR N%=0 TO 2 STEP 2
+P%=code
+[ OPT N%
+.swrtest
+SEI
+LDY #&FF:STY swrpage:INY
+.findswr
+STY romsel
+LDA swrcheck:EOR #&55:STA swrcheck
+CMP swrcheck
+BNE noswryet
+STY swrpage:BEQ swrdone
+.noswryet
+INY:CPY #16
+BNE findswr
+.swrdone
+LDY &F4:STY romsel
+CLI
+RTS
+.swrcopy
+SEI
+LDY swrpage:STY romsel
+LDX #&00
+.swrcpyloop
+LDA &4000, X:STA &8000, X
+INX
+CPX #&00:BNE swrcpyloop
+INC swrcpyloop+2:INC swrcpyloop+5
+LDA swrcpyloop+2
+CMP #&80:BNE swrcpyloop
+LDY &F4:STY romsel
+CLI
+RTS
+]
+NEXT
+IF P%-code > 80 MODE7:PRINT"Too much code ";P%-code:END
+CALL swrtest
+IF ?swrpage=255 MODE7:PRINT"No sideways RAM detected":END
+*L.BDATA
+CALL swrcopy
 :
 REM Load extra datafile
 *L.EXTRA

@@ -39,8 +39,8 @@
   JSR cls
 
   ; Store a pointer to title data
-  LDA #(titles) MOD 256:STA titleptr
-  LDA #(titles) DIV 256:STA titleptr+1
+  LDA #(swrtitles) MOD 256:STA titleptr
+  LDA #(swrtitles) DIV 256:STA titleptr+1
 
   ; Set tile cursor
   LDA #(MODE8BASE) MOD 256:STA sprdst
@@ -57,7 +57,7 @@
   BNE nexttile
   INC titleptr+1
 .nexttile
-  LDA #(titles+&200) DIV 256
+  LDA #(swrtitles+&200) DIV 256
   CMP titleptr+1
   BNE loop
 
@@ -174,7 +174,7 @@
   EQUB &FF
 
   EQUB &00, &36
-  EQUS "BBC", &B0, "MICRO", &B0, "PORT", &B0, "2022", &B0, "BY", &B0, "PICOSONIC"
+  EQUS "BBC", &B0, "MICRO", &B0, "PORT", &B0, "2023", &B0, "BY", &B0, "PICOSONIC"
   EQUB &FF
 }
 

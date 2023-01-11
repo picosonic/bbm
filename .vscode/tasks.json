@@ -37,7 +37,7 @@
             "type": "shell",
             "args": [
                 "-c",
-                "beebjit -0 ${workspaceFolder}/bbm.ssd -autoboot"
+                "beebjit -0 ${workspaceFolder}/bbm.ssd -autoboot -swram 4"
             ],
             "problemMatcher": [],
             "group": {

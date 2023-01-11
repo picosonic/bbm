@@ -80,8 +80,8 @@ PAL_DBG   = &03
   PHA
 
   ; Store a pointer to spritesheet
-  LDA #(tilesheet) MOD 256:STA sprsrc
-  LDA #(tilesheet) DIV 256:STA sprsrc+1
+  LDA #(swrtilesheet) MOD 256:STA sprsrc
+  LDA #(swrtilesheet) DIV 256:STA sprsrc+1
 
   ; Calculate pointer to requested sprite within spritesheet
   LDA sprite
@@ -179,12 +179,12 @@ PAL_DBG   = &03
   PHA
 
   ; Store a pointer to tilesheet top half
-  LDA #(tilesheet) MOD 256:STA sprsrc
-  LDA #(tilesheet) DIV 256:STA sprsrc+1
+  LDA #(swrtilesheet) MOD 256:STA sprsrc
+  LDA #(swrtilesheet) DIV 256:STA sprsrc+1
 
   ; Store a pointer to tilesheet bottom half
-  LDA #(tilesheet+&20) MOD 256:STA sprsrc2
-  LDA #(tilesheet+&20) DIV 256:STA sprsrc2+1
+  LDA #(swrtilesheet+&20) MOD 256:STA sprsrc2
+  LDA #(swrtilesheet+&20) DIV 256:STA sprsrc2+1
 
   LDA #&40:STA sprnext
 
@@ -195,8 +195,8 @@ PAL_DBG   = &03
   LDA #&20:STA sprnext
 
   ; Store a pointer to tilesheet bottom half
-  LDA #(tilesheet+&100) MOD 256:STA sprsrc2
-  LDA #(tilesheet+&100) DIV 256:STA sprsrc2+1
+  LDA #(swrtilesheet+&100) MOD 256:STA sprsrc2
+  LDA #(swrtilesheet+&100) DIV 256:STA sprsrc2+1
 
 .inline
 
@@ -246,11 +246,11 @@ PAL_DBG   = &03
   PHA
 
   ; Store a pointer to spritesheet
-  LDA #(spritesheet) MOD 256:STA sprsrc
-  LDA #(spritesheet) DIV 256:STA sprsrc+1
+  LDA #(swrspritesheet) MOD 256:STA sprsrc
+  LDA #(swrspritesheet) DIV 256:STA sprsrc+1
 
-  LDA #(spritesheet+&100) MOD 256:STA sprsrc2
-  LDA #(spritesheet+&100) DIV 256:STA sprsrc2+1
+  LDA #(swrspritesheet+&100) MOD 256:STA sprsrc2
+  LDA #(swrspritesheet+&100) DIV 256:STA sprsrc2+1
 
   ; Store a pointer to the screen
   LDA #(MODE8BASE) MOD 256:STA sprdst

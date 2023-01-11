@@ -83,7 +83,7 @@ ORG DOWNLOADER_ADDR
   JSR OSWORD
 
   ; Start game running
-  JMP MAIN_RELOC_ADDR+&2200 ; Main entry point following relocation
+  JMP MAIN_RELOC_ADDR ; Main entry point following relocation
 
 .envelope
   ; "Marimba"

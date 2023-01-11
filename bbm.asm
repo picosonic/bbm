@@ -11,18 +11,8 @@ ORG MAIN_RELOC_ADDR
 GUARD ROMSBASE
 
 .start
-.datastart
 
-.titles
-INCBIN "TITLE.beeb"
-
-.tilesheet
-INCBIN "TILES.beeb"
-
-.spritesheet
-INCBIN "SPRITES.beeb"
-
-.dataend
+  PAGE_SWRDATA
 
 .codestart
   JMP init
@@ -1325,48 +1315,6 @@ INCLUDE "sound.asm"
   RTS
 }
 
-; Stage 2
-.melody_04_c1
-INCBIN "melodies/M04C1.bin"
-.melody_04_c2
-INCBIN "melodies/M04C2.bin"
-.melody_04_c3
-INCBIN "melodies/M04C3.bin"
-
-; God mode
-.melody_05_c1
-;INCBIN "melodies/M05C1.bin"
-.melody_05_c2
-;INCBIN "melodies/M05C2.bin"
-.melody_05_c3
-;INCBIN "melodies/M05C3.bin"
-
-; Bonus
-.melody_06_c1
-;INCBIN "melodies/M06C1.bin"
-.melody_06_c2
-;INCBIN "melodies/M06C2.bin"
-.melody_06_c3
-;INCBIN "melodies/M06C3.bin"
-
-; Fanfare
-.melody_07_c1
-;INCBIN "melodies/M07C1.bin"
-.melody_07_c2
-;INCBIN "melodies/M07C2.bin"
-.melody_07_c3
-;INCBIN "melodies/M07C3.bin"
-
-; Died
-.melody_08_c1
-INCBIN "melodies/M08C1.bin"
-.melody_08_c2
-INCBIN "melodies/M08C2.bin"
-
-; Final
-.melody_10_c3
-;INCBIN "melodies/M10C3.bin"
-
 .usedmemory
 
 ORG MAIN_LOAD_ADDR+MAX_OBJ_SIZE-(MAIN_LOAD_ADDR-MAIN_RELOC_ADDR)
@@ -1377,43 +1325,22 @@ INCBIN "DOWNLOADER"
 ORG &0900
 GUARD &0D00
 .extradata
-
-; Title
-.melody_01_c1
-INCBIN "melodies/M01C1.bin"
-.melody_01_c2
-INCBIN "melodies/M01C2.bin"
-.melody_01_c3
-INCBIN "melodies/M01C3.bin"
-
-; Stage screen
-.melody_02_c1
-INCBIN "melodies/M02C1.bin"
-.melody_02_c2
-INCBIN "melodies/M02C2.bin"
-.melody_02_c3
-INCBIN "melodies/M02C3.bin"
-
-; Stage
-.melody_03_c3
-INCBIN "melodies/M03C3.bin"
-
-; Game over
-.melody_09_c1
-INCBIN "melodies/M09C1.bin"
-.melody_09_c2
-INCBIN "melodies/M09C2.bin"
-.melody_09_c3
-INCBIN "melodies/M09C3.bin"
-
 INCLUDE "extra.asm"
 .extraend
+
+; SWR data
+ORG ROMSBASE
+CLEAR ROMSBASE, OSBASE
+GUARD OSBASE
+.swrdata
+INCLUDE "swrdata.asm"
+.swrend
 
 ORG &00
 CLEAR &00, &FF
 .plingboot
 EQUS "*BASIC", &0D ; Reset to BASIC
-EQUS "PAGE=&1900", &0D ; Set PAGE
+EQUS "PAGE=&1300", &0D ; Set PAGE
 EQUS "*FX21", &0D ; Flush buffer
 EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
 EQUS "REM https://github.com/picosonic/bbm/", &0D ; Repo URL
@@ -1424,14 +1351,15 @@ SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "loadscr", "$.LOADSCR", MODE2BASE
 SAVE "EXTRA", extradata, extraend
+SAVE "BDATA", swrdata, swrend, &4000, &4000
 SAVE "BBM", start, codeend, DOWNLOADER_ADDR, MAIN_LOAD_ADDR
 
 PRINT "-------------------------------------------"
 PRINT "Zero page from &00 to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
 PRINT "VARS from &400 to ", ~end_of_vars-1, "  (", SOUND_WORKSPACE-end_of_vars, " bytes left )"
-PRINT "TUNES/EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
-PRINT "SPRITES/TILES from ", ~datastart, " to ", ~dataend-1
+PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
+PRINT "SWRDATA from ", ~swrdata, " to ", ~swrend-1, "  (", OSBASE-swrend, " bytes left )"
 PRINT ""
 remaining = MODE8BASE-usedmemory
 PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
