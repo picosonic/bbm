@@ -49,17 +49,17 @@ PROCSPACE
 :
 PROCBOMB
 PRINT'CHR$(129)"CONTROL FUNCTIONS:"
-PRINT'CHR$(131)"*"CHR$(135)"moves Bomberman"CHR$(129)"up"
-PRINTCHR$(131)"?"CHR$(135)"moves Bomberman"CHR$(129)"down"
-PRINTCHR$(131)"Z"CHR$(135)"moves Bomberman"CHR$(129)"left"
-PRINTCHR$(131)"X"CHR$(135)"moves Bomberman"CHR$(129)"right"
-PRINTCHR$(131)"SPACE"CHR$(135)"lays down a"CHR$(129)"bomb."CHR$(135)"This key is     also used when you pick up the remote   controlling explosion panel."
+PRINT'CHR$(131)"     *"CHR$(135)"moves Bomberman"CHR$(129)"up"
+PRINTCHR$(131)"     ?"CHR$(135)"moves Bomberman"CHR$(129)"down"
+PRINTCHR$(131)"     Z"CHR$(135)"moves Bomberman"CHR$(129)"left"
+PRINTCHR$(131)"     X"CHR$(135)"moves Bomberman"CHR$(129)"right"
+PRINTCHR$(131)" SPACE"CHR$(135)"lays down a"CHR$(129)"bomb."CHR$(135)"This key is     also used when you pick up the remote   controlling explosion panel."
 PRINTCHR$(131)"RETURN"CHR$(135)"to"CHR$(129)"pause"CHR$(135)"the game. To"CHR$(129)"start"CHR$(135)"the  game, simply press"CHR$(131)"RETURN"CHR$(135)"again."
 PRINTCHR$(131)"ESCAPE"CHR$(135)"quits the game."
 PRINT'CHR$(129)"TITLE SCREEN CONTROLS:"
 PRINT'" Choose"CHR$(129)"START"CHR$(135)"or"CHR$(129)"CONTINUE"CHR$(135)"using"CHR$(131)"SPACE.  "CHR$(135)"If you press"CHR$(129)"START,"CHR$(135)"the game will start from screen 1. If"CHR$(129)"CONTINUE"CHR$(135)"is selected, use a code to start a previous screen."
-:
 PROCSPACE
+:
 CLS:*FX200,3
 :
 REM Disable ESC processing
@@ -73,7 +73,7 @@ A=INKEY(500)
 :
 MODE1
 VDU23,1,0;0;0;0;:REM Hide cursor
-VDU19,1,0;0;19,2,0;0;19,3,0;0;19,4,0;0;:REM Blank palette
+VDU19,0,0;0;19,1,0;0;19,2,0;0;19,3,0;0;:REM Blank palette
 :
 REM Sideways RAM loader
 DIM code 80
