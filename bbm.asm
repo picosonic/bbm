@@ -7,7 +7,23 @@ INCLUDE "internal.asm"
 INCLUDE "consts.asm"
 INCLUDE "vars.asm"
 
+ORG &00
+CLEAR &00, &FF
+.plingboot
+EQUS "*BASIC", &0D ; Reset to BASIC
+EQUS "PAGE=&1300", &0D ; Set PAGE
+EQUS "*FX21", &0D ; Flush buffer
+EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
+EQUS "REM https://github.com/picosonic/bbm/", &0D ; Repo URL
+EQUS "REM BBM build ", TIME$ ; Add a build date
+.plingend
+SAVE "!BOOT", plingboot, plingend
+
+INCLUDE "loader2.asm"
+SAVE "LOADER", basicstart, basicend, &FF8023, &FF1900
+
 ORG MAIN_RELOC_ADDR
+CLEAR MAIN_RELOC_ADDR, MAIN_RELOC_ADDR+&2000
 GUARD ROMSBASE
 
 .start
@@ -1336,19 +1352,6 @@ GUARD OSBASE
 INCLUDE "swrdata.asm"
 .swrend
 
-ORG &00
-CLEAR &00, &FF
-.plingboot
-EQUS "*BASIC", &0D ; Reset to BASIC
-EQUS "PAGE=&1300", &0D ; Set PAGE
-EQUS "*FX21", &0D ; Flush buffer
-EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
-EQUS "REM https://github.com/picosonic/bbm/", &0D ; Repo URL
-EQUS "REM BBM build ", TIME$ ; Add a build date
-.plingend
-
-SAVE "!BOOT", plingboot, plingend
-PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "loadscr2", "$.LOADSCR", MODE2BASE
 SAVE "EXTRA", extradata, extraend
 SAVE "BDATA", swrdata, swrend, &4000, &4000

@@ -26,3 +26,6 @@ flip_lut
 
 # Downloader binary
 DOWNLOADER
+
+# Tokenised BASIC
+loadertok.bin
