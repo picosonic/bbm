@@ -5,6 +5,7 @@ workdir=$1
 cd "${workdir}"
 
 # Tool names
+exo="./exomizer"
 beebasm="beebasm"
 
 # Tool options
@@ -41,6 +42,40 @@ function refreshrequired()
 
   return 1
 }
+
+##############################################################
+
+# Set filenames
+beebscr="loadscr2"
+exoscr="XSCR"
+
+# When source is newer, rebuild
+if refreshrequired ${exoscr} ${beebscr}
+then
+  if [ ! -x ${exo} ]
+  then
+    echo "Can't find exomizer"
+    exit 1
+  fi
+
+  # Compress beeb format with exomizer
+  #
+  # -c required when LITERAL_SEQUENCES_NOT_USED = 1
+  # -M256 required when MAX_SEQUENCE_LENGTH_256 = 1
+  # -P+16 required when EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE = 1
+  # -P-32 required when DONT_REUSE_OFFSET = 1
+  # -f required when DECRUNCH_FORWARDS = 1
+
+  ${exo} level -M256 -P+16-32 -c ${beebscr}@0x0000 -o ${exoscr}
+fi
+
+##############################################################
+
+# Build exomiser'd loader screen loader if required
+if refreshrequired EXOSCR os.asm consts.asm exomizer310decruncher.h.asm exomizer310decruncher.asm XSCR exoloader.asm
+then
+  ${beebasm} ${verbose} -i exoloader.asm
+fi
 
 ##############################################################
 

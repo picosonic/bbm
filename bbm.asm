@@ -11,7 +11,7 @@ ORG &00
 CLEAR &00, &FF
 .plingboot
 EQUS "*BASIC", &0D ; Reset to BASIC
-EQUS "PAGE=&1300", &0D ; Set PAGE
+EQUS "PAGE=&1200", &0D ; Set PAGE to first file buffer (as we don't open any files from BASIC)
 EQUS "*FX21", &0D ; Flush buffer
 EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
 EQUS "REM https://github.com/picosonic/bbm/", &0D ; Repo URL
@@ -1352,7 +1352,7 @@ GUARD OSBASE
 INCLUDE "swrdata.asm"
 .swrend
 
-PUTFILE "loadscr2", "$.LOADSCR", MODE2BASE
+PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
 SAVE "BDATA", swrdata, swrend, &4000, &4000
 SAVE "BBM", start, codeend, DOWNLOADER_ADDR, MAIN_LOAD_ADDR

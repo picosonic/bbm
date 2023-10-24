@@ -1,5 +1,5 @@
 ; Origin set to where the BASIC code is loaded
-ORG &1300
+ORG &1200
 
 ; Place in memory to check if writable
 swrcheck=ROMSBASE+8

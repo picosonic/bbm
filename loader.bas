@@ -22,25 +22,28 @@ CLS:*FX200,3
 REM Disable ESC processing
 *FX229,1
 :
+MODE1
+VDU23,1,0;0;0;0;:REM Hide cursor
+VDU19,0,0;0;19,1,0;0;19,2,0;0;19,3,0;0;:REM Blank palette
+:
+REM Sideways RAM loader
+swrpage=&100
+swrtest=&2800
+swrcopy=&2828
+CALL swrtest
+IF ?swrpage=255 MODE7:PRINT"No sideways RAM detected":END
+*L.BDATA
+CALL swrcopy
+:
 MODE2
 VDU23,1,0;0;0;0;:REM Hide cursor
-*L.LOADSCR
+*/EXOSCR
 *FX15
 A=INKEY(500)
 :
 MODE1
 VDU23,1,0;0;0;0;:REM Hide cursor
 VDU19,0,0;0;19,1,0;0;19,2,0;0;19,3,0;0;:REM Blank palette
-:
-REM Sideways RAM loader
-DIM code 80
-swrpage=&100
-swrtest=&2900
-swrcopy=&2928
-CALL swrtest
-IF ?swrpage=255 MODE7:PRINT"No sideways RAM detected":END
-*L.BDATA
-CALL swrcopy
 :
 REM Load extra datafile
 *L.EXTRA
