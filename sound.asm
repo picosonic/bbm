@@ -27,10 +27,12 @@
 
 ; Stop playing melody
 .sound_stop
+{
   LDA #&00:STA sound_music
 
-.sound_abort
+.^sound_abort
   RTS
+}
 
 .sound_eventvhandler
 {
@@ -437,15 +439,15 @@
 
 ; Melodies table
 .sound_melodies_table
-  EQUW melody_01_c1   , melody_01_c2   , melody_01_c3, &8080
-  EQUW melody_02_c1   , melody_02_c2   , melody_02_c3, &4040
-  EQUW           &0000,           &0000, melody_03_c3, &8080
-  EQUW melody_04_c1   , melody_04_c2   , melody_04_c3, &8080
-  EQUW melody_05_c1   , melody_05_c2   , melody_05_c3, &8080
-  EQUW melody_06_c1   , melody_06_c2   , melody_06_c3, &8080
-  EQUW melody_07_c1   , melody_07_c2   , melody_07_c3, &0040
-  EQUW melody_08_c1   , melody_08_c2   ,        &0000, &8080
-  EQUW melody_09_c1   , melody_09_c2   , melody_09_c3, &8080
-  EQUW melody_07_c1+55, melody_07_c2+59, melody_10_c3, &0040
+  EQUW melody_01_c1   , melody_01_c2   , melody_01_c3, &8080 ; 1: TITLE
+  EQUW melody_02_c1   , melody_02_c2   , melody_02_c3, &4040 ; 2: STAGE_SCREEN
+  EQUW           &0000,           &0000, melody_03_c3, &8080 ; 3: STAGE
+  EQUW melody_04_c1   , melody_04_c2   , melody_04_c3, &8080 ; 4: STAGE2
+  EQUW melody_05_c1   , melody_05_c2   , melody_05_c3, &8080 ; 5: GODMODE
+  EQUW melody_06_c1   , melody_06_c2   , melody_06_c3, &8080 ; 6: BONUS
+  EQUW melody_07_c1   , melody_07_c2   , melody_07_c3, &0040 ; 7: FANFARE
+  EQUW melody_08_c1   , melody_08_c2   ,        &0000, &8080 ; 8: DIED
+  EQUW melody_09_c1   , melody_09_c2   , melody_09_c3, &8080 ; 9: GAMEOVER
+  EQUW melody_07_c1+55, melody_07_c2+59, melody_10_c3, &0040 ; 10: ???
   
 ; ---------------------------------------------------------
