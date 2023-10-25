@@ -1354,7 +1354,7 @@ INCLUDE "swrdata.asm"
 
 PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
-SAVE "BDATA", swrdata, swrend, &4000, &4000
+SAVE "BDATA", swrdata, swrend, SWR_CACHE, SWR_CACHE
 SAVE "BBM", start, codeend, DOWNLOADER_ADDR, MAIN_LOAD_ADDR
 
 PRINT "-------------------------------------------"
@@ -1365,5 +1365,5 @@ PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " 
 PRINT "SWRDATA from ", ~swrdata, " to ", ~swrend-1, "  (", OSBASE-swrend, " bytes left )"
 PRINT ""
 remaining = MODE8BASE-usedmemory
-PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
+PRINT "Bytes left before screen memory : ", ~remaining, "  (", remaining, " bytes )"
 PRINT "-------------------------------------------"
