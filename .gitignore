@@ -11,6 +11,7 @@ bbcmemmap1.txt
 *.webp
 *.gif
 *.bak
+*.o
 
 # Emulator RAM DUMP file
 DUMP
@@ -23,6 +24,9 @@ melody_extract
 
 # Flip lookup table generator
 flip_lut
+
+# Image converter
+img2beeb
 
 # Downloader binary
 DOWNLOADER
