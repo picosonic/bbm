@@ -131,7 +131,7 @@ INCLUDE "sound.asm"
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   LDA inmenu:BNE menu
 
-  ;LDA #PAL_DBG:JSR setpal
+  ;SET_COL0 PAL_OS_Green
 
   JSR drawbomberman ; clear bomberman in old pos
 
@@ -145,7 +145,7 @@ INCLUDE "sound.asm"
 
   JSR drawbomberman ; draw bomberman in new pos
 
-  ;LDA #PAL_GAME:JSR setpal
+  ;SET_COL0 PAL_OS_Black
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .menu
 
