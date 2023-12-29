@@ -2,9 +2,14 @@
 
 workdir=$1
 
+# Set pixel resolution
+xmax=160
+ymax=256
+
 cd "${workdir}"
 
 # Tool names
+img2beeb="./img2beeb"
 exo="./exomizer"
 beebasm="beebasm"
 
@@ -46,17 +51,36 @@ function refreshrequired()
 ##############################################################
 
 # Set filenames
+srcscr="bomb_manual2.png"
+beebpal="bomb_manual2.pal"
 beebscr="loadscr2"
 exoscr="XSCR"
 
 # When source is newer, rebuild
-if refreshrequired ${exoscr} ${beebscr}
+if refreshrequired ${exoscr} ${beebpal} ${srcscr} ${beebscr}
 then
+  if [ ! -x ${img2beeb} ]
+  then
+    make ${img2beeb}
+
+    if [ ! -x ${img2beeb} ]
+    then
+      echo "Can't find img2beeb"
+      exit 1
+    fi
+  fi
+
   if [ ! -x ${exo} ]
   then
     echo "Can't find exomizer"
     exit 1
   fi
+
+  # Remove old screen
+  rm "${beebscr}" >/dev/null 2>&1
+
+  # Convert from image to beeb format
+  ${img2beeb} -f "${beebpal}" -d1 -b4 -X${xmax} -Y${ymax} "${srcscr}" "${beebscr}"
 
   # Compress beeb format with exomizer
   #
