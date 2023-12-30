@@ -221,8 +221,6 @@
   ; Timing control
   LDA sound_temp:AND #&7F
 
-  ; TODO *** Convert 60Hz note lengths to 50Hz ***
-
   STA sound_notelen, X
   JMP sound_write_regs
 

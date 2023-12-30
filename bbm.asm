@@ -40,6 +40,15 @@ INCLUDE "menus.asm"
 INCLUDE "gfx.asm"
 INCLUDE "sound.asm"
 
+timer_60hz = 1000000/60
+
+MACRO RESETTIMER2
+{
+  LDA #lo(timer_60hz):STA USERVIA_T2CL
+  LDA #hi(timer_60hz):STA USERVIA_T2CH
+}
+ENDMACRO
+
 .init
   ; Initialise cursor
   LDA #&00:STA cursor
@@ -57,6 +66,24 @@ INCLUDE "sound.asm"
   LDA #eventhandler DIV 256:STA EVNTV+1
   CLI
   LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
+
+  ; Set up IRQ handler
+  SEI
+  ; Back up current IRQ handler
+  LDA IRQ2V:STA irq_ptr
+  LDA IRQ2V+1:STA irq_ptr+1
+
+  ; Enable vsync and timer2 interrupts
+  LDA #INT_ENABLE+INT_TIMER2+INT_VSYNC:STA USERVIA_IER
+
+  ; Timer2 control = one shot
+  LDA #&00:STA USERVIA_ACR
+  RESETTIMER2
+
+  ; Set new IRQ handler
+  LDA #lo(irqhandler):STA IRQ2V
+  LDA #hi(irqhandler):STA IRQ2V+1
+  CLI
 
 .gamestart
 
@@ -103,15 +130,21 @@ INCLUDE "sound.asm"
 .startpressed
 {
   LDA cursor
-  BEQ playgame
+  BEQ playstart
 
   ; Flip cursor
   LDA cursor:EOR #&01:STA cursor
 
   ; Password entry screen
   JSR password
-  LDA tempz:BNE playgame+4
+  LDA tempz:BNE clearstart
   JMP gamestart
+
+.playstart
+  JMP playgame
+
+.clearstart
+  JMP clearbombs
 }
 
 ; Handler for VBLANK event
@@ -120,10 +153,8 @@ INCLUDE "sound.asm"
   ; Save registers
   PHP
   PHA
-  TXA
-  PHA
-  TYA
-  PHA
+  TXA:PHA
+  TYA:PHA
 
   INC framecounter
   INC frames
@@ -150,17 +181,52 @@ INCLUDE "sound.asm"
 .menu
 
   JSR read_input
-  JSR sound_eventvhandler
 
   ; Restore registers
-  PLA
-  TAY
-  PLA
-  TAX
+  PLA:TAY
+  PLA:TAX
   PLA
   PLP
 
   RTS
+}
+
+.irqhandler
+{
+  ; Save registers
+  LDA &FC:PHA
+  TXA:PHA
+  TYA:PHA
+
+  ; Find out which interrupt it is
+  LDA USERVIA_IFR
+  AND #INT_VSYNC
+  BEQ try_timer2 ; not vsync, so try timer2
+
+  ;;;;;;;;;;;;;;
+  ; Handle vsync
+
+.try_timer2
+  LDA USERVIA_IFR
+  AND #INT_TIMER2
+  BEQ return_to_os ; not timer2, so hand back to OS
+
+  ;;;;;;;;;;;;;;;
+  ; Handle timer2
+  STA USERVIA_IFR ; Mark interrupt as handled
+  LDA USERVIA_T2CL ; Clear timer
+
+  RESETTIMER2
+
+  JSR sound_eventvhandler
+
+.return_to_os
+  ; Restore registers
+  PLA:TAY
+  PLA:TAX
+  PLA:STA &FC
+
+  JMP (irq_ptr)
 }
 
 .playgame
@@ -168,7 +234,7 @@ INCLUDE "sound.asm"
   ; Initialise bombs
   LDX #MAX_BOMB-1
   LDA #NO
-.clearbombs
+.^clearbombs
   STA BOMB_ACTIVE, X
   DEX
   BPL clearbombs

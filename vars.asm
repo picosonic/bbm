@@ -107,6 +107,9 @@ GUARD &0090
 .sound_pause_point EQUB &00, &00, &00
 .sound_pause_counter EQUB &00, &00, &00
 
+; Store system IRQ handler to chain onwards to
+.irq_ptr EQUW &0000
+
 .zpend
 
 ; ---------------------------------------------------------
