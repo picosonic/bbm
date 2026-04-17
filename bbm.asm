@@ -65,7 +65,7 @@ ENDMACRO
   LDA #eventhandler MOD 256:STA EVNTV
   LDA #eventhandler DIV 256:STA EVNTV+1
   CLI
-  LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
+  LDA #OSB_ENABLE_EVENTS:LDX #EV_VSYNC:JSR OSBYTE ; Enable vsync event handler
 
   ; Set up IRQ handler
   SEI
@@ -339,7 +339,7 @@ ENDMACRO
   BEQ gameloop
 
   ; acknowledge ESC
-  LDA #&7E:JSR OSBYTE
+  LDA #OSB_ACK_ESCAPE:JSR OSBYTE
 
   ; Stop sprites being drawn (by vsync)
   LDA #YES:STA inmenu
@@ -1390,7 +1390,7 @@ ENDMACRO
 ; Delay specified number of frames
 .delay
 {
-  LDA #&13:JSR OSBYTE ; Wait for vsync
+  LDA #OSB_WAIT_VSYNC:JSR OSBYTE ; Wait for vsync
 
   DEC delayframes
   BNE delay
